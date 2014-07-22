@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="BaseTheme" parent="android:Theme.Holo" />
+
+    <style name="Theme" parent="BaseTheme" />
+
+</resources>
