@@ -12,13 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
-import com.tughi.aggregator.content.AggregatorUris;
-
 /**
  * A {@link ListFragment} for feed entries.
  * The displayed entries depend on the provided entries {@link Uri}.
  */
 public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    /**
+     * The entries {@link Uri}
+     */
+    public static final String ARG_ENTRIES_URI = "uri";
 
     private static final int LOADER_ENTRIES = 1;
 
@@ -39,7 +42,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(applicationContext, AggregatorUris.newEntriesUri(), null, null, null, null);
+        Uri uri = getArguments().getParcelable(ARG_ENTRIES_URI);
+        return new CursorLoader(applicationContext, uri, null, null, null, null);
     }
 
     @Override

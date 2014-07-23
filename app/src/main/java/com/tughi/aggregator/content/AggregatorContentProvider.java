@@ -35,10 +35,25 @@ public class AggregatorContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         switch (AggregatorUris.match(uri)) {
+            case AggregatorUris.MATCHED_FEEDS_URI:
+                return queryFeeds(uri, projection, selection, selectionArgs, orderBy);
+            case AggregatorUris.MATCHED_FEED_ENTRIES_URI:
+                if (selection == null) {
+                    selection = "feed_id = " + uri.getPathSegments().get(1);
+                } else {
+                    selection = "feed_id = " + uri.getPathSegments().get(1) + " AND (" + selection + ")";
+                }
             case AggregatorUris.MATCHED_ENTRIES_URI:
                 return queryEntries(uri, projection, selection, selectionArgs, orderBy);
         }
         throw new UnsupportedOperationException(uri.toString());
+    }
+
+    private Cursor queryFeeds(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
+        SQLiteDatabase database = helper.getReadableDatabase();
+        Cursor cursor = database.query(TABLE_FEED, projection, selection, selectionArgs, null, null, orderBy);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     private Cursor queryEntries(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {

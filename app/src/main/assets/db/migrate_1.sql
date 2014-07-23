@@ -7,7 +7,7 @@ CREATE TABLE feed (
     favicon TEXT,
     etag TEXT,
     modified TEXT,
-    poll INTEGER NOT NULL,
+    poll INTEGER NOT NULL DEFAULT 0,
     poll_status INTEGER,
     poll_type TEXT,
     next_poll INTEGER NOT NULL DEFAULT 0
@@ -64,3 +64,6 @@ CREATE VIEW entry AS
     WHERE
         entry_user.feed_id = entry_sync.feed_id AND
         entry_user.guid = entry_sync.guid;
+
+-- add initial feeds
+INSERT INTO feed (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');

@@ -22,6 +22,13 @@ public class AggregatorUris {
     }
 
     /**
+     * Creates an {@link Uri} for all feeds.
+     */
+    public static Uri newFeedsUri() {
+        return Uri.withAppendedPath(BASE_URI, "feed");
+    }
+
+    /**
      * Creates an {@link Uri} for a feed's entries.
      */
     public static Uri newFeedEntriesUri(long feedId) {
@@ -30,12 +37,14 @@ public class AggregatorUris {
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
-    public static final int MATCHED_ENTRIES_URI = 1;
+    public static final int MATCHED_FEEDS_URI = 1;
     public static final int MATCHED_FEED_ENTRIES_URI = 2;
+    public static final int MATCHED_ENTRIES_URI = 3;
 
     static {
-        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "entries", MATCHED_ENTRIES_URI);
+        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed", MATCHED_FEEDS_URI);
         URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed/#/entries", MATCHED_FEED_ENTRIES_URI);
+        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "entries", MATCHED_ENTRIES_URI);
     }
 
     /**
