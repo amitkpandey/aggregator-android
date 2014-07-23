@@ -19,7 +19,11 @@ public class AggregatorContentProvider extends ContentProvider {
     private SQLiteOpenHelper helper;
 
     private static final String TABLE_FEED = "feed";
-    private static final String TABLE_ENTRY = "entry";
+    private static final String TABLE_ENTRY_SYNC = "entry_sync";
+    private static final String TABLE_ENTRY_USER = "entry_user";
+
+    private static final String VIEW_FEED = "feed_view";
+    private static final String VIEW_ENTRY = "entry_view";
 
     @Override
     public boolean onCreate() {
@@ -51,14 +55,14 @@ public class AggregatorContentProvider extends ContentProvider {
 
     private Cursor queryFeeds(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         SQLiteDatabase database = helper.getReadableDatabase();
-        Cursor cursor = database.query(TABLE_FEED, projection, selection, selectionArgs, null, null, orderBy);
+        Cursor cursor = database.query(VIEW_FEED, projection, selection, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
     private Cursor queryEntries(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         SQLiteDatabase database = helper.getReadableDatabase();
-        Cursor cursor = database.query(TABLE_ENTRY, projection, selection, selectionArgs, null, null, orderBy);
+        Cursor cursor = database.query(VIEW_ENTRY, projection, selection, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }

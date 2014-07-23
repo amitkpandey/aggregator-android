@@ -50,7 +50,7 @@ CREATE TRIGGER delete_entry_user
     END;
 
 -- a view that merges entry_sync and entry_user
-CREATE VIEW entry AS
+CREATE VIEW entry_view AS
     SELECT
         entry_user._id AS _id,
         entry_user.feed_id AS feed_id,
@@ -64,6 +64,52 @@ CREATE VIEW entry AS
     WHERE
         entry_user.feed_id = entry_sync.feed_id AND
         entry_user.guid = entry_sync.guid;
+
+-- a view that includes 'all' and 'starred' virtual feed
+CREATE VIEW feed_view AS
+    SELECT
+        -1 AS _id,
+        NULL AS url,
+        'ALL' AS title,
+        NULL AS link,
+        NULL AS favicon,
+        NULL AS etag,
+        NULL AS modified,
+        0 AS poll,
+        NULL AS poll_status,
+        NULL AS poll_type,
+        0 AS next_poll,
+        (SELECT COUNT(1) FROM entry_view WHERE flag_read = 0) AS unread_count
+    UNION
+        SELECT
+            -2 AS _id,
+            NULL AS url,
+            'STARRED' AS title,
+            NULL AS link,
+            NULL AS favicon,
+            NULL AS etag,
+            NULL AS modified,
+            0 AS poll,
+            NULL AS poll_status,
+            NULL AS poll_type,
+            0 AS next_poll,
+            (SELECT COUNT(1) FROM entry_view WHERE flag_star = 1) AS unread_count
+        UNION
+            SELECT
+                feed._id,
+                feed.url,
+                feed.title,
+                feed.link,
+                feed.favicon,
+                feed.etag,
+                feed.modified,
+                feed.poll,
+                feed.poll_status,
+                feed.poll_type,
+                feed.next_poll,
+                (SELECT COUNT(1) FROM entry_view WHERE entry_view.feed_id = feed._id AND flag_read = 0) AS unread_count
+            FROM feed
+            ORDER BY title;
 
 -- add initial feeds
 INSERT INTO feed (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');

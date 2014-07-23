@@ -43,6 +43,8 @@ public class AggregatorUris {
 
     static {
         URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed", MATCHED_FEEDS_URI);
+        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed/-1/entries", MATCHED_FEED_ENTRIES_URI);
+        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed/-2/entries", MATCHED_FEED_ENTRIES_URI);
         URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed/#/entries", MATCHED_FEED_ENTRIES_URI);
         URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "entries", MATCHED_ENTRIES_URI);
     }
