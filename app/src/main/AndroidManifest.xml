@@ -8,7 +8,7 @@
         android:theme="@style/Theme">
 
         <provider
-            android:name=".content.AggregatorContentProvider"
+            android:name=".content.DatabaseContentProvider"
             android:authorities="com.tughi.aggregator" />
 
         <activity android:name=".ui.MainActivity">

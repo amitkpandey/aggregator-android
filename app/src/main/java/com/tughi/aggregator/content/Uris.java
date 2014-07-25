@@ -7,11 +7,11 @@ import android.net.Uri;
 /**
  * Utility methods for Aggregator {@link Uri}s.
  */
-public class AggregatorUris {
+public class Uris {
 
     private static final Uri BASE_URI = new Uri.Builder()
             .scheme(ContentResolver.SCHEME_CONTENT)
-            .authority(AggregatorContentProvider.AUTHORITY)
+            .authority(DatabaseContentProvider.AUTHORITY)
             .build();
 
     /**
@@ -42,11 +42,11 @@ public class AggregatorUris {
     public static final int MATCHED_ENTRIES_URI = 3;
 
     static {
-        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed", MATCHED_FEEDS_URI);
-        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed/-1/entries", MATCHED_FEED_ENTRIES_URI);
-        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed/-2/entries", MATCHED_FEED_ENTRIES_URI);
-        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "feed/#/entries", MATCHED_FEED_ENTRIES_URI);
-        URI_MATCHER.addURI(AggregatorContentProvider.AUTHORITY, "entries", MATCHED_ENTRIES_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feed", MATCHED_FEEDS_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feed/-1/entries", MATCHED_FEED_ENTRIES_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feed/-2/entries", MATCHED_FEED_ENTRIES_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feed/#/entries", MATCHED_FEED_ENTRIES_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "entries", MATCHED_ENTRIES_URI);
     }
 
     /**

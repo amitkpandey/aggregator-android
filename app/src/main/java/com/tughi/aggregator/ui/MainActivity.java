@@ -22,7 +22,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tughi.aggregator.R;
-import com.tughi.aggregator.content.AggregatorUris;
+import com.tughi.aggregator.content.FeedColumns;
+import com.tughi.aggregator.content.Uris;
 
 public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
@@ -136,7 +137,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         // create fragment
         Fragment fragment = new EntryListFragment();
         Bundle args = new Bundle();
-        args.putParcelable(EntryListFragment.ARG_ENTRIES_URI, AggregatorUris.newFeedEntriesUri(id));
+        args.putParcelable(EntryListFragment.ARG_ENTRIES_URI, Uris.newFeedEntriesUri(id));
         fragment.setArguments(args);
 
         // replace existing fragment with the new one
@@ -156,9 +157,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     }
 
     private static final String[] FEED_PROJECTION = {
-            "_id",
-            "title",
-            "unread_count"
+            FeedColumns.FEED_ID,
+            FeedColumns.FEED_TITLE,
+            FeedColumns.FEED_UNREAD_COUNT
     };
     private static final int FEED_ID_INDEX = 0;
     private static final int FEED_TITLE_INDEX = 1;
@@ -166,7 +167,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, AggregatorUris.newFeedsUri(), FEED_PROJECTION, null, null, null);
+        return new CursorLoader(this, Uris.newFeedsUri(), FEED_PROJECTION, null, null, null);
     }
 
     @Override
