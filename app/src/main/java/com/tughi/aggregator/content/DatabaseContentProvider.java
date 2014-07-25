@@ -38,16 +38,24 @@ public class DatabaseContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
+        String feedId;
         switch (Uris.match(uri)) {
+            case Uris.MATCHED_FEED_URI:
+                feedId = uri.getPathSegments().get(1);
+                if (selection == null) {
+                    selection = "_id = " + feedId;
+                } else {
+                    selection = "_id = " + feedId + " AND (" + selection + ")";
+                }
             case Uris.MATCHED_FEEDS_URI:
                 return queryFeeds(uri, projection, selection, selectionArgs, orderBy);
             case Uris.MATCHED_FEED_ENTRIES_URI:
+                feedId = uri.getPathSegments().get(1);
                 if (selection == null) {
-                    selection = "feed_id = " + uri.getPathSegments().get(1);
+                    selection = "feed_id = " + feedId;
                 } else {
-                    selection = "feed_id = " + uri.getPathSegments().get(1) + " AND (" + selection + ")";
+                    selection = "feed_id = " + feedId + " AND (" + selection + ")";
                 }
-            case Uris.MATCHED_ENTRIES_URI:
                 return queryEntries(uri, projection, selection, selectionArgs, orderBy);
         }
         throw new UnsupportedOperationException(uri.toString());
