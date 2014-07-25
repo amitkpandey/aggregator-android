@@ -2,6 +2,12 @@
 
     <style name="BaseTheme" parent="android:Theme.Holo" />
 
-    <style name="Theme" parent="BaseTheme" />
+    <style name="Theme" parent="BaseTheme">
+        <item name="android:actionBarStyle">@style/Widget.ActionBar</item>
+    </style>
+
+    <style name="Widget.ActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">#666</item>
+    </style>
 
 </resources>
