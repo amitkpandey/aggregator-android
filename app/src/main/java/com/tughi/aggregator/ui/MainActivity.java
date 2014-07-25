@@ -76,6 +76,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         getActionBar().setHomeButtonEnabled(true);
 
         title = getTitle();
+
+        // show the 'unread' feed by default
+        selectDrawerItem(0, -1);
     }
 
     @Override
@@ -140,10 +143,13 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content, fragment)
-                .commitAllowingStateLoss();
+                .commit();
 
         // mark position as active
-        drawerListView.setItemChecked(position, true);
+        if (drawerListAdapter.getCursor() != null) {
+            // if loaded only... otherwise it will be done in onLoadFinished
+            drawerListView.setItemChecked(position, true);
+        }
 
         // finish
         drawerLayout.closeDrawer(drawerListView);
@@ -167,9 +173,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         drawerListAdapter.swapCursor(cursor);
 
-        if (!isFinishing() && getFragmentManager().findFragmentById(R.id.content) == null) {
-            // add default fragment
-            selectDrawerItem(0, -1);
+        if (drawerListView.getCheckedItemCount() == 0) {
+            // mark the 'unread' feed as active
+            drawerListView.setItemChecked(0, true);
         }
     }
 
