@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
+import com.tughi.aggregator.service.FeedsUpdateService;
 
 public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
@@ -85,6 +87,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
+        // TODO: move this call to the ACTION_BOOT_COMPLETED broadcast handler
+        startService(new Intent(this, FeedsUpdateService.class));
 
         drawerToggle.syncState();
     }
@@ -157,9 +162,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     }
 
     private static final String[] FEED_PROJECTION = {
-            FeedColumns.FEED_ID,
-            FeedColumns.FEED_TITLE,
-            FeedColumns.FEED_UNREAD_COUNT
+            FeedColumns.ID,
+            FeedColumns.TITLE,
+            FeedColumns.UNREAD_COUNT
     };
     private static final int FEED_ID_INDEX = 0;
     private static final int FEED_TITLE_INDEX = 1;

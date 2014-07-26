@@ -1,13 +1,19 @@
 package com.tughi.aggregator.content;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
 import com.tughi.android.database.sqlite.DatabaseOpenHelper;
+
+import java.util.ArrayList;
 
 /**
  * A {@link ContentProvider} that stores the aggregated feeds.
@@ -43,18 +49,26 @@ public class DatabaseContentProvider extends ContentProvider {
             case Uris.MATCHED_FEED_URI:
                 feedId = uri.getPathSegments().get(1);
                 if (selection == null) {
-                    selection = "_id = " + feedId;
+                    selection = FeedColumns.ID + " = " + feedId;
                 } else {
-                    selection = "_id = " + feedId + " AND (" + selection + ")";
+                    selection = FeedColumns.ID + " = " + feedId + " AND (" + selection + ")";
                 }
             case Uris.MATCHED_FEEDS_URI:
                 return queryFeeds(uri, projection, selection, selectionArgs, orderBy);
             case Uris.MATCHED_FEED_ENTRIES_URI:
                 feedId = uri.getPathSegments().get(1);
-                if (selection == null) {
-                    selection = "feed_id = " + feedId;
-                } else {
-                    selection = "feed_id = " + feedId + " AND (" + selection + ")";
+                if ("-2".equals(feedId)) {
+                    if (selection == null) {
+                        selection = EntryColumns.FLAG_STAR + " = 1";
+                    } else {
+                        selection = EntryColumns.FLAG_STAR + " = 1 AND (" + selection + ")";
+                    }
+                } else if (!"-1".equals(feedId)) {
+                    if (selection == null) {
+                        selection = EntryColumns.FEED_ID + " = " + feedId;
+                    } else {
+                        selection = EntryColumns.FEED_ID + " = " + feedId + " AND (" + selection + ")";
+                    }
                 }
                 return queryEntries(uri, projection, selection, selectionArgs, orderBy);
         }
@@ -77,7 +91,38 @@ public class DatabaseContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        switch (Uris.match(uri)) {
+            case Uris.MATCHED_FEED_ENTRIES_URI:
+                return insertEntry(uri, values);
+        }
+
         throw new UnsupportedOperationException(uri.toString());
+    }
+
+    public Uri insertEntry(Uri uri, ContentValues values) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+
+        String where = EntryColumns.FEED_ID + " = ? AND " + EntryColumns.GUID + " = ?";
+        String[] whereArgs = {
+                values.getAsString(EntryColumns.FEED_ID),
+                values.getAsString(EntryColumns.GUID)
+        };
+
+        // try to update existing entry
+        if (database.update(TABLE_ENTRY_SYNC, values, where, whereArgs) > 0) {
+            final String[] columns = {EntryColumns.ID};
+            Cursor cursor = database.query(TABLE_ENTRY_USER, columns, where, whereArgs, null, null, null);
+            try {
+                cursor.moveToFirst();
+                return Uri.withAppendedPath(uri, cursor.getString(0));
+            } finally {
+                cursor.close();
+            }
+        }
+
+        // insert new entry otherwise
+        long id = database.insert(TABLE_ENTRY_SYNC, null, values);
+        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
@@ -88,6 +133,24 @@ public class DatabaseContentProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
         throw new UnsupportedOperationException(uri.toString());
+    }
+
+    @Override
+    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations) throws OperationApplicationException {
+        SQLiteDatabase database = helper.getWritableDatabase();
+
+        database.beginTransaction();
+        try {
+            for (ContentProviderOperation operation : operations) {
+                operation.apply(this, null, 0);
+            }
+
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+
+        return super.applyBatch(operations);
     }
 
 }

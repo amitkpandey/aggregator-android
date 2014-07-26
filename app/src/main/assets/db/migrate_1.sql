@@ -17,8 +17,9 @@ CREATE TABLE feed (
 CREATE TABLE entry_sync (
     feed_id INTEGER NOT NULL,
     guid TEXT NOT NULL,
-    poll INTEGER NOT NULL,
+    title TEXT,
     updated INTEGER,
+    poll INTEGER NOT NULL,
     data TEXT NOT NULL,
     UNIQUE (feed_id, guid),
     FOREIGN KEY (feed_id) REFERENCES feed (_id)
@@ -55,8 +56,9 @@ CREATE VIEW entry_view AS
         entry_user._id AS _id,
         entry_user.feed_id AS feed_id,
         entry_user.guid AS guid,
-        entry_sync.poll AS poll,
+        entry_sync.title AS title,
         entry_sync.updated AS updated,
+        entry_sync.poll AS poll,
         entry_sync.data AS data,
         entry_user.flag_read AS flag_read,
         entry_user.flag_star AS flag_star
@@ -113,3 +115,6 @@ CREATE VIEW feed_view AS
 
 -- add initial feeds
 INSERT INTO feed (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');
+
+-- add initial feeds
+INSERT INTO feed (url, title, link) VALUES ('https://github.com/tughi.atom', 'Tughi''s Github', 'https://github.com/tughi');

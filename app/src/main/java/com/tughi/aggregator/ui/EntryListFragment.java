@@ -8,11 +8,14 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.TextView;
 
 import com.tughi.aggregator.R;
+import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
 
 /**
@@ -45,6 +48,14 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
     }
 
+    private static final String[] ENTRY_PROJECTION = {
+            EntryColumns.ID,
+            EntryColumns.TITLE,
+            EntryColumns.UPDATED,
+    };
+    private static final int ENTRY_TITLE_INDEX = 1;
+    private static final int ENTRY_UPDATED_INDEX = 2;
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri = getArguments().getParcelable(ARG_ENTRIES_URI);
@@ -54,7 +65,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 Uri feedUri = Uri.parse(uriString.substring(0, uriString.lastIndexOf("/")));
                 return new CursorLoader(applicationContext, feedUri, null, null, null, null);
             case LOADER_ENTRIES:
-                return new CursorLoader(applicationContext, uri, null, null, null, null);
+                return new CursorLoader(applicationContext, uri, ENTRY_PROJECTION, null, null, null);
         }
 
         // never happens
@@ -68,7 +79,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 // update the activity title
                 if (cursor.moveToFirst()) {
                     String title;
-                    switch (cursor.getInt(cursor.getColumnIndex(FeedColumns.FEED_ID))) {
+                    switch (cursor.getInt(cursor.getColumnIndex(FeedColumns.ID))) {
                         case -2:
                             title = getString(R.string.starred_feed);
                             break;
@@ -76,7 +87,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                             title = getString(R.string.unread_feed);
                             break;
                         default:
-                            title = cursor.getString(cursor.getColumnIndex(FeedColumns.FEED_TITLE));
+                            title = cursor.getString(cursor.getColumnIndex(FeedColumns.TITLE));
                     }
                     getActivity().setTitle(title);
                 }
@@ -103,12 +114,26 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return null;
+            View view = LayoutInflater.from(context).inflate(R.layout.entry_list_item, parent, false);
+
+            ViewTag tag = new ViewTag();
+            tag.titleTextView = (TextView) view.findViewById(R.id.title);
+            tag.dateTextView = (TextView) view.findViewById(R.id.date);
+            view.setTag(tag);
+
+            return view;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            ViewTag tag = (ViewTag) view.getTag();
+            tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
+            tag.dateTextView.setText(cursor.getString(ENTRY_UPDATED_INDEX));
+        }
 
+        private class ViewTag {
+            private TextView titleTextView;
+            private TextView dateTextView;
         }
 
     }

@@ -3,11 +3,12 @@
     <style name="BaseTheme" parent="android:Theme.Holo" />
 
     <style name="Theme" parent="BaseTheme">
+        <item name="android:windowBackground">@android:color/black</item>
         <item name="android:actionBarStyle">@style/Widget.ActionBar</item>
     </style>
 
     <style name="Widget.ActionBar" parent="android:Widget.ActionBar">
-        <item name="android:background">#666</item>
+        <item name="android:background">#136</item>
     </style>
 
 </resources>
