@@ -18,6 +18,8 @@ import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
 
+import java.text.DateFormat;
+
 /**
  * A {@link ListFragment} for feed entries.
  * The displayed entries depend on the provided entries {@link Uri}.
@@ -52,9 +54,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             EntryColumns.ID,
             EntryColumns.TITLE,
             EntryColumns.UPDATED,
+            EntryColumns.FEED_TITLE,
     };
     private static final int ENTRY_TITLE_INDEX = 1;
     private static final int ENTRY_UPDATED_INDEX = 2;
+    private static final int ENTRY_FEED_TITLE_INDEX = 3;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -108,6 +112,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     private class EntryListAdapter extends CursorAdapter {
 
+        private DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+
         public EntryListAdapter(Context context) {
             super(context, null, false);
         }
@@ -118,6 +124,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
             ViewTag tag = new ViewTag();
             tag.titleTextView = (TextView) view.findViewById(R.id.title);
+            tag.feedTextView = (TextView) view.findViewById(R.id.feed);
             tag.dateTextView = (TextView) view.findViewById(R.id.date);
             view.setTag(tag);
 
@@ -128,11 +135,13 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         public void bindView(View view, Context context, Cursor cursor) {
             ViewTag tag = (ViewTag) view.getTag();
             tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
-            tag.dateTextView.setText(cursor.getString(ENTRY_UPDATED_INDEX));
+            tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
+            tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
         }
 
         private class ViewTag {
             private TextView titleTextView;
+            private TextView feedTextView;
             private TextView dateTextView;
         }
 

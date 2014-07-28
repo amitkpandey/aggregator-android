@@ -134,7 +134,7 @@ public class FeedsUpdateService extends Service {
                         entryValues.put(EntryColumns.FEED_ID, feedId);
                         entryValues.put(EntryColumns.GUID, entry.id);
                         entryValues.put(EntryColumns.TITLE, entry.title);
-                        entryValues.put(EntryColumns.UPDATED, entry.updated);
+                        entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp);
                         entryValues.put(EntryColumns.POLL, poll);
                         entryValues.put(EntryColumns.DATA, entry.title);
 

@@ -61,11 +61,17 @@ CREATE VIEW entry_view AS
         entry_sync.poll AS poll,
         entry_sync.data AS data,
         entry_user.flag_read AS flag_read,
-        entry_user.flag_star AS flag_star
-    FROM entry_user, entry_sync
+        entry_user.flag_star AS flag_star,
+        feed.title AS feed_title,
+        feed.favicon AS feed_favicon
+    FROM
+        entry_user,
+        entry_sync,
+        feed
     WHERE
         entry_user.feed_id = entry_sync.feed_id AND
-        entry_user.guid = entry_sync.guid;
+        entry_user.guid = entry_sync.guid AND
+        entry_user.feed_id = feed._id;
 
 -- a view that includes 'all' and 'starred' virtual feed
 CREATE VIEW feed_view AS

@@ -29,4 +29,14 @@ public interface EntryColumns {
      */
     public static final String FLAG_STAR = "flag_star";
 
+    /**
+     * The feed's title from the feed table.
+     */
+    public static final String FEED_TITLE = "feed_title";
+
+    /**
+     * The feed's favicon from the feed table.
+     */
+    public static final String FEED_FAVICON = "feed_favicon";
+
 }
