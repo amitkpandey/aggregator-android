@@ -119,8 +119,8 @@ CREATE VIEW feed_view AS
             FROM feed
             ORDER BY title;
 
--- add initial feeds
+-- add test feed
 INSERT INTO feed (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');
 
--- add initial feeds
+-- add test feed
 INSERT INTO feed (url, title, link) VALUES ('https://github.com/tughi.atom', 'Tughi''s Github', 'https://github.com/tughi');

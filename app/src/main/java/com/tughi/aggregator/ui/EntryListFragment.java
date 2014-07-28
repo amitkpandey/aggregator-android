@@ -19,6 +19,7 @@ import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 
 /**
  * A {@link ListFragment} for feed entries.
@@ -56,6 +57,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             EntryColumns.UPDATED,
             EntryColumns.FEED_TITLE,
     };
+    private static final String ENTRY_ORDER = EntryColumns.UPDATED;
     private static final int ENTRY_TITLE_INDEX = 1;
     private static final int ENTRY_UPDATED_INDEX = 2;
     private static final int ENTRY_FEED_TITLE_INDEX = 3;
@@ -69,7 +71,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 Uri feedUri = Uri.parse(uriString.substring(0, uriString.lastIndexOf("/")));
                 return new CursorLoader(applicationContext, feedUri, null, null, null, null);
             case LOADER_ENTRIES:
-                return new CursorLoader(applicationContext, uri, ENTRY_PROJECTION, null, null, null);
+                return new CursorLoader(applicationContext, uri, ENTRY_PROJECTION, null, null, ENTRY_ORDER);
         }
 
         // never happens
@@ -113,6 +115,12 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private class EntryListAdapter extends CursorAdapter {
 
         private DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+        private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
+
+        private Calendar calendar = Calendar.getInstance();
+
+        private long previousDate = -1;
+        private int previousPosition = -1;
 
         public EntryListAdapter(Context context) {
             super(context, null, false);
@@ -120,12 +128,21 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View view = LayoutInflater.from(context).inflate(R.layout.entry_list_item, parent, false);
+            int layout;
+            switch (getItemViewType(cursor.getPosition())) {
+                case 1:
+                    layout = R.layout.entry_list_header_item;
+                    break;
+                default:
+                    layout = R.layout.entry_list_item;
+            }
+            View view = LayoutInflater.from(context).inflate(layout, parent, false);
 
             ViewTag tag = new ViewTag();
             tag.titleTextView = (TextView) view.findViewById(R.id.title);
             tag.feedTextView = (TextView) view.findViewById(R.id.feed);
             tag.dateTextView = (TextView) view.findViewById(R.id.date);
+            tag.headerTextView = (TextView) view.findViewById(R.id.header);
             view.setTag(tag);
 
             return view;
@@ -137,12 +154,58 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
             tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
             tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
+            if (tag.headerTextView != null) {
+                tag.headerTextView.setText(dateFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            Cursor cursor = (Cursor) getItem(position);
+            calendar.setTimeInMillis(cursor.getLong(ENTRY_UPDATED_INDEX));
+            calendar.set(Calendar.HOUR, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            long currentDate = calendar.getTimeInMillis();
+
+            try {
+                if (position == 0) {
+                    return 1;
+                } else if (previousPosition == position - 1 && previousDate != currentDate) {
+                    return 1;
+                } else {
+                    if (cursor.moveToPrevious()) {
+                        calendar.setTimeInMillis(cursor.getLong(ENTRY_UPDATED_INDEX));
+                        calendar.set(Calendar.HOUR, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        previousDate = calendar.getTimeInMillis();
+                    }
+                    cursor.moveToPosition(position);
+                    if (previousDate != currentDate) {
+                        return 1;
+                    }
+                }
+
+                return 0;
+            } finally {
+                previousDate = currentDate;
+                previousPosition = position;
+            }
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2;
         }
 
         private class ViewTag {
             private TextView titleTextView;
             private TextView feedTextView;
             private TextView dateTextView;
+            private TextView headerTextView;
         }
 
     }
