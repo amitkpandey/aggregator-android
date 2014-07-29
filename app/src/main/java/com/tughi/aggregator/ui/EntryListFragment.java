@@ -51,6 +51,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.entry_list_fragment, container, false);
+    }
+
     private static final String[] ENTRY_PROJECTION = {
             EntryColumns.ID,
             EntryColumns.TITLE,
@@ -112,7 +117,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         }
     }
 
-    private class EntryListAdapter extends CursorAdapter {
+    private class EntryListAdapter extends CursorAdapter implements HeaderListAdapter {
 
         private DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
         private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
@@ -199,6 +204,12 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         @Override
         public int getViewTypeCount() {
             return 2;
+        }
+
+        @Override
+        public String getItemHeader(int position) {
+            Cursor cursor = (Cursor) getItem(position);
+            return cursor != null ? cursor.getString(ENTRY_UPDATED_INDEX) : null;
         }
 
         private class ViewTag {

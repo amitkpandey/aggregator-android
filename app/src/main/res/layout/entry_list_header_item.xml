@@ -6,11 +6,6 @@
 
     <include layout="@layout/entry_list_header" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:dividerVertical" />
-
     <include layout="@layout/entry_list_item" />
 
 </LinearLayout>
