@@ -61,10 +61,9 @@ public class SectionListView extends ListView {
 
             // draw
             canvas.save();
-            int secondVisibleItemTop = secondVisibleItem.getTop();
-            int headerViewBottom = headerView.getBottom();
-            if (!firstVisibleItemSection.equals(secondVisibleItemSection) && secondVisibleItemTop < headerViewBottom) {
-                canvas.translate(0, secondVisibleItemTop - headerViewBottom);
+            if (!firstVisibleItemSection.equals(secondVisibleItemSection)) {
+                // clip overlay to current section
+                canvas.clipRect(headerView.getLeft(), headerView.getTop(), headerView.getRight(), firstVisibleItem.getBottom());
             }
             headerView.draw(canvas);
             canvas.restore();
