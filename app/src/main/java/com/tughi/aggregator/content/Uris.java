@@ -10,12 +10,15 @@ import android.net.Uri;
  */
 public class Uris {
 
-    private static final Uri BASE_URI = new Uri.Builder()
+    public static final Uri BASE_URI = new Uri.Builder()
             .scheme(ContentResolver.SCHEME_CONTENT)
             .authority(DatabaseContentProvider.AUTHORITY)
             .build();
 
+    private static final Uri SYNC_BASE_URI = Uri.withAppendedPath(BASE_URI, "sync");
     private static final Uri USER_BASE_URI = Uri.withAppendedPath(BASE_URI, "user");
+
+    public static final String CALL_COMMIT_ENTRIES_READ_STATE = "commit_entries_read_state";
 
     /**
      * Creates an {@link Uri} for all feeds.

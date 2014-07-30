@@ -95,6 +95,15 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     }
 
     @Override
+    protected void onDestroy() {
+        if (isFinishing()) {
+            getContentResolver().call(Uris.BASE_URI, Uris.CALL_COMMIT_ENTRIES_READ_STATE, null, null);
+        }
+
+        super.onDestroy();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 

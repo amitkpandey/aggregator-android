@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.tughi.android.database.sqlite.DatabaseOpenHelper;
 
@@ -172,6 +173,23 @@ public class DatabaseContentProvider extends ContentProvider {
         }
 
         return super.applyBatch(operations);
+    }
+
+    @Override
+    public Bundle call(String method, String arg, Bundle extras) {
+        if (Uris.CALL_COMMIT_ENTRIES_READ_STATE.equals(method)) {
+            return commitEntryReadFlags();
+        }
+
+        return super.call(method, arg, extras);
+    }
+
+    private Bundle commitEntryReadFlags() {
+        SQLiteDatabase database = helper.getWritableDatabase();
+        database.execSQL("UPDATE " + TABLE_ENTRY_USER
+                + " SET " + EntryColumns.RO_FLAG_READ + " = " + EntryColumns.FLAG_READ
+                + " WHERE " + EntryColumns.RO_FLAG_READ + " <> " + EntryColumns.FLAG_READ);
+        return null;
     }
 
 }
