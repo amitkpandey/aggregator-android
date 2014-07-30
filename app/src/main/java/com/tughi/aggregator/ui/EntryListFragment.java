@@ -176,6 +176,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             tag.titleTextView = (TextView) view.findViewById(R.id.title);
             tag.feedTextView = (TextView) view.findViewById(R.id.feed);
             tag.dateTextView = (TextView) view.findViewById(R.id.date);
+            tag.stateIndicatorView = (StateIndicatorView) view.findViewById(R.id.state);
             tag.headerTextView = (TextView) view.findViewById(R.id.header);
             view.setTag(tag);
 
@@ -189,8 +190,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
             if (cursor.getInt(ENTRY_READ_INDEX) == 0) {
                 tag.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
+                tag.stateIndicatorView.setState(0);
             } else {
                 tag.titleTextView.setTypeface(Typeface.DEFAULT);
+                tag.stateIndicatorView.setState(1);
             }
             tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
             tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
@@ -264,6 +267,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             private TextView titleTextView;
             private TextView feedTextView;
             private TextView dateTextView;
+            private StateIndicatorView stateIndicatorView;
             private TextView headerTextView;
 
             @Override

@@ -17,6 +17,7 @@
             android:id="@+id/feed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
             android:layout_weight="1"
             android:textAllCaps="true"
             android:textAppearance="?android:textAppearanceSmall" />
@@ -25,8 +26,15 @@
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:gravity="center_vertical"
+
             android:textAppearance="?android:textAppearanceSmall" />
+
+        <com.tughi.aggregator.ui.StateIndicatorView
+            android:id="@+id/state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp" />
 
     </LinearLayout>
 
