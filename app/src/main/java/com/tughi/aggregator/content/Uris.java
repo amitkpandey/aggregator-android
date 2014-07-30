@@ -15,6 +15,8 @@ public class Uris {
             .authority(DatabaseContentProvider.AUTHORITY)
             .build();
 
+    private static final Uri USER_BASE_URI = Uri.withAppendedPath(BASE_URI, "user");
+
     /**
      * Creates an {@link Uri} for all feeds.
      */
@@ -36,11 +38,27 @@ public class Uris {
         return Uri.withAppendedPath(newFeedUri(feedId), "entries");
     }
 
+    /**
+     * Creates an {@link Uri} that is meant for update only.
+     */
+    public static Uri newUserEntriesUri() {
+        return Uri.withAppendedPath(USER_BASE_URI, "entries");
+    }
+
+    /**
+     * Creates an {@link Uri} that is meant for update only.
+     */
+    public static Uri newUserEntryUri(long entryId) {
+        return ContentUris.withAppendedId(newUserEntriesUri(), entryId);
+    }
+
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     public static final int MATCHED_FEEDS_URI = 1;
     public static final int MATCHED_FEED_URI = 2;
     public static final int MATCHED_FEED_ENTRIES_URI = 3;
+    public static final int MATCHED_USER_ENTRIES_URI = 4;
+    public static final int MATCHED_USER_ENTRY_URI = 5;
 
     static {
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feeds", MATCHED_FEEDS_URI);
@@ -50,6 +68,8 @@ public class Uris {
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feeds/-1/entries", MATCHED_FEED_ENTRIES_URI);
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feeds/-2/entries", MATCHED_FEED_ENTRIES_URI);
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feeds/#/entries", MATCHED_FEED_ENTRIES_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "user/entries", MATCHED_USER_ENTRIES_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "user/entries/#", MATCHED_USER_ENTRY_URI);
     }
 
     /**

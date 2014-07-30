@@ -2,22 +2,27 @@ package com.tughi.aggregator.ui;
 
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
+import com.tughi.aggregator.content.Uris;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -57,16 +62,35 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         return inflater.inflate(R.layout.entry_list_fragment, container, false);
     }
 
+    @Override
+    public void onListItemClick(ListView view, View itemView, int position, long id) {
+        // mark entry as read
+        new AsyncTask<Object, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Object... params) {
+                final Context context = (Context) params[0];
+                final long id = (Long) params[1];
+
+                ContentValues values = new ContentValues();
+                values.put(EntryColumns.FLAG_READ, true);
+                return context.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
+            }
+        }.execute(applicationContext, id);
+    }
+
     private static final String[] ENTRY_PROJECTION = {
             EntryColumns.ID,
             EntryColumns.TITLE,
             EntryColumns.UPDATED,
             EntryColumns.FEED_TITLE,
+            EntryColumns.FLAG_READ,
     };
+    private static final String ENTRY_SELECTION = EntryColumns.RO_FLAG_READ + " = 0";
     private static final String ENTRY_ORDER = EntryColumns.UPDATED + " ASC";
     private static final int ENTRY_TITLE_INDEX = 1;
     private static final int ENTRY_UPDATED_INDEX = 2;
     private static final int ENTRY_FEED_TITLE_INDEX = 3;
+    private static final int ENTRY_READ_INDEX = 4;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -77,7 +101,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 Uri feedUri = Uri.parse(uriString.substring(0, uriString.lastIndexOf("/")));
                 return new CursorLoader(applicationContext, feedUri, null, null, null, null);
             case LOADER_ENTRIES:
-                return new CursorLoader(applicationContext, uri, ENTRY_PROJECTION, null, null, ENTRY_ORDER);
+                return new CursorLoader(applicationContext, uri, ENTRY_PROJECTION, ENTRY_SELECTION, null, ENTRY_ORDER);
         }
 
         // never happens
@@ -132,8 +156,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         public EntryListAdapter(Context context) {
             super(context, null, false);
 
-             timeFormat = android.text.format.DateFormat.getTimeFormat(context);
-             dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
+            timeFormat = android.text.format.DateFormat.getTimeFormat(context);
+            dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
         }
 
         @Override
@@ -163,6 +187,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             ViewTag tag = (ViewTag) view.getTag();
             tag.section = sections.get(cursor.getPosition());
             tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
+            if (cursor.getInt(ENTRY_READ_INDEX) == 0) {
+                tag.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                tag.titleTextView.setTypeface(Typeface.DEFAULT);
+            }
             tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
             tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
             if (tag.headerTextView != null) {

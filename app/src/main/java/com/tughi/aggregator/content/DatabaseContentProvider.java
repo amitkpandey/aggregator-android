@@ -127,7 +127,28 @@ public class DatabaseContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        switch (Uris.match(uri)) {
+            case Uris.MATCHED_USER_ENTRY_URI:
+                if (where == null) {
+                    where = EntryColumns.ID + " = " + uri.getLastPathSegment();
+                } else {
+                    where = EntryColumns.ID + " = " + uri.getLastPathSegment() + " AND (" + where + ")";
+                }
+            case Uris.MATCHED_USER_ENTRIES_URI:
+                return updateUserEntries(uri, values, where, whereArgs);
+        }
         throw new UnsupportedOperationException(uri.toString());
+    }
+
+    private int updateUserEntries(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+        int result = database.update(TABLE_ENTRY_USER, values, where, whereArgs);
+
+        if (result != 0) {
+            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+        }
+
+        return result;
     }
 
     @Override

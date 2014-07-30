@@ -30,6 +30,11 @@ public interface EntryColumns {
     public static final String FLAG_STAR = "flag_star";
 
     /**
+     * Read-only boolean flag that contains the original value of {@link #FLAG_READ}.
+     */
+    public static final String RO_FLAG_READ = "ro_flag_read";
+
+    /**
      * The feed's title from the feed table.
      */
     public static final String FEED_TITLE = "feed_title";

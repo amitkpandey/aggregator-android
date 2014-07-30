@@ -32,6 +32,7 @@ CREATE TABLE entry_user (
     guid TEXT NOT NULL,
     flag_read INTEGER NOT NULL DEFAULT 0,
     flag_star INTEGER NOT NULL DEFAULT 0,
+    ro_flag_read INTEGER NOT NULL DEFAULT 0,
     UNIQUE (feed_id, guid),
     FOREIGN KEY (feed_id) REFERENCES feed (_id)
 );
@@ -62,6 +63,7 @@ CREATE VIEW entry_view AS
         entry_sync.data AS data,
         entry_user.flag_read AS flag_read,
         entry_user.flag_star AS flag_star,
+        entry_user.ro_flag_read AS ro_flag_read,
         feed.title AS feed_title,
         feed.favicon AS feed_favicon
     FROM
