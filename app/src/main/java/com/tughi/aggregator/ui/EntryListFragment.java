@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             EntryColumns.UPDATED,
             EntryColumns.FEED_TITLE,
     };
-    private static final String ENTRY_ORDER = EntryColumns.UPDATED;
+    private static final String ENTRY_ORDER = EntryColumns.UPDATED + " ASC";
     private static final int ENTRY_TITLE_INDEX = 1;
     private static final int ENTRY_UPDATED_INDEX = 2;
     private static final int ENTRY_FEED_TITLE_INDEX = 3;
@@ -117,18 +118,22 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         }
     }
 
-    private class EntryListAdapter extends CursorAdapter implements HeaderListAdapter {
+    private class EntryListAdapter extends CursorAdapter implements SectionListAdapter {
 
-        private DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
-        private DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
+        private DateFormat timeFormat;
+        private DateFormat dateFormat;
 
         private Calendar calendar = Calendar.getInstance();
+        private long todayStart;
+        private long yesterdayStart;
 
-        private long previousDate = -1;
-        private int previousPosition = -1;
+        private SparseArray<String> sections = new SparseArray<String>(2000);
 
         public EntryListAdapter(Context context) {
             super(context, null, false);
+
+             timeFormat = android.text.format.DateFormat.getTimeFormat(context);
+             dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
         }
 
         @Override
@@ -156,49 +161,46 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ViewTag tag = (ViewTag) view.getTag();
+            tag.section = sections.get(cursor.getPosition());
             tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
             tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
             tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
             if (tag.headerTextView != null) {
-                tag.headerTextView.setText(dateFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
+                tag.headerTextView.setText(tag.section);
             }
         }
 
         @Override
-        public int getItemViewType(int position) {
-            Cursor cursor = (Cursor) getItem(position);
-            calendar.setTimeInMillis(cursor.getLong(ENTRY_UPDATED_INDEX));
+        public Cursor swapCursor(Cursor newCursor) {
+            sections.clear();
+
+            calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            long currentDate = calendar.getTimeInMillis();
+            todayStart = calendar.getTimeInMillis();
 
-            try {
-                if (position == 0) {
-                    return 1;
-                } else if (previousPosition == position - 1 && previousDate != currentDate) {
-                    return 1;
-                } else {
-                    if (cursor.moveToPrevious()) {
-                        calendar.setTimeInMillis(cursor.getLong(ENTRY_UPDATED_INDEX));
-                        calendar.set(Calendar.HOUR, 0);
-                        calendar.set(Calendar.MINUTE, 0);
-                        calendar.set(Calendar.SECOND, 0);
-                        calendar.set(Calendar.MILLISECOND, 0);
-                        previousDate = calendar.getTimeInMillis();
-                    }
-                    cursor.moveToPosition(position);
-                    if (previousDate != currentDate) {
-                        return 1;
-                    }
-                }
+            calendar.add(Calendar.DATE, -1);
+            yesterdayStart = calendar.getTimeInMillis();
 
-                return 0;
-            } finally {
-                previousDate = currentDate;
-                previousPosition = position;
+            return super.swapCursor(newCursor);
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            String itemSection = getItemSection(position);
+
+            if (position == 0) {
+                return 1;
             }
+
+            String previousItemSection = getItemSection(position - 1);
+            if (!itemSection.equals(previousItemSection)) {
+                return 1;
+            }
+
+            return 0;
         }
 
         @Override
@@ -207,16 +209,38 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         }
 
         @Override
-        public String getItemHeader(int position) {
-            Cursor cursor = (Cursor) getItem(position);
-            return cursor != null ? cursor.getString(ENTRY_UPDATED_INDEX) : null;
+        public String getItemSection(int position) {
+            String section = sections.get(position);
+            if (section == null) {
+                section = getItemSection((Cursor) getItem(position));
+                sections.put(position, section);
+            }
+            return section;
         }
 
-        private class ViewTag {
+        private String getItemSection(Cursor cursor) {
+            long updated = cursor.getLong(ENTRY_UPDATED_INDEX);
+            if (updated >= todayStart) {
+                return getString(R.string.today);
+            }
+            if (updated >= yesterdayStart) {
+                return getString(R.string.yesterday);
+            }
+            return dateFormat.format(updated);
+        }
+
+        private class ViewTag implements SectionTag {
+            private String section;
+
             private TextView titleTextView;
             private TextView feedTextView;
             private TextView dateTextView;
             private TextView headerTextView;
+
+            @Override
+            public String getSection() {
+                return section;
+            }
         }
 
     }

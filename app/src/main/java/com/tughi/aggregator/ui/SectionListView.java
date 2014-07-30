@@ -14,13 +14,13 @@ import com.tughi.aggregator.R;
 /**
  * A {@link ListView} that displays the top section title on top of the list.
  */
-public class HeaderListView extends ListView {
+public class SectionListView extends ListView {
 
     private View headerView;
     private TextView headerTextView;
-    private HeaderListAdapter adapter;
+    private SectionListAdapter adapter;
 
-    public HeaderListView(Context context, AttributeSet attrs) {
+    public SectionListView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         headerView = LayoutInflater.from(context).inflate(R.layout.entry_list_header, null);
@@ -29,7 +29,7 @@ public class HeaderListView extends ListView {
 
     @Override
     public void setAdapter(ListAdapter adapter) {
-        this.adapter = (HeaderListAdapter) adapter;
+        this.adapter = (SectionListAdapter) adapter;
         super.setAdapter(adapter);
     }
 
@@ -47,10 +47,27 @@ public class HeaderListView extends ListView {
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
 
-        if (adapter != null) {
-            // draw header
-            headerTextView.setText(adapter.getItemHeader(getFirstVisiblePosition()));
+        // draw current section overlay
+        int childCount = getChildCount();
+        if (childCount > 1) {
+            View firstVisibleItem = getChildAt(0);
+            String firstVisibleItemSection = ((SectionTag) firstVisibleItem.getTag()).getSection();
+
+            View secondVisibleItem = getChildAt(1);
+            String secondVisibleItemSection = ((SectionTag) secondVisibleItem.getTag()).getSection();
+
+            // update overlay text
+            headerTextView.setText(firstVisibleItemSection);
+
+            // draw
+            canvas.save();
+            int secondVisibleItemTop = secondVisibleItem.getTop();
+            int headerViewBottom = headerView.getBottom();
+            if (!firstVisibleItemSection.equals(secondVisibleItemSection) && secondVisibleItemTop < headerViewBottom) {
+                canvas.translate(0, secondVisibleItemTop - headerViewBottom);
+            }
             headerView.draw(canvas);
+            canvas.restore();
         }
     }
 

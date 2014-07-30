@@ -3,6 +3,7 @@
     <style name="BaseTheme" parent="android:Theme.Holo" />
 
     <style name="Theme" parent="BaseTheme">
+        <item name="android:keepScreenOn">true</item>
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:actionBarStyle">@style/Widget.ActionBar</item>
     </style>

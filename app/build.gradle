@@ -5,7 +5,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.tughi.aggregator"
+        applicationId "com.tughi.aggregator2"
         minSdkVersion 16
         targetSdkVersion 20
         versionCode 100

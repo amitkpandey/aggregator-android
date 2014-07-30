@@ -3,4 +3,7 @@
 
     <string name="unread_feed">Unread</string>
     <string name="starred_feed">Starred</string>
+
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

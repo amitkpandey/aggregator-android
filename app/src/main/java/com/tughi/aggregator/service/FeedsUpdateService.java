@@ -2,6 +2,7 @@ package com.tughi.aggregator.service;
 
 import android.app.Service;
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
 import com.tughi.aggregator.feeds.FeedParser;
+import com.tughi.aggregator.feeds.FeedParserException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -119,7 +121,12 @@ public class FeedsUpdateService extends Service {
                 URLConnection connection = new URL(feedUrl).openConnection();
 
                 // parse feed
-                FeedParser.Result result = FeedParser.parse(connection);
+                FeedParser.Result result;
+                try {
+                    result = FeedParser.parse(connection);
+                } catch (FeedParserException exception) {
+                    throw new IOException(exception);
+                }
 
                 if (result.status == HttpURLConnection.HTTP_OK) {
                     // prepare content batch
@@ -147,8 +154,12 @@ public class FeedsUpdateService extends Service {
                     }
 
                     // execute batch
+                    ContentResolver contentResolver = getContentResolver();
                     try {
-                        getContentResolver().applyBatch(DatabaseContentProvider.AUTHORITY, batch);
+                        contentResolver.applyBatch(DatabaseContentProvider.AUTHORITY, batch);
+
+                        contentResolver.notifyChange(Uris.newFeedUri(feedId), null);
+                        contentResolver.notifyChange(Uris.newFeedUri(-1), null);
                     } catch (Exception exception) {
                         throw new IOException("batch failed", exception);
                     }
