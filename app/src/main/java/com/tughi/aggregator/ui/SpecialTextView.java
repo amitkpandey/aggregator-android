@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tughi.aggregator.R;
+
 /**
  * A {@link ViewGroup} that centers its only child on a text line.
  */
@@ -18,13 +20,22 @@ public class SpecialTextView extends ViewGroup {
     public SpecialTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        Paint paint = new Paint();
+        TypedArray typedArray;
 
-        int[] textAttrs = {android.R.attr.textSize};
-        TypedArray typedArray = context.obtainStyledAttributes(null, textAttrs, 0, android.R.style.TextAppearance_Small);
-        paint.setTextSize(typedArray.getDimension(0, 0));
+        // get text appearance resource
+        typedArray = context.obtainStyledAttributes(attrs, R.styleable.SpecialTextView, 0, 0);
+        int textAppearance = typedArray.getResourceId(R.styleable.SpecialTextView_android_textAppearance, 0);
         typedArray.recycle();
 
+        // get text size
+        int[] textAttrs = {android.R.attr.textSize};
+        typedArray = context.obtainStyledAttributes(null, textAttrs, 0, textAppearance);
+        float textSize = typedArray.getDimension(0, -1);
+        typedArray.recycle();
+
+        // get font metrics
+        Paint paint = new Paint();
+        paint.setTextSize(textSize);
         Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
         lineHeight = fontMetrics.bottom - fontMetrics.top;
         lineCenter = fontMetrics.descent / 2 + fontMetrics.ascent / 2 - fontMetrics.top;

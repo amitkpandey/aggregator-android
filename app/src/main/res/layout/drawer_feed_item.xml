@@ -7,6 +7,20 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
+    <com.tughi.aggregator.ui.SpecialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:textAppearance="?android:textAppearanceLarge">
+
+        <ImageView
+            android:id="@+id/favicon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/favicon_placeholder" />
+
+    </com.tughi.aggregator.ui.SpecialTextView>
+
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
