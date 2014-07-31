@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -176,7 +176,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             tag.titleTextView = (TextView) view.findViewById(R.id.title);
             tag.feedTextView = (TextView) view.findViewById(R.id.feed);
             tag.dateTextView = (TextView) view.findViewById(R.id.date);
-            tag.stateIndicatorView = (StateIndicatorView) view.findViewById(R.id.state);
+            tag.stateImageView = (ImageView) view.findViewById(R.id.state);
             tag.headerTextView = (TextView) view.findViewById(R.id.header);
             view.setTag(tag);
 
@@ -188,13 +188,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             ViewTag tag = (ViewTag) view.getTag();
             tag.section = sections.get(cursor.getPosition());
             tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
-            if (cursor.getInt(ENTRY_READ_INDEX) == 0) {
-                tag.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
-                tag.stateIndicatorView.setState(0);
-            } else {
-                tag.titleTextView.setTypeface(Typeface.DEFAULT);
-                tag.stateIndicatorView.setState(1);
-            }
+            tag.stateImageView.setImageLevel(cursor.getInt(ENTRY_READ_INDEX));
             tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
             tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
             if (tag.headerTextView != null) {
@@ -267,7 +261,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             private TextView titleTextView;
             private TextView feedTextView;
             private TextView dateTextView;
-            private StateIndicatorView stateIndicatorView;
+            private ImageView stateImageView;
             private TextView headerTextView;
 
             @Override

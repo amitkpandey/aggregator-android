@@ -25,11 +25,11 @@ task generateDrawables << {
 
     def DENSITY_RATIOS = ['mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4]
 
-    def generateDrawable = { name, width, height, densities ->
-        def svgFile = new File(svgDir, name + '.svg')
+    def generateDrawable = { svg, drawable, width, height, densities=['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']->
+        def svgFile = new File(svgDir, svg + '.svg')
 
         densities.each() { density ->
-            def drawableFile = new File(resDir, 'drawable-' + density + File.separator + name + '.png')
+            def drawableFile = new File(resDir, 'drawable-' + density + File.separator + (drawable ?: svg) + '.png')
 
             if (!drawableFile.exists() || drawableFile.lastModified() < svgFile.lastModified()) {
                 def w = (int) width * DENSITY_RATIOS[density]
@@ -42,6 +42,9 @@ task generateDrawables << {
         }
     }
 
-    generateDrawable('ic_launcher', 48, 48, ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi'])
+    generateDrawable('ic_launcher', null, 48, 48, ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi'])
+
+    generateDrawable('ic_launcher', 'ic_activity', 32, 32)
+    generateDrawable('favicon_placeholder', null, 16, 16)
 
 }

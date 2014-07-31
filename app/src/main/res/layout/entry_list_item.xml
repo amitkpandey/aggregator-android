@@ -13,6 +13,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <com.tughi.aggregator.ui.SpecialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp">
+
+            <ImageView
+                android:id="@+id/favicon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/favicon_placeholder" />
+
+        </com.tughi.aggregator.ui.SpecialTextView>
+
         <TextView
             android:id="@+id/feed"
             android:layout_width="0dp"
@@ -20,21 +33,27 @@
             android:layout_marginRight="16dp"
             android:layout_weight="1"
             android:textAllCaps="true"
-            android:textAppearance="?android:textAppearanceSmall" />
+            android:textAppearance="@style/TextAppearance.EntryHeader" />
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:textAppearance="@style/TextAppearance.EntryHeader" />
 
-            android:textAppearance="?android:textAppearanceSmall" />
-
-        <com.tughi.aggregator.ui.StateIndicatorView
-            android:id="@+id/state"
+        <com.tughi.aggregator.ui.SpecialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginLeft="8dp">
+
+            <ImageView
+                android:id="@+id/state"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/entry_state_blue" />
+
+        </com.tughi.aggregator.ui.SpecialTextView>
 
     </LinearLayout>
 
@@ -45,6 +64,6 @@
         android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:textAppearance="?android:textAppearanceMedium" />
+        android:textAppearance="@style/TextAppearance.EntryTitle" />
 
 </LinearLayout>
