@@ -111,6 +111,16 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     }
 
     @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(drawerListView)) {
+            drawerLayout.closeDrawer(drawerListView);
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.drawer, menu);
 
