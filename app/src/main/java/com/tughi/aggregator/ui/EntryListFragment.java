@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -90,7 +91,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private static final int ENTRY_TITLE_INDEX = 1;
     private static final int ENTRY_UPDATED_INDEX = 2;
     private static final int ENTRY_FEED_TITLE_INDEX = 3;
-    private static final int ENTRY_READ_INDEX = 4;
+    private static final int ENTRY_FLAG_READ_INDEX = 4;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -188,7 +189,9 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             ViewTag tag = (ViewTag) view.getTag();
             tag.section = sections.get(cursor.getPosition());
             tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
-            tag.stateImageView.setImageLevel(cursor.getInt(ENTRY_READ_INDEX));
+            int flagRead = cursor.getInt(ENTRY_FLAG_READ_INDEX);
+            tag.titleTextView.setTypeface(flagRead == 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            tag.stateImageView.setImageLevel(flagRead);
             tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
             tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
             if (tag.headerTextView != null) {
