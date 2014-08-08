@@ -64,6 +64,13 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        adapter.updateSections();
+    }
+
+    @Override
     public void onListItemClick(ListView view, View itemView, int position, long id) {
         // mark entry as read
         new AsyncTask<Object, Void, Boolean>() {
@@ -203,17 +210,28 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         public Cursor swapCursor(Cursor newCursor) {
             sections.clear();
 
+            updateSections();
+
+            return super.swapCursor(newCursor);
+        }
+
+        private void updateSections() {
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            todayStart = calendar.getTimeInMillis();
 
-            calendar.add(Calendar.DATE, -1);
-            yesterdayStart = calendar.getTimeInMillis();
+            if (todayStart != calendar.getTimeInMillis()) {
+                sections.clear();
 
-            return super.swapCursor(newCursor);
+                todayStart = calendar.getTimeInMillis();
+
+                calendar.add(Calendar.DATE, -1);
+                yesterdayStart = calendar.getTimeInMillis();
+
+                notifyDataSetChanged();
+            }
         }
 
         @Override
