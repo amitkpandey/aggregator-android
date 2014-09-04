@@ -7,10 +7,8 @@ CREATE TABLE feed (
     favicon TEXT,
     etag TEXT,
     modified TEXT,
-    poll INTEGER NOT NULL DEFAULT 0,
-    poll_status INTEGER,
-    poll_type TEXT,
-    next_poll INTEGER NOT NULL DEFAULT 0
+    update_mode INTEGER NOT NULL DEFAULT 0,
+    next_sync INTEGER NOT NULL DEFAULT 0
 );
 
 -- the entry_sync table is updated by the sync service
@@ -85,10 +83,8 @@ CREATE VIEW feed_view AS
         NULL AS favicon,
         NULL AS etag,
         NULL AS modified,
-        0 AS poll,
-        NULL AS poll_status,
-        NULL AS poll_type,
-        0 AS next_poll,
+        -1 AS update_mode,
+        0 AS next_sync,
         (SELECT COUNT(1) FROM entry_view WHERE flag_read = 0) AS unread_count
     UNION
         SELECT
@@ -99,10 +95,8 @@ CREATE VIEW feed_view AS
             NULL AS favicon,
             NULL AS etag,
             NULL AS modified,
-            0 AS poll,
-            NULL AS poll_status,
-            NULL AS poll_type,
-            0 AS next_poll,
+            -1 AS update_mode,
+            0 AS next_sync,
             (SELECT COUNT(1) FROM entry_view WHERE flag_star = 1) AS unread_count
         UNION
             SELECT
@@ -113,10 +107,8 @@ CREATE VIEW feed_view AS
                 feed.favicon,
                 feed.etag,
                 feed.modified,
-                feed.poll,
-                feed.poll_status,
-                feed.poll_type,
-                feed.next_poll,
+                feed.update_mode,
+                feed.next_sync,
                 (SELECT COUNT(1) FROM entry_view WHERE entry_view.feed_id = feed._id AND flag_read = 0) AS unread_count
             FROM feed
             ORDER BY title;

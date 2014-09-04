@@ -15,6 +15,7 @@ import com.tughi.aggregator.BuildConfig;
 import com.tughi.aggregator.content.DatabaseContentProvider;
 import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
+import com.tughi.aggregator.content.FeedUpdateModes;
 import com.tughi.aggregator.content.Uris;
 import com.tughi.aggregator.feeds.FeedParser;
 import com.tughi.aggregator.feeds.FeedParserException;
@@ -63,7 +64,8 @@ public class FeedsUpdateService extends Service {
          * Selects all feeds that should be updated 'now'.
          */
         private final String FEED_SELECTION = FeedColumns.ID + " > 0 AND "
-                + FeedColumns.NEXT_POLL + " < strftime('%s', 'now')";
+                + FeedColumns.UPDATE_MODE + " != " + FeedUpdateModes.DISABLED + " AND "
+                + FeedColumns.NEXT_SYNC + " < strftime('%s', 'now')";
 
         /**
          * Returns a {@link List} of {@link UpdateFeedTask#execute(Object[])} parameters.

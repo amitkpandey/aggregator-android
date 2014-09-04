@@ -49,27 +49,15 @@ public class DatabaseContentProvider extends ContentProvider {
         switch (Uris.match(uri)) {
             case Uris.MATCHED_FEED_URI:
                 feedId = uri.getPathSegments().get(1);
-                if (selection == null) {
-                    selection = FeedColumns.ID + " = " + feedId;
-                } else {
-                    selection = FeedColumns.ID + " = " + feedId + " AND (" + selection + ")";
-                }
+                selection = and(FeedColumns.ID + " = " + feedId, selection);
             case Uris.MATCHED_FEEDS_URI:
                 return queryFeeds(uri, projection, selection, selectionArgs, orderBy);
             case Uris.MATCHED_FEED_ENTRIES_URI:
                 feedId = uri.getPathSegments().get(1);
                 if ("-2".equals(feedId)) {
-                    if (selection == null) {
-                        selection = EntryColumns.FLAG_STAR + " = 1";
-                    } else {
-                        selection = EntryColumns.FLAG_STAR + " = 1 AND (" + selection + ")";
-                    }
+                    selection = and(EntryColumns.FLAG_STAR + " = 1", selection);
                 } else if (!"-1".equals(feedId)) {
-                    if (selection == null) {
-                        selection = EntryColumns.FEED_ID + " = " + feedId;
-                    } else {
-                        selection = EntryColumns.FEED_ID + " = " + feedId + " AND (" + selection + ")";
-                    }
+                    selection = and(EntryColumns.FEED_ID + " = " + feedId, selection);
                 }
                 return queryEntries(uri, projection, selection, selectionArgs, orderBy);
         }
@@ -130,13 +118,13 @@ public class DatabaseContentProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
         switch (Uris.match(uri)) {
             case Uris.MATCHED_USER_ENTRY_URI:
-                if (where == null) {
-                    where = EntryColumns.ID + " = " + uri.getLastPathSegment();
-                } else {
-                    where = EntryColumns.ID + " = " + uri.getLastPathSegment() + " AND (" + where + ")";
-                }
+                where = and(EntryColumns.ID + " = " + uri.getLastPathSegment(), where);
             case Uris.MATCHED_USER_ENTRIES_URI:
                 return updateUserEntries(uri, values, where, whereArgs);
+            case Uris.MATCHED_FEED_URI:
+                where = and(FeedColumns.ID + " = " + uri.getLastPathSegment(), where);
+            case Uris.MATCHED_FEEDS_URI:
+                return updateFeeds(uri, values, where, whereArgs);
         }
         throw new UnsupportedOperationException(uri.toString());
     }
@@ -144,6 +132,17 @@ public class DatabaseContentProvider extends ContentProvider {
     private int updateUserEntries(Uri uri, ContentValues values, String where, String[] whereArgs) {
         SQLiteDatabase database = helper.getWritableDatabase();
         int result = database.update(TABLE_ENTRY_USER, values, where, whereArgs);
+
+        if (result != 0) {
+            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+        }
+
+        return result;
+    }
+
+    private int updateFeeds(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+        int result = database.update(TABLE_FEED, values, where, whereArgs);
 
         if (result != 0) {
             getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
@@ -190,6 +189,16 @@ public class DatabaseContentProvider extends ContentProvider {
                 + " SET " + EntryColumns.RO_FLAG_READ + " = " + EntryColumns.FLAG_READ
                 + " WHERE " + EntryColumns.RO_FLAG_READ + " <> " + EntryColumns.FLAG_READ);
         return null;
+    }
+
+    /**
+     * Concatenates two SQL conditions with the AND operation.
+     */
+    private String and(String first, String second) {
+        if (second != null) {
+            return first + " AND (" + second + ")";
+        }
+        return first;
     }
 
 }

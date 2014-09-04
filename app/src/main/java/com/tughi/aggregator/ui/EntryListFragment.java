@@ -5,6 +5,7 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -13,6 +14,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -44,6 +48,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     private Context applicationContext;
 
+    private Uri entriesUri;
+    private Uri feedUri;
+    private long feedId;
+
     private EntryListAdapter adapter;
 
     @Override
@@ -52,10 +60,18 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
         applicationContext = getActivity().getApplicationContext();
 
+        entriesUri = getArguments().getParcelable(ARG_ENTRIES_URI);
+        feedId = Long.parseLong(entriesUri.getPathSegments().get(1));
+        feedUri = Uris.newFeedUri(feedId);
+
         setListAdapter(adapter = new EntryListAdapter(applicationContext));
 
         getLoaderManager().initLoader(LOADER_FEED, null, this);
         getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
+
+        if (feedId > 0) {
+            setHasOptionsMenu(true);
+        }
     }
 
     @Override
@@ -68,6 +84,21 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         super.onResume();
 
         adapter.updateSections();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.entry_list_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mode:
+                startActivity(new Intent(applicationContext, FeedUpdateModeActivity.class).setData(feedUri));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -102,14 +133,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri = getArguments().getParcelable(ARG_ENTRIES_URI);
         switch (id) {
             case LOADER_FEED:
-                String uriString = uri.toString();
-                Uri feedUri = Uri.parse(uriString.substring(0, uriString.lastIndexOf("/")));
                 return new CursorLoader(applicationContext, feedUri, null, null, null, null);
             case LOADER_ENTRIES:
-                return new CursorLoader(applicationContext, uri, ENTRY_PROJECTION, ENTRY_SELECTION, null, ENTRY_ORDER);
+                return new CursorLoader(applicationContext, entriesUri, ENTRY_PROJECTION, ENTRY_SELECTION, null, ENTRY_ORDER);
         }
 
         // never happens

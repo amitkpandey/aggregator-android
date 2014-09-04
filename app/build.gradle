@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId 'com.tughi.aggregator2'
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 20
         versionCode 100
         versionName '3.0'

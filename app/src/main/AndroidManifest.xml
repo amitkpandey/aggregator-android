@@ -22,7 +22,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.FeedUpdateModeActivity" />
+
         <service android:name=".service.FeedsUpdateService" />
+
     </application>
 
 </manifest>

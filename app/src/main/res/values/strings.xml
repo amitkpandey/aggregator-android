@@ -7,4 +7,14 @@
 
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+
+    <string name="feed_update_mode">Update mode</string>
+    <string name="feed_update_mode_auto_title">Auto</string>
+    <string name="feed_update_mode_auto_description">The application decides when will the next update be started based on the already aggregated feed entries</string>
+    <string name="feed_update_mode_repeating_title">Repeating</string>
+    <string name="feed_update_mode_repeating_description">The application tries to update the feed based on a selected time interval</string>
+    <string name="feed_update_mode_custom_title">Custom</string>
+    <string name="feed_update_mode_custom_description">Decide when will the application try to update the feed based on a set of alarms</string>
+    <string name="feed_update_mode_disabled_title">Disabled</string>
+    <string name="feed_update_mode_disabled_description">The application does not update the feed on its own</string>
 </resources>

@@ -12,9 +12,15 @@ public interface FeedColumns {
     public static final String TITLE = "title";
 
     /**
-     * Specifies when should a new update be executed.
+     * Specifies the feed update mode.
+     * See {@link FeedUpdateModes} for allowed values.
      */
-    public static final String NEXT_POLL = "next_poll";
+    public static final String UPDATE_MODE = "update_mode";
+
+    /**
+     * Specifies next scheduled feed update as timestamp.
+     */
+    public static final String NEXT_SYNC = "next_sync";
 
     /**
      * A synthetic column of the feed view that contains the count of unread entries of each feed.
