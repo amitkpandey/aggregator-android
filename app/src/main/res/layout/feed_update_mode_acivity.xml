@@ -57,14 +57,15 @@
 
     </ScrollView>
 
-    <ImageButton
+    <com.tughi.aggregator.ui.view.FloatingAction
         android:id="@+id/save"
         style="@style/Widget.ImageButton.FloatingAction"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="32dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_action_ok"
+        android:translationY="88dp"
         android:visibility="gone" />
 
 </FrameLayout>
