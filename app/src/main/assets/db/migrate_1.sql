@@ -1,15 +1,35 @@
--- the feeds table
-CREATE TABLE feed (
+-- the feed_sync table is updated by the sync service
+CREATE TABLE feed_sync (
     _id INTEGER PRIMARY KEY,
-    url TEXT UNIQUE NOT NULL,
+    url TEXT NOT NULL,
     title TEXT NOT NULL,
     link TEXT,
-    favicon TEXT,
     etag TEXT,
-    modified TEXT,
+    modified TEXT
+);
+
+-- the feed_user table is updated by the user
+CREATE TABLE feed_user (
+    _id INTEGER UNIQUE NOT NULL,
+    title TEXT,
+    favicon TEXT,
     update_mode INTEGER NOT NULL DEFAULT 0,
     next_sync INTEGER NOT NULL DEFAULT 0
 );
+
+-- a trigger that inserts a new feed_user row for each new feed_sync
+CREATE TRIGGER create_feed_user
+    AFTER INSERT ON feed_sync
+    BEGIN
+        INSERT INTO feed_user (_id) VALUES (NEW._id);
+    END;
+
+-- a trigger that deletes the associated feed_user when a feed_sync is deleted
+CREATE TRIGGER delete_feed_user
+    AFTER DELETE ON feed_sync
+    BEGIN
+        DELETE FROM feed_user WHERE _id = OLD._id;
+    END;
 
 -- the entry_sync table is updated by the sync service
 CREATE TABLE entry_sync (
@@ -62,16 +82,18 @@ CREATE VIEW entry_view AS
         entry_user.flag_read AS flag_read,
         entry_user.flag_star AS flag_star,
         entry_user.ro_flag_read AS ro_flag_read,
-        feed.title AS feed_title,
-        feed.favicon AS feed_favicon
+        feed_sync.title AS feed_title,
+        feed_user.favicon AS feed_favicon
     FROM
         entry_user,
         entry_sync,
-        feed
+        feed_user,
+        feed_sync
     WHERE
         entry_user.feed_id = entry_sync.feed_id AND
         entry_user.guid = entry_sync.guid AND
-        entry_user.feed_id = feed._id;
+        entry_user.feed_id = feed_user._id AND
+        feed_user._id = feed_sync._id;
 
 -- a view that includes 'all' and 'starred' virtual feed
 CREATE VIEW feed_view AS
@@ -100,21 +122,25 @@ CREATE VIEW feed_view AS
             (SELECT COUNT(1) FROM entry_view WHERE flag_star = 1) AS unread_count
         UNION
             SELECT
-                feed._id,
-                feed.url,
-                feed.title,
-                feed.link,
-                feed.favicon,
-                feed.etag,
-                feed.modified,
-                feed.update_mode,
-                feed.next_sync,
-                (SELECT COUNT(1) FROM entry_view WHERE entry_view.feed_id = feed._id AND flag_read = 0) AS unread_count
-            FROM feed
+                feed_sync._id,
+                feed_sync.url,
+                feed_sync.title,
+                feed_sync.link,
+                feed_user.favicon,
+                feed_sync.etag,
+                feed_sync.modified,
+                feed_user.update_mode,
+                feed_user.next_sync,
+                (SELECT COUNT(1) FROM entry_view WHERE entry_view.feed_id = feed_sync._id AND flag_read = 0) AS unread_count
+            FROM
+                feed_user,
+                feed_sync
+            WHERE
+                feed_user._id = feed_sync._id
             ORDER BY title;
 
 -- add test feed
-INSERT INTO feed (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');
+INSERT INTO feed_sync (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');
 
 -- add test feed
-INSERT INTO feed (url, title, link) VALUES ('https://github.com/tughi.atom', 'Tughi''s Github', 'https://github.com/tughi');
+INSERT INTO feed_sync (url, title, link) VALUES ('https://github.com/tughi.atom', 'Tughi''s Github', 'https://github.com/tughi');

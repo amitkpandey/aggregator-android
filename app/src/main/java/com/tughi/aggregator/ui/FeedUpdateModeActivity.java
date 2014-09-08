@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.FeedUpdateModes;
+import com.tughi.aggregator.content.Uris;
 
 /**
  * An {@link Activity} to configure the mode in which the feed gets updated.
@@ -133,9 +134,10 @@ public class FeedUpdateModeActivity extends Activity implements AdapterView.OnIt
                 Uri feedUri = (Uri) objects[1];
                 int updateMode = (Integer) objects[2];
 
+                Uri userFeedUri = Uris.newUserFeedUri(Long.parseLong(feedUri.getLastPathSegment()));
                 ContentValues values = new ContentValues(1);
                 values.put(FeedColumns.UPDATE_MODE, updateMode);
-                context.getContentResolver().update(feedUri, values, null, null);
+                context.getContentResolver().update(userFeedUri, values, null, null);
 
                 return null;
             }
