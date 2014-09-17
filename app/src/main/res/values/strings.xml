@@ -8,6 +8,9 @@
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
 
+    <string name="add_feed">Add feed</string>
+    <string name="add_feed_query_hint">URL or feed name</string>
+
     <string name="feed_update_mode">Update mode</string>
     <string name="feed_update_mode_auto_title">Auto</string>
     <string name="feed_update_mode_auto_description">The application decides when will the next update be started based on the already aggregated feed entries</string>

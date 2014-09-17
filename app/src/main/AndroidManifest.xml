@@ -24,6 +24,16 @@
 
         <activity android:name=".ui.FeedUpdateModeActivity" />
 
+        <activity
+            android:name=".ui.AddFeedActivity"
+            android:label="@string/add_feed">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <service android:name=".service.FeedsUpdateService" />
 
     </application>

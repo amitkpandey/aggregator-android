@@ -143,6 +143,12 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
             return true;
         }
 
+        switch (item.getItemId()) {
+            case R.id.subscribe:
+                startActivity(new Intent(this, AddFeedActivity.class));
+                return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
