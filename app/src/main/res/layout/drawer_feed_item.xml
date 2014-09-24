@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="?android:textAppearanceLarge">
 
         <ImageView
@@ -25,8 +26,10 @@
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:ellipsize="end"
         android:singleLine="true"
@@ -36,6 +39,7 @@
         android:id="@+id/unread_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:textAppearance="?android:textAppearanceMedium"
         android:textStyle="bold" />
