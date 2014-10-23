@@ -1,20 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion '20.0.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.0.2'
 
     defaultConfig {
         applicationId 'com.tughi.aggregator2'
         minSdkVersion 14
-        targetSdkVersion 20
+        targetSdkVersion 21
         versionCode 100
         versionName '3.0'
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
     compile project(':sqlite')
     compile project(':core')
 }
