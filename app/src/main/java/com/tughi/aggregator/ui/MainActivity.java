@@ -88,9 +88,6 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // TODO: move this call to the ACTION_BOOT_COMPLETED broadcast handler
-        startService(new Intent(this, FeedsUpdateService.class));
-
         drawerToggle.syncState();
     }
 
@@ -122,7 +119,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.drawer, menu);
+        getMenuInflater().inflate(R.menu.main_activity, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -146,6 +143,9 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
         switch (item.getItemId()) {
             case R.id.subscribe:
                 startActivity(new Intent(this, AddFeedActivity.class));
+                return true;
+            case R.id.sync:
+                startService(new Intent(this, FeedsUpdateService.class));
                 return true;
         }
 

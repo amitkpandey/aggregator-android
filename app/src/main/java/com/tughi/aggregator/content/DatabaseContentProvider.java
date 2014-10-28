@@ -125,7 +125,11 @@ public class DatabaseContentProvider extends ContentProvider {
             case Uris.MATCHED_USER_FEED_URI:
                 where = and(FeedColumns.ID + " = " + uri.getLastPathSegment(), where);
             case Uris.MATCHED_USER_FEEDS_URI:
-                return updateFeeds(uri, values, where, whereArgs);
+                return updateUserFeeds(uri, values, where, whereArgs);
+            case Uris.MATCHED_SYNC_FEED_URI:
+                where = and(FeedColumns.ID + " = " + uri.getLastPathSegment(), where);
+            case Uris.MATCHED_SYNC_FEEDS_URI:
+                return updateSyncFeeds(uri, values, where, whereArgs);
         }
         throw new UnsupportedOperationException(uri.toString());
     }
@@ -141,9 +145,20 @@ public class DatabaseContentProvider extends ContentProvider {
         return result;
     }
 
-    private int updateFeeds(Uri uri, ContentValues values, String where, String[] whereArgs) {
+    private int updateUserFeeds(Uri uri, ContentValues values, String where, String[] whereArgs) {
         SQLiteDatabase database = helper.getWritableDatabase();
         int result = database.update(TABLE_FEED_USER, values, where, whereArgs);
+
+        if (result != 0) {
+            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+        }
+
+        return result;
+    }
+
+    private int updateSyncFeeds(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+        int result = database.update(TABLE_FEED_SYNC, values, where, whereArgs);
 
         if (result != 0) {
             getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);

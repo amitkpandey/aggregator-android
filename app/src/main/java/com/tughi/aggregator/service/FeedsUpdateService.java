@@ -1,5 +1,7 @@
 package com.tughi.aggregator.service;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
@@ -33,6 +35,19 @@ import java.util.List;
  */
 public class FeedsUpdateService extends Service {
 
+    private AlarmManager alarmManager;
+    private PendingIntent syncPendingIntent;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent(this, FeedsUpdateReceiver.class);
+        syncPendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // start the multi-threaded update
@@ -55,17 +70,12 @@ public class FeedsUpdateService extends Service {
 
         private final String[] FEED_PROJECTION = {
                 FeedColumns.ID,
-                FeedColumns.URL
+                FeedColumns.URL,
+                FeedColumns.UPDATE_MODE,
         };
         private final int FEED_ID_INDEX = 0;
         private final int FEED_URL_INDEX = 1;
-
-        /**
-         * Selects all feeds that should be updated 'now'.
-         */
-        private final String FEED_SELECTION = FeedColumns.ID + " > 0 AND "
-                + FeedColumns.UPDATE_MODE + " != " + FeedUpdateModes.DISABLED + " AND "
-                + FeedColumns.NEXT_SYNC + " < strftime('%s', 'now')";
+        private final int FEED_UPDATE_MODE = 2;
 
         /**
          * Returns a {@link List} of {@link UpdateFeedTask#execute(Object[])} parameters.
@@ -74,18 +84,24 @@ public class FeedsUpdateService extends Service {
         protected List<Object[]> doInBackground(Void... voids) {
             LinkedList<Object[]> result = new LinkedList<Object[]>();
 
-            long poll = System.currentTimeMillis() / 1000;
+            long poll = System.currentTimeMillis();
 
-            Cursor cursor = getContentResolver().query(Uris.newFeedsUri(), FEED_PROJECTION, FEED_SELECTION, null, null);
+            String selection = FeedColumns.ID + " > 0 AND "
+                    + FeedColumns.UPDATE_MODE + " != " + FeedUpdateModes.DISABLED + " AND "
+                    + FeedColumns.NEXT_SYNC + " < " + poll;
+            Cursor cursor = getContentResolver().query(Uris.newFeedsUri(), FEED_PROJECTION, selection, null, null);
             if (cursor.moveToFirst()) {
                 do {
                     Object[] parameters = {
                             cursor.getLong(FEED_ID_INDEX),
                             cursor.getString(FEED_URL_INDEX),
+                            cursor.getInt(FEED_UPDATE_MODE),
                             poll
                     };
                     result.add(parameters);
                 } while (cursor.moveToNext());
+            } else {
+                scheduleAlarm(poll);
             }
             cursor.close();
 
@@ -112,7 +128,8 @@ public class FeedsUpdateService extends Service {
         protected Void doInBackground(Object... objects) {
             final long feedId = (Long) objects[0];
             final String feedUrl = (String) objects[1];
-            final long poll = (Long) objects[2];
+            final int feedUpdateMode = (Integer) objects[2];
+            final long poll = (Long) objects[3];
 
             final Uri feedEntriesUri = Uris.newFeedEntriesUri(feedId);
 
@@ -134,11 +151,20 @@ public class FeedsUpdateService extends Service {
                     // prepare content batch
                     ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>(result.feed.entries.size() + 1);
 
-                    // TODO: update feed meta data
+                    // update feed values
+                    ContentValues feedSyncValues = new ContentValues();
+                    feedSyncValues.put(FeedColumns.URL, connection.getURL().toString());
+                    feedSyncValues.put(FeedColumns.TITLE, result.feed.title);
+                    feedSyncValues.put(FeedColumns.LINK, result.feed.link);
+                    feedSyncValues.put(FeedColumns.ENTRY_COUNT, result.feed.entries.size());
+                    batch.add(
+                            ContentProviderOperation.newUpdate(Uris.newSyncFeedUri(feedId))
+                                    .withValues(feedSyncValues)
+                                    .build()
+                    );
 
-                    // insert/update feed entries
                     for (FeedParser.Result.Feed.Entry entry : result.feed.entries) {
-                        // process entry values
+                        // insert/update feed entry
                         ContentValues entryValues = new ContentValues();
                         entryValues.put(EntryColumns.FEED_ID, feedId);
                         entryValues.put(EntryColumns.GUID, entry.id);
@@ -146,13 +172,11 @@ public class FeedsUpdateService extends Service {
                         entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp);
                         entryValues.put(EntryColumns.POLL, poll);
                         entryValues.put(EntryColumns.DATA, entry.title);
-
-                        // add insert operation
-                        ContentProviderOperation operation = ContentProviderOperation
-                                .newInsert(feedEntriesUri)
-                                .withValues(entryValues)
-                                .build();
-                        batch.add(operation);
+                        batch.add(
+                                ContentProviderOperation.newInsert(feedEntriesUri)
+                                        .withValues(entryValues)
+                                        .build()
+                        );
                     }
 
                     // execute batch
@@ -164,6 +188,13 @@ public class FeedsUpdateService extends Service {
                     } catch (Exception exception) {
                         throw new IOException("batch failed", exception);
                     }
+
+                    // schedule next sync
+                    ContentValues feedUserValues = new ContentValues();
+                    feedUserValues.put(FeedColumns.NEXT_SYNC, findNextSync(feedId, feedUpdateMode, poll));
+                    contentResolver.update(Uris.newUserFeedUri(feedId), feedUserValues, null, null);
+
+                    scheduleAlarm(poll);
                 } else {
                     Log.w(getClass().getName(), "feed update failed: " + result.status);
                 }
@@ -177,6 +208,96 @@ public class FeedsUpdateService extends Service {
 
             return null;
         }
+
+        private long findNextSync(long feedId, int feedUpdateMode, long poll) {
+            switch (feedUpdateMode) {
+                case FeedUpdateModes.AUTO:
+                default:
+                    return findNextAutoSync(feedId, poll);
+            }
+        }
+
+        private long findNextAutoSync(long feedId, long poll) {
+            ContentResolver contentResolver = getContentResolver();
+
+            Uri feedEntriesUri = Uris.newFeedEntriesUri(feedId);
+            final String[] projection = {EntryColumns.ID};
+            final String selection = EntryColumns.UPDATED + " >= ?";
+            final String[] selectionArgs = new String[1];
+            Cursor cursor;
+
+            // get aggregated number of entries in the last 24 hours
+            selectionArgs[0] = Long.toString(poll - 86400000);
+            cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, null);
+            int day_entries = cursor.getCount();
+            cursor.close();
+
+            int poll_rate;
+            if (day_entries > 0) {
+                poll_rate = 86400000 / day_entries;
+            } else {
+                // get aggregated number of entries in the last 7 * 24 hours
+                selectionArgs[0] = Long.toString(poll - 604800000);
+                cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, null);
+                int week_entries = cursor.getCount();
+                cursor.close();
+
+                if (week_entries > 0) {
+                    poll_rate = 604800000 / week_entries;
+                } else {
+                    poll_rate = 345600000;
+                }
+            }
+
+            if (poll_rate < 1800000) {
+                // schedule new poll in 15 minutes
+                return poll + 900000;
+            } else if (poll_rate < 3600000) {
+                // schedule new poll in 30 minutes
+                return poll + 1800000;
+            } else if (poll_rate < 10800000) {
+                // schedule new poll in 1 hour
+                return poll + 3600000;
+            } else if (poll_rate < 21600000) {
+                // schedule new poll in 3 hours
+                return poll + 10800000;
+            } else if (poll_rate < 43200000) {
+                // schedule new poll in 6 hours
+                return poll + 21600000;
+            } else if (poll_rate < 86400000) {
+                // schedule new poll in 12 hours
+                return poll + 43200000;
+            } else if (poll_rate < 172800000) {
+                // schedule new poll in 1 day
+                return poll + 86400000;
+            } else if (poll_rate < 259200000) {
+                // schedule new poll in 2 day
+                return poll + 172800000;
+            } else if (poll_rate < 345600000) {
+                // schedule new poll in 3 day
+                return poll + 259200000;
+            } else {
+                // schedule new poll in 4 days
+                return poll + 345600000;
+            }
+        }
+
+    }
+
+    /**
+     * Invoked from a background thread of an {@link AsyncTask} to schedule the next alarm.
+     */
+    private void scheduleAlarm(long poll) {
+        final String[] projection = {FeedColumns.NEXT_SYNC};
+        final String selection = FeedColumns.NEXT_SYNC + " > " + poll;
+        final String sortOrder = FeedColumns.NEXT_SYNC;
+        Cursor cursor = getContentResolver().query(Uris.newFeedsUri(), projection, selection, null, sortOrder);
+        if (cursor.moveToFirst()) {
+            long triggerAtMillis = cursor.getLong(0);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, syncPendingIntent);
+            Log.d(getClass().getName(), String.format("next sync: %tc", triggerAtMillis));
+        }
+        cursor.close();
     }
 
 }

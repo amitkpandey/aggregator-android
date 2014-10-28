@@ -5,7 +5,8 @@ CREATE TABLE feed_sync (
     title TEXT NOT NULL,
     link TEXT,
     etag TEXT,
-    modified TEXT
+    modified TEXT,
+    entry_count INTEGER NOT NULL DEFAULT 0
 );
 
 -- the feed_user table is updated by the user
@@ -48,6 +49,7 @@ CREATE TABLE entry_user (
     _id INTEGER PRIMARY KEY,
     feed_id INTEGER NOT NULL,
     guid TEXT NOT NULL,
+    poll INTEGER NOT NULL,
     flag_read INTEGER NOT NULL DEFAULT 0,
     flag_star INTEGER NOT NULL DEFAULT 0,
     ro_flag_read INTEGER NOT NULL DEFAULT 0,
@@ -59,7 +61,7 @@ CREATE TABLE entry_user (
 CREATE TRIGGER create_entry_user
     AFTER INSERT ON entry_sync
     BEGIN
-        INSERT INTO entry_user (feed_id, guid) VALUES (NEW.feed_id, NEW.guid);
+        INSERT INTO entry_user (feed_id, guid, poll) VALUES (NEW.feed_id, NEW.guid, NEW.poll);
     END;
 
 -- a trigger that deletes the associated entry_user when an entry_sync is deleted

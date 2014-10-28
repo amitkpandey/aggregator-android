@@ -12,6 +12,16 @@ public interface FeedColumns {
     public static final String TITLE = "title";
 
     /**
+     * Contains the home of the feed as URL string.
+     */
+    public static final String LINK = "link";
+
+    /**
+     * Stores the count of entries found in the feed XML.
+     */
+    public static final String ENTRY_COUNT = "entry_count";
+
+    /**
      * Specifies the feed update mode.
      * See {@link FeedUpdateModes} for allowed values.
      */

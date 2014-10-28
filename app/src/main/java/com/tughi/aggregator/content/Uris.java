@@ -69,6 +69,20 @@ public class Uris {
         return ContentUris.withAppendedId(newUserEntriesUri(), entryId);
     }
 
+    /**
+     * Creates the base {@link Uri} for sync feeds.
+     */
+    private static Uri newSyncFeedsUri() {
+        return Uri.withAppendedPath(SYNC_BASE_URI, "feeds");
+    }
+
+    /**
+     * Creates an {@link Uri} that is meant for insert, updates and delete only.
+     */
+    public static Uri newSyncFeedUri(long feedId) {
+        return ContentUris.withAppendedId(newSyncFeedsUri(), feedId);
+    }
+
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     public static final int MATCHED_FEEDS_URI = 1;
@@ -78,6 +92,8 @@ public class Uris {
     public static final int MATCHED_USER_FEED_URI = 5;
     public static final int MATCHED_USER_ENTRIES_URI = 6;
     public static final int MATCHED_USER_ENTRY_URI = 7;
+    public static final int MATCHED_SYNC_FEEDS_URI = 8;
+    public static final int MATCHED_SYNC_FEED_URI = 9;
 
     static {
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feeds", MATCHED_FEEDS_URI);
@@ -91,6 +107,8 @@ public class Uris {
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "user/feeds/#", MATCHED_USER_FEED_URI);
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "user/entries", MATCHED_USER_ENTRIES_URI);
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "user/entries/#", MATCHED_USER_ENTRY_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "sync/feeds", MATCHED_SYNC_FEEDS_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "sync/feeds/#", MATCHED_SYNC_FEED_URI);
     }
 
     /**
