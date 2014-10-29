@@ -79,7 +79,6 @@ CREATE VIEW entry_view AS
         entry_user.guid AS guid,
         entry_sync.title AS title,
         entry_sync.updated AS updated,
-        entry_sync.poll AS poll,
         entry_sync.data AS data,
         entry_user.flag_read AS flag_read,
         entry_user.flag_star AS flag_star,
@@ -140,6 +139,22 @@ CREATE VIEW feed_view AS
             WHERE
                 feed_user._id = feed_sync._id
             ORDER BY title;
+
+-- a view for the feed updates
+CREATE VIEW sync_log AS
+    SELECT
+        feed_sync._id AS feed_id,
+        entry_user.poll AS poll,
+        COUNT(1) AS entry_count,
+        feed_sync.entry_count AS entry_count_max
+    FROM
+        feed_sync,
+        entry_user
+    WHERE
+        feed_sync._id = entry_user.feed_id
+    GROUP BY entry_user.poll, feed_sync._id
+    ORDER BY entry_user.poll;
+
 
 -- add test feed
 INSERT INTO feed_sync (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');

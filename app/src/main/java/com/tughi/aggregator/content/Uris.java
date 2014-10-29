@@ -83,6 +83,13 @@ public class Uris {
         return ContentUris.withAppendedId(newSyncFeedsUri(), feedId);
     }
 
+    /**
+     * Creates an {@link Uri} that is meant for query only.
+     */
+    public static Uri newSyncLogUri() {
+        return Uri.withAppendedPath(newSyncFeedsUri(), "log");
+    }
+
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     public static final int MATCHED_FEEDS_URI = 1;
@@ -94,6 +101,7 @@ public class Uris {
     public static final int MATCHED_USER_ENTRY_URI = 7;
     public static final int MATCHED_SYNC_FEEDS_URI = 8;
     public static final int MATCHED_SYNC_FEED_URI = 9;
+    public static final int MATCHED_SYNC_LOG_URI = 10;
 
     static {
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "feeds", MATCHED_FEEDS_URI);
@@ -109,6 +117,7 @@ public class Uris {
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "user/entries/#", MATCHED_USER_ENTRY_URI);
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "sync/feeds", MATCHED_SYNC_FEEDS_URI);
         URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "sync/feeds/#", MATCHED_SYNC_FEED_URI);
+        URI_MATCHER.addURI(DatabaseContentProvider.AUTHORITY, "sync/log", MATCHED_SYNC_LOG_URI);
     }
 
     /**
