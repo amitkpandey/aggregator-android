@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -223,7 +224,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         public void bindView(View view, Context context, Cursor cursor) {
             ViewTag tag = (ViewTag) view.getTag();
             tag.section = sections.get(cursor.getPosition());
-            tag.titleTextView.setText(cursor.getString(ENTRY_TITLE_INDEX));
+            tag.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE_INDEX)));
             int flagRead = cursor.getInt(ENTRY_FLAG_READ_INDEX);
             tag.titleTextView.setTypeface(flagRead == 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
             tag.stateImageView.setImageLevel(flagRead);

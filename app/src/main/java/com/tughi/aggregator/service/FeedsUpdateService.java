@@ -45,7 +45,7 @@ public class FeedsUpdateService extends Service {
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         Intent intent = new Intent(this, FeedsUpdateReceiver.class);
-        syncPendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        syncPendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
