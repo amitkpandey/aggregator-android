@@ -1,6 +1,5 @@
 package com.tughi.aggregator.ui;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -12,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,7 +28,7 @@ import com.tughi.aggregator.content.Uris;
 /**
  * An {@link Activity} to configure the mode in which the feed gets updated.
  */
-public class FeedUpdateModeActivity extends Activity implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class FeedUpdateModeActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     private static final int LOADER_FEED = 0;
 
@@ -51,10 +51,7 @@ public class FeedUpdateModeActivity extends Activity implements AdapterView.OnIt
 
         modeSpinnerAdapter = new ModeSpinnerAdapter();
 
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            actionBar.setSubtitle(R.string.feed_update_mode);
-        }
+        getSupportActionBar().setSubtitle(R.string.feed_update_mode);
 
         setContentView(R.layout.feed_update_mode_acivity);
 

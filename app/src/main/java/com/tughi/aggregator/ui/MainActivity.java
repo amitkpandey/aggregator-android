@@ -1,6 +1,5 @@
 package com.tughi.aggregator.ui;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -10,8 +9,9 @@ import android.content.Loader;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +27,7 @@ import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
 import com.tughi.aggregator.service.FeedsUpdateService;
 
-public class MainActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     private static final int LOADER_FEEDS = 1;
 
@@ -48,12 +48,12 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, 0, 0) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                getActionBar().setTitle(R.string.app_name);
+                getSupportActionBar().setTitle(R.string.app_name);
                 invalidateOptionsMenu();
             }
 
@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 
-                getActionBar().setTitle(title);
+                getSupportActionBar().setTitle(title);
                 invalidateOptionsMenu();
             }
         };
@@ -75,8 +75,8 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
 
         getLoaderManager().initLoader(LOADER_FEEDS, null, this);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         title = getTitle();
 
@@ -155,7 +155,7 @@ public class MainActivity extends Activity implements LoaderManager.LoaderCallba
     @Override
     public void setTitle(CharSequence title) {
         this.title = title;
-        getActionBar().setTitle(title);
+        getSupportActionBar().setTitle(title);
     }
 
     @Override
