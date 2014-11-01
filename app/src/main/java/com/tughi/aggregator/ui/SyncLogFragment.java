@@ -164,7 +164,7 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                 int size = logItems.length;
                 for (int index = 0; index < size; index++) {
                     LogItem logItem = logItems[index];
-                    float x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step);
+                    int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - (int) rulerPaint.getStrokeWidth() / 2;
                     float y = (logItem.entryCount * height / 2 / logItem.entryCountMax) * scaleFactor;
 
                     canvas.drawLine(x, height / 2 - y, x, height / 2 + y, rulerPaint);

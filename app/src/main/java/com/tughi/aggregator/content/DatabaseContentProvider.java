@@ -95,6 +95,8 @@ public class DatabaseContentProvider extends ContentProvider {
         switch (Uris.match(uri)) {
             case Uris.MATCHED_FEED_ENTRIES_URI:
                 return insertEntry(uri, values);
+            case Uris.MATCHED_SYNC_FEEDS_URI:
+                return insertFeed(uri, values);
         }
 
         throw new UnsupportedOperationException(uri.toString());
@@ -124,6 +126,18 @@ public class DatabaseContentProvider extends ContentProvider {
         // insert new entry otherwise
         long id = database.insert(TABLE_ENTRY_SYNC, null, values);
         return ContentUris.withAppendedId(uri, id);
+    }
+
+    public Uri insertFeed(Uri uri, ContentValues values) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+
+        long feedId = database.insert(TABLE_FEED_SYNC, null, values);
+
+        if (feedId > 0) {
+            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+        }
+
+        return Uris.newSyncFeedUri(feedId);
     }
 
     @Override

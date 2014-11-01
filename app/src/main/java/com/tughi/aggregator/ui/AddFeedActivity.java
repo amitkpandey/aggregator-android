@@ -2,6 +2,7 @@ package com.tughi.aggregator.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tughi.aggregator.R;
+import com.tughi.aggregator.content.FeedColumns;
+import com.tughi.aggregator.content.Uris;
 import com.tughi.aggregator.feeds.FeedsFinder;
 
 import java.io.IOException;
@@ -52,7 +56,7 @@ public class AddFeedActivity extends Activity {
         }
     }
 
-    public static class QueryFragment extends Fragment {
+    public static class QueryFragment extends Fragment implements AdapterView.OnItemClickListener {
 
         private static final String ARG_QUERY = "query";
 
@@ -92,6 +96,7 @@ public class AddFeedActivity extends Activity {
 
             ListView feedsListView = (ListView) view.findViewById(R.id.feeds);
             feedsListView.setAdapter(feedsListAdapter = new FeedsListAdapter());
+            feedsListView.setOnItemClickListener(this);
 
             return view;
         }
@@ -126,6 +131,16 @@ public class AddFeedActivity extends Activity {
 
             // start searching
             new SearchTask().execute(queryEditText.getText().toString());
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            FeedsFinder.Result.Feed feed = feedsListAdapter.getItem(position);
+
+            ContentValues feedValues = new ContentValues();
+            feedValues.put(FeedColumns.URL, feed.href);
+            feedValues.put(FeedColumns.TITLE, feed.title);
+            getActivity().getContentResolver().insert(Uris.newSyncFeedsUri(), feedValues);
         }
 
         private class SearchTask extends AsyncTask<Object, Object, FeedsFinder.Result> {

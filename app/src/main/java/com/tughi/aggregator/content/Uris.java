@@ -72,7 +72,7 @@ public class Uris {
     /**
      * Creates the base {@link Uri} for sync feeds.
      */
-    private static Uri newSyncFeedsUri() {
+    public static Uri newSyncFeedsUri() {
         return Uri.withAppendedPath(SYNC_BASE_URI, "feeds");
     }
 
