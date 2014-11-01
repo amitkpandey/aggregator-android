@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     private static final int LOADER_FEEDS = 1;
 
+    private SyncLogFragment syncLogFragment;
+
     private DrawerLayout drawerLayout;
 
     private ListView drawerListView;
@@ -46,9 +49,14 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         setContentView(R.layout.main_activity);
 
+        Toolbar actionBar = (Toolbar) findViewById(R.id.action_bar);
+        setSupportActionBar(actionBar);
+
+        syncLogFragment = (SyncLogFragment) getSupportFragmentManager().findFragmentById(R.id.sync_log);
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, actionBar, 0, 0) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -63,6 +71,13 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
                 getSupportActionBar().setTitle(title);
                 invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+
+                syncLogFragment.setScaleFactor(1 - slideOffset);
             }
         };
         drawerLayout.setDrawerListener(drawerToggle);
@@ -163,11 +178,11 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         selectDrawerItem(position, id);
     }
 
-    private void selectDrawerItem(int position, long id) {
+    private void selectDrawerItem(int position, long feedId) {
         // create fragment
         Fragment fragment = new EntryListFragment();
         Bundle args = new Bundle();
-        args.putParcelable(EntryListFragment.ARG_ENTRIES_URI, Uris.newFeedEntriesUri(id));
+        args.putParcelable(EntryListFragment.ARG_ENTRIES_URI, Uris.newFeedEntriesUri(feedId));
         fragment.setArguments(args);
 
         // replace existing fragment with the new one
@@ -184,6 +199,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         // finish
         drawerLayout.closeDrawer(drawerListView);
+
+        syncLogFragment.setSyncLogUri(Uris.newFeedSyncLogUri(feedId));
     }
 
     private static final String[] FEED_PROJECTION = {

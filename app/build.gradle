@@ -17,6 +17,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile project(':sqlite')
     compile project(':core')
+    compile project(':xml')
 }
 
 task generateDrawables << {

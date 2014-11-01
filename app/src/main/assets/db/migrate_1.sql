@@ -153,7 +153,7 @@ CREATE VIEW sync_log AS
     WHERE
         feed_sync._id = entry_user.feed_id
     GROUP BY entry_user.poll, feed_sync._id
-    ORDER BY entry_user.poll;
+    ORDER BY entry_user.poll DESC;
 
 
 -- add test feed

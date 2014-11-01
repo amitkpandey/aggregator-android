@@ -32,6 +32,7 @@ public class DatabaseContentProvider extends ContentProvider {
 
     private static final String VIEW_FEED = "feed_view";
     private static final String VIEW_ENTRY = "entry_view";
+    private static final String VIEW_SYNC_LOG = "sync_log";
 
     @Override
     public boolean onCreate() {
@@ -61,6 +62,11 @@ public class DatabaseContentProvider extends ContentProvider {
                     selection = and(EntryColumns.FEED_ID + " = " + feedId, selection);
                 }
                 return queryEntries(uri, projection, selection, selectionArgs, orderBy);
+            case Uris.MATCHED_FEED_SYNC_LOG_URI:
+                feedId = uri.getPathSegments().get(2);
+                selection = and(SyncLogColumns.FEED_ID + " = " + feedId, selection);
+            case Uris.MATCHED_FEEDS_SYNC_LOG_URI:
+                return querySyncLog(uri, projection, selection, selectionArgs, orderBy);
         }
         throw new UnsupportedOperationException(uri.toString());
     }
@@ -77,6 +83,11 @@ public class DatabaseContentProvider extends ContentProvider {
         Cursor cursor = database.query(VIEW_ENTRY, projection, selection, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
+    }
+
+    private Cursor querySyncLog(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
+        SQLiteDatabase database = helper.getReadableDatabase();
+        return database.query(VIEW_SYNC_LOG, projection, selection, selectionArgs, null, null, orderBy);
     }
 
     @Override
