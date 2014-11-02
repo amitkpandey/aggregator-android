@@ -2,7 +2,7 @@
 CREATE TABLE feed_sync (
     _id INTEGER PRIMARY KEY,
     url TEXT NOT NULL,
-    title TEXT NOT NULL,
+    title TEXT,
     link TEXT,
     etag TEXT,
     modified TEXT,

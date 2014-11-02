@@ -1,23 +1,19 @@
 package com.tughi.aggregator.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,34 +30,31 @@ import java.util.List;
 /**
  * An {@link Activity} for adding a feed.
  */
-public class AddFeedActivity extends Activity {
+public class AddFeedActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            // activity was not recreated
+        setContentView(R.layout.add_feed_activity);
 
-            Bundle queryFragmentArgs = new Bundle();
-
-            Intent intent = getIntent();
-            if (Intent.ACTION_SEND.equals(intent.getAction())) {
-                queryFragmentArgs.putCharSequence(QueryFragment.ARG_QUERY, intent.getCharSequenceExtra(Intent.EXTRA_TEXT));
-            }
-
-            getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, Fragment.instantiate(this, QueryFragment.class.getName(), queryFragmentArgs))
-                    .commit();
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
+    }
+
+    /**
+     * A {@link Fragment} used to search for feeds.
+     */
     public static class QueryFragment extends Fragment implements AdapterView.OnItemClickListener {
 
         private static final String ARG_QUERY = "query";
 
-        private EditText queryEditText;
-        private ImageButton searchButton;
+        private SearchView searchView;
         private ProgressBar progressBar;
 
         private FeedsListAdapter feedsListAdapter;
@@ -70,26 +63,20 @@ public class AddFeedActivity extends Activity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.add_feed_query_fragment, container, false);
 
-            queryEditText = (EditText) view.findViewById(R.id.query);
-            queryEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            searchView = (SearchView) view.findViewById(R.id.query);
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
-                public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        onSearch();
-                        return true;
-                    }
+                public boolean onQueryTextSubmit(String query) {
+                    onSearch(query);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String query) {
                     return false;
                 }
             });
-            queryEditText.setFocusable(savedInstanceState != null || getArguments().get(ARG_QUERY) == null);
-
-            searchButton = (ImageButton) view.findViewById(R.id.search);
-            searchButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onSearch();
-                }
-            });
+            searchView.setSubmitButtonEnabled(true);
 
             progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
@@ -104,33 +91,24 @@ public class AddFeedActivity extends Activity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             if (savedInstanceState == null) {
-                CharSequence query = getArguments().getCharSequence(ARG_QUERY);
-                if (query != null) {
-                    queryEditText.setText(query);
-                    onSearch();
+                Intent intent = getActivity().getIntent();
+                if (Intent.ACTION_SEND.equals(intent.getAction())) {
+                    // activity was started as a share intent
+                    String query = intent.getCharSequenceExtra(Intent.EXTRA_TEXT).toString();
+                    searchView.setQuery(query, true);
                 }
             }
         }
 
-        private void onSearch() {
-            // disable query field
-            queryEditText.clearFocus();
-            queryEditText.setEnabled(false);
-
+        private void onSearch(String query) {
             // show progress indicator
-            searchButton.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-
-            // hide software keyboard
-            Context context = queryEditText.getContext();
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(queryEditText.getWindowToken(), 0);
 
             // reset previous search, if any
             feedsListAdapter.setFeeds(null);
 
             // start searching
-            new SearchTask().execute(queryEditText.getText().toString());
+            new SearchTask().execute(query);
         }
 
         @Override
@@ -163,12 +141,7 @@ public class AddFeedActivity extends Activity {
             @Override
             protected void onPostExecute(FeedsFinder.Result result) {
                 // hide progress indicator
-                searchButton.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-
-                // enable query field
-                queryEditText.setFocusableInTouchMode(true);
-                queryEditText.setEnabled(true);
 
                 // show result
                 if (result != null) {
