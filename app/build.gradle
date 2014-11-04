@@ -48,4 +48,8 @@ task generateDrawables << {
     generateDrawable('ic_launcher', 'ic_activity', 32, 32)
     generateDrawable('favicon_placeholder', null, 16, 16)
 
+    generateDrawable('ic_action_add', null, 24, 24)
+    generateDrawable('ic_action_color_lens', null, 24, 24)
+    generateDrawable('ic_action_done', null, 24, 24)
+
 }

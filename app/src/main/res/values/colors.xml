@@ -2,6 +2,7 @@
 <resources>
     <color name="primary">#ff113366</color>
     <color name="primary_dark">#ff112142</color>
+    <color name="accent">#ffef6c00</color>
     <color name="pressed_shade">#33000000</color>
     <color name="sync_log">#1fffffff</color>
 </resources>

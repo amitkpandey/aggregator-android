@@ -6,7 +6,7 @@
         android:visible="false">
         <item
             android:id="@+id/subscribe"
-            android:icon="@drawable/ic_action_new"
+            android:icon="@drawable/ic_action_add"
             android:menuCategory="secondary"
             android:title="Add Feed"
             app:showAsAction="always" />

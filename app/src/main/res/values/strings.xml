@@ -10,6 +10,7 @@
 
     <string name="add_feed">Add feed</string>
     <string name="add_feed_query_hint">URL or feed name</string>
+    <string name="add_feed_title">Title</string>
 
     <string name="feed_update_mode">Update mode</string>
     <string name="feed_update_mode_auto_title">Auto</string>
@@ -20,4 +21,7 @@
     <string name="feed_update_mode_custom_description">Decide when will the application try to update the feed based on a set of alarms</string>
     <string name="feed_update_mode_disabled_title">Disabled</string>
     <string name="feed_update_mode_disabled_description">The application does not update the feed on its own</string>
+
+    <string name="done">Done</string>
+
 </resources>
