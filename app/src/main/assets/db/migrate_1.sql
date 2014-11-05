@@ -125,7 +125,7 @@ CREATE VIEW feed_view AS
             SELECT
                 feed_sync._id,
                 feed_sync.url,
-                feed_sync.title,
+                COALESCE(feed_user.title, feed_sync.title),
                 feed_sync.link,
                 feed_user.favicon,
                 feed_sync.etag,

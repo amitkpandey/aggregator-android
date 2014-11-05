@@ -10,6 +10,7 @@
 
     <string name="add_feed">Add feed</string>
     <string name="add_feed_query_hint">URL or feed name</string>
+    <string name="add_feed_url">URL</string>
     <string name="add_feed_title">Title</string>
 
     <string name="feed_update_mode">Update mode</string>
