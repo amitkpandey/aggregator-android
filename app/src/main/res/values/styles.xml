@@ -3,7 +3,7 @@
 
     <style name="Theme" parent="Theme.AppCompat">
         <item name="android:keepScreenOn">true</item>
-        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowBackground">@color/background</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
@@ -16,10 +16,6 @@
 
     <style name="TextAppearance.EntryTitle" parent="android:TextAppearance.Medium">
         <item name="android:textColor">#ccc</item>
-    </style>
-
-    <style name="TextAppearance.EntryHeader" parent="android:TextAppearance.Small">
-        <item name="android:textColor">#666</item>
     </style>
 
     <style name="Widget.ImageButton.FloatingAction" parent="android:Widget.ImageButton">

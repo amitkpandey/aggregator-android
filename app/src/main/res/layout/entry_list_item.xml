@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:textAppearance="@style/TextAppearance.EntryHeader">
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption">
 
             <ImageView
                 android:id="@+id/favicon"
@@ -38,21 +38,21 @@
             android:layout_marginRight="16dp"
             android:layout_weight="1"
             android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.EntryHeader" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.EntryHeader" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
         <com.tughi.aggregator.ui.SpecialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:textAppearance="@style/TextAppearance.EntryHeader">
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption">
 
             <ImageView
                 android:id="@+id/state"
@@ -71,6 +71,6 @@
         android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.EntryTitle" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>
