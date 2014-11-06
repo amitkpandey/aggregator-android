@@ -185,6 +185,7 @@ public class FeedsUpdateService extends Service {
                         contentResolver.applyBatch(DatabaseContentProvider.AUTHORITY, batch);
 
                         contentResolver.notifyChange(Uris.newFeedsUri(), null);
+                        contentResolver.notifyChange(Uris.newSyncFeedsUri(), null);
                     } catch (Exception exception) {
                         throw new IOException("batch failed", exception);
                     }

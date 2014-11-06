@@ -87,7 +87,9 @@ public class DatabaseContentProvider extends ContentProvider {
 
     private Cursor querySyncLog(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         SQLiteDatabase database = helper.getReadableDatabase();
-        return database.query(VIEW_SYNC_LOG, projection, selection, selectionArgs, null, null, orderBy);
+        Cursor cursor = database.query(VIEW_SYNC_LOG, projection, selection, selectionArgs, null, null, orderBy);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Override
