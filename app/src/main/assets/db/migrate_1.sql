@@ -83,7 +83,7 @@ CREATE VIEW entry_view AS
         entry_user.flag_read AS flag_read,
         entry_user.flag_star AS flag_star,
         entry_user.ro_flag_read AS ro_flag_read,
-        feed_sync.title AS feed_title,
+        COALESCE(feed_user.title, feed_sync.title) AS feed_title,
         feed_user.favicon AS feed_favicon
     FROM
         entry_user,
@@ -100,6 +100,7 @@ CREATE VIEW entry_view AS
 CREATE VIEW feed_view AS
     SELECT
         -1 AS _id,
+        1 AS _type,
         NULL AS url,
         'ALL' AS title,
         NULL AS link,
@@ -112,6 +113,7 @@ CREATE VIEW feed_view AS
     UNION
         SELECT
             -2 AS _id,
+            2 AS _type,
             NULL AS url,
             'STARRED' AS title,
             NULL AS link,
@@ -123,22 +125,23 @@ CREATE VIEW feed_view AS
             (SELECT COUNT(1) FROM entry_view WHERE flag_star = 1) AS unread_count
         UNION
             SELECT
-                feed_sync._id,
-                feed_sync.url,
-                COALESCE(feed_user.title, feed_sync.title),
-                feed_sync.link,
-                feed_user.favicon,
-                feed_sync.etag,
-                feed_sync.modified,
-                feed_user.update_mode,
-                feed_user.next_sync,
+                feed_sync._id AS _id,
+                3 AS _type,
+                feed_sync.url AS url,
+                COALESCE(feed_user.title, feed_sync.title) AS title,
+                feed_sync.link AS link,
+                feed_user.favicon AS favicon,
+                feed_sync.etag AS etag,
+                feed_sync.modified AS modified,
+                feed_user.update_mode AS update_mode,
+                feed_user.next_sync AS next_sync,
                 (SELECT COUNT(1) FROM entry_view WHERE entry_view.feed_id = feed_sync._id AND flag_read = 0) AS unread_count
             FROM
                 feed_user,
                 feed_sync
             WHERE
                 feed_user._id = feed_sync._id
-            ORDER BY title;
+            ORDER BY _type, title;
 
 -- a view for the feed updates
 CREATE VIEW sync_log AS
