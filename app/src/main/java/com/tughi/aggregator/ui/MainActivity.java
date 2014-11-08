@@ -26,7 +26,7 @@ import android.widget.TextView;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
-import com.tughi.aggregator.service.FeedsUpdateService;
+import com.tughi.aggregator.service.FeedsSyncService;
 
 public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
@@ -160,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 startActivity(new Intent(this, AddFeedActivity.class));
                 return true;
             case R.id.sync:
-                startService(new Intent(this, FeedsUpdateService.class));
+                startService(new Intent(this, FeedsSyncService.class));
                 return true;
         }
 

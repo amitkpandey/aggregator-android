@@ -54,6 +54,8 @@ public class DatabaseContentProvider extends ContentProvider {
                 selection = and(FeedColumns.ID + " = " + feedId, selection);
             case Uris.MATCHED_FEEDS_URI:
                 return queryFeeds(uri, projection, selection, selectionArgs, orderBy);
+            case Uris.MATCHED_USER_FEEDS_URI:
+                return queryUserFeeds(uri, projection, selection, selectionArgs, orderBy);
             case Uris.MATCHED_FEED_ENTRIES_URI:
                 feedId = uri.getPathSegments().get(1);
                 if ("-2".equals(feedId)) {
@@ -76,6 +78,11 @@ public class DatabaseContentProvider extends ContentProvider {
         Cursor cursor = database.query(VIEW_FEED, projection, selection, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
+    }
+
+    private Cursor queryUserFeeds(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
+        SQLiteDatabase database = helper.getReadableDatabase();
+        return database.query(TABLE_FEED_USER, projection, selection, selectionArgs, null, null, orderBy);
     }
 
     private Cursor queryEntries(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
