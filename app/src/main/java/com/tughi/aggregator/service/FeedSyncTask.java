@@ -78,7 +78,8 @@ import java.util.ArrayList;
                 feedSyncValues.put(FeedColumns.LINK, result.feed.link);
                 feedSyncValues.put(FeedColumns.ENTRY_COUNT, result.feed.entries.size());
                 batch.add(
-                        ContentProviderOperation.newUpdate(Uris.newSyncFeedUri(feedId))
+                        ContentProviderOperation
+                                .newUpdate(Uris.newSyncFeedUri(feedId))
                                 .withValues(feedSyncValues)
                                 .build()
                 );
@@ -89,11 +90,12 @@ import java.util.ArrayList;
                     entryValues.put(EntryColumns.FEED_ID, feedId);
                     entryValues.put(EntryColumns.GUID, entry.id);
                     entryValues.put(EntryColumns.TITLE, entry.title);
-                    entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp);
+                    entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp != 0 ? entry.updatedTimestamp : poll);
                     entryValues.put(EntryColumns.POLL, poll);
                     entryValues.put(EntryColumns.DATA, entry.title);
                     batch.add(
-                            ContentProviderOperation.newInsert(feedEntriesUri)
+                            ContentProviderOperation
+                                    .newInsert(feedEntriesUri)
                                     .withValues(entryValues)
                                     .build()
                     );
