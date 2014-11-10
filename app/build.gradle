@@ -45,7 +45,6 @@ task generateDrawables << {
 
     generateDrawable('ic_launcher', null, 48, 48, ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi'])
 
-    generateDrawable('ic_launcher', 'ic_activity', 32, 32)
     generateDrawable('favicon_placeholder', null, 16, 16)
 
     generateDrawable('ic_action_add', null, 24, 24)
