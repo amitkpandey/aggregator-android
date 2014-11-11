@@ -18,7 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.tughi.aggregator.BuildConfig;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
@@ -109,6 +111,15 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         }.execute(applicationContext, id);
     }
 
+    private static final String[] FEED_PROJECTION = {
+            FeedColumns.ID,
+            FeedColumns.TITLE,
+            FeedColumns.NEXT_SYNC,
+    };
+    private static final int FEED_ID = 0;
+    private static final int FEED_TITLE = 1;
+    private static final int FEED_NEXT_SYNC = 2;
+
     private static final String ENTRY_SELECTION = EntryColumns.RO_FLAG_READ + " = 0";
     private static final String ENTRY_ORDER = EntryColumns.UPDATED + " ASC";
 
@@ -116,7 +127,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case LOADER_FEED:
-                return new CursorLoader(applicationContext, feedUri, null, null, null, null);
+                return new CursorLoader(applicationContext, feedUri, FEED_PROJECTION, null, null, null);
             case LOADER_ENTRIES:
                 return new CursorLoader(applicationContext, entriesUri, EntryListAdapter.ENTRY_PROJECTION, ENTRY_SELECTION, null, ENTRY_ORDER);
         }
@@ -132,7 +143,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 // update the activity title
                 if (cursor.moveToFirst()) {
                     String title;
-                    switch (cursor.getInt(cursor.getColumnIndex(FeedColumns.ID))) {
+                    switch (cursor.getInt(FEED_ID)) {
                         case -2:
                             title = getString(R.string.starred_feed);
                             break;
@@ -140,9 +151,16 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                             title = getString(R.string.unread_feed);
                             break;
                         default:
-                            title = cursor.getString(cursor.getColumnIndex(FeedColumns.TITLE));
+                            title = cursor.getString(FEED_TITLE);
                     }
                     getActivity().setTitle(title);
+
+                    if (BuildConfig.DEBUG) {
+                        if (feedId > 0) {
+                            String text = String.format("Next sync: %tc", cursor.getLong(FEED_NEXT_SYNC));
+                            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }
                 break;
             case LOADER_ENTRIES:

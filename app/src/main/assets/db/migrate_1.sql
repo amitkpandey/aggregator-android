@@ -107,8 +107,8 @@ CREATE VIEW feed_view AS
         NULL AS favicon,
         NULL AS etag,
         NULL AS modified,
-        -1 AS update_mode,
-        0 AS next_sync,
+        NULL AS update_mode,
+        NULL AS next_sync,
         (SELECT COUNT(1) FROM entry_view WHERE flag_read = 0) AS unread_count
     UNION
         SELECT
@@ -120,8 +120,8 @@ CREATE VIEW feed_view AS
             NULL AS favicon,
             NULL AS etag,
             NULL AS modified,
-            -1 AS update_mode,
-            0 AS next_sync,
+            NULL AS update_mode,
+            NULL AS next_sync,
             (SELECT COUNT(1) FROM entry_view WHERE flag_star = 1) AS unread_count
         UNION
             SELECT
