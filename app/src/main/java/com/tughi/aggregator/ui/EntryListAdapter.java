@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.EntryColumns;
 
@@ -28,12 +29,14 @@ import java.util.Calendar;
             EntryColumns.TITLE,
             EntryColumns.UPDATED,
             EntryColumns.FEED_TITLE,
+            EntryColumns.FEED_FAVICON,
             EntryColumns.FLAG_READ,
     };
     public static final int ENTRY_TITLE_INDEX = 1;
     public static final int ENTRY_UPDATED_INDEX = 2;
     public static final int ENTRY_FEED_TITLE_INDEX = 3;
-    public static final int ENTRY_FLAG_READ_INDEX = 4;
+    public static final int ENTRY_FEED_FAVICON_INDEX = 4;
+    public static final int ENTRY_FLAG_READ_INDEX = 5;
 
     private Context context;
 
@@ -69,6 +72,7 @@ import java.util.Calendar;
 
         ViewTag tag = new ViewTag();
         tag.titleTextView = (TextView) view.findViewById(R.id.title);
+        tag.faviconImageView = (ImageView) view.findViewById(R.id.favicon);
         tag.feedTextView = (TextView) view.findViewById(R.id.feed);
         tag.dateTextView = (TextView) view.findViewById(R.id.date);
         tag.stateImageView = (ImageView) view.findViewById(R.id.state);
@@ -90,6 +94,15 @@ import java.util.Calendar;
         tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
         if (tag.headerTextView != null) {
             tag.headerTextView.setText(tag.section);
+        }
+
+        if (!cursor.isNull(ENTRY_FEED_FAVICON_INDEX)) {
+            Picasso.with(context)
+                    .load(cursor.getString(ENTRY_FEED_FAVICON_INDEX))
+                    .placeholder(R.drawable.favicon_placeholder)
+                    .into(tag.faviconImageView);
+        } else {
+            tag.faviconImageView.setImageResource(R.drawable.favicon_placeholder);
         }
     }
 
@@ -170,6 +183,7 @@ import java.util.Calendar;
         private String section;
 
         private TextView titleTextView;
+        private ImageView faviconImageView;
         private TextView feedTextView;
         private TextView dateTextView;
         private ImageView stateImageView;

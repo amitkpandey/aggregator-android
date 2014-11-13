@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
+import com.tughi.aggregator.feeds.FaviconFinder;
 import com.tughi.aggregator.feeds.FeedParser;
 import com.tughi.aggregator.feeds.FeedParserException;
 
@@ -48,6 +49,7 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
 
     private String feedUrl;
     private String feedTitle;
+    private String feedFavicon;
 
     private EditText titleEditText;
 
@@ -121,14 +123,17 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
                 syncFeedValues.put(FeedColumns.TITLE, feedTitle);
                 Uri syncFeedUri = contentResolver.insert(Uris.newSyncFeedsUri(), syncFeedValues);
 
+                long feedId = Long.parseLong(syncFeedUri.getLastPathSegment());
+
+                // add user values
+                ContentValues userFeedValues = new ContentValues();
+                userFeedValues.put(FeedColumns.FAVICON, feedFavicon);
                 if (customFeedTitle.length() > 0 && !customFeedTitle.equals(feedTitle)) {
                     // set custom title
-                    long feedId = Long.parseLong(syncFeedUri.getLastPathSegment());
-
-                    ContentValues userFeedValues = new ContentValues();
                     userFeedValues.put(FeedColumns.TITLE, customFeedTitle);
-                    contentResolver.update(Uris.newUserFeedUri(feedId), userFeedValues, null, null);
                 }
+                contentResolver.update(Uris.newUserFeedUri(feedId), userFeedValues, null, null);
+
                 return Boolean.TRUE;
             }
         }.execute();
@@ -156,6 +161,7 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         FeedLoader feedLoader = (FeedLoader) loader;
         feedTitle = feedLoader.result.feed.title;
+        feedFavicon = feedLoader.feedFavicon;
 
         titleEditText.setText(feedTitle);
         entryListAdapter.swapCursor(cursor);
@@ -171,6 +177,7 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
         private final String feedUrl;
 
         private volatile FeedParser.Result result;
+        private volatile String feedFavicon;
 
         public FeedLoader(Context context, String feedUrl) {
             super(context);
@@ -186,8 +193,16 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
                 URLConnection urlConnection = url.openConnection();
                 result = FeedParser.parse(urlConnection);
 
-                // build cursor
                 if (result.status == HttpURLConnection.HTTP_OK) {
+                    // load favicon
+                    try {
+                        feedFavicon = FaviconFinder.find(new URL(result.feed.link).openConnection()).faviconUrl;
+                    } catch (Exception exception) {
+                        // not fatal
+                        Log.w(getClass().getName(), "Failed to find the favicon", exception);
+                    }
+
+                    // build cursor
                     MatrixCursor cursor = new MatrixCursor(EntryListAdapter.ENTRY_PROJECTION, result.feed.entries.size());
 
                     for (FeedParser.Result.Feed.Entry entry : result.feed.entries) {
@@ -196,6 +211,7 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
                                 .add(entry.title)
                                 .add(entry.updatedTimestamp)
                                 .add(result.feed.title)
+                                .add(feedFavicon)
                                 .add(0);
                     }
 

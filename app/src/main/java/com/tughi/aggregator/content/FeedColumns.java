@@ -12,6 +12,11 @@ public interface FeedColumns {
     public static final String TITLE = "title";
 
     /**
+     * Contains the favicon URL.
+     */
+    public static final String FAVICON = "favicon";
+
+    /**
      * Contains the home of the feed as URL string.
      */
     public static final String LINK = "link";

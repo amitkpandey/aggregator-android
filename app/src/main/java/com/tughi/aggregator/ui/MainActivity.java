@@ -19,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
@@ -206,11 +208,13 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     private static final String[] FEED_PROJECTION = {
             FeedColumns.ID,
             FeedColumns.TITLE,
+            FeedColumns.FAVICON,
             FeedColumns.UNREAD_COUNT
     };
     private static final int FEED_ID_INDEX = 0;
     private static final int FEED_TITLE_INDEX = 1;
-    private static final int FEED_UNREAD_COUNT_INDEX = 2;
+    private static final int FEED_FAVICON_INDEX = 2;
+    private static final int FEED_UNREAD_COUNT_INDEX = 3;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -248,6 +252,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             ViewTag tag = new ViewTag();
             tag.titleTextView = (TextView) view.findViewById(R.id.title);
             tag.unreadCountTextView = (TextView) view.findViewById(R.id.unread_count);
+            tag.faviconImageView = (ImageView) view.findViewById(R.id.favicon);
             view.setTag(tag);
 
             return view;
@@ -256,17 +261,21 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ViewTag tag = (ViewTag) view.getTag();
+            int faviconPlaceholder;
 
             // set feed title
             switch (cursor.getInt(FEED_ID_INDEX)) {
                 case -1:
                     tag.titleTextView.setText(R.string.unread_feed);
+                    faviconPlaceholder = R.drawable.favicon_unread;
                     break;
                 case -2:
                     tag.titleTextView.setText(R.string.starred_feed);
+                    faviconPlaceholder = R.drawable.favicon_starred;
                     break;
                 default:
                     tag.titleTextView.setText(cursor.getString(FEED_TITLE_INDEX));
+                    faviconPlaceholder = R.drawable.favicon_placeholder;
             }
 
             // set feed unread items count
@@ -276,11 +285,22 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
             } else {
                 tag.unreadCountTextView.setVisibility(View.GONE);
             }
+
+            // set feed favicon
+            if (!cursor.isNull(FEED_FAVICON_INDEX)) {
+                Picasso.with(context)
+                        .load(cursor.getString(FEED_FAVICON_INDEX))
+                        .placeholder(faviconPlaceholder)
+                        .into(tag.faviconImageView);
+            } else {
+                tag.faviconImageView.setImageResource(faviconPlaceholder);
+            }
         }
 
         private class ViewTag {
             private TextView titleTextView;
             private TextView unreadCountTextView;
+            private ImageView faviconImageView;
         }
 
     }

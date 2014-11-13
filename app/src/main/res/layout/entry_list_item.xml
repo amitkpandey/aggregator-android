@@ -15,20 +15,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.tughi.aggregator.ui.SpecialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <com.tughi.aggregator.ui.BaselinedImageView
+            android:id="@+id/favicon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption">
-
-            <ImageView
-                android:id="@+id/favicon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/favicon_placeholder" />
-
-        </com.tughi.aggregator.ui.SpecialTextView>
+            android:scaleType="fitXY"
+            android:src="@drawable/favicon_placeholder"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
         <TextView
             android:id="@+id/feed"
@@ -47,20 +43,15 @@
             android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-        <com.tughi.aggregator.ui.SpecialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <com.tughi.aggregator.ui.BaselinedImageView
+            android:id="@+id/state"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption">
-
-            <ImageView
-                android:id="@+id/state"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/entry_state_blue" />
-
-        </com.tughi.aggregator.ui.SpecialTextView>
+            android:src="@drawable/entry_state_blue"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
     </LinearLayout>
 
