@@ -34,10 +34,7 @@ import com.tughi.aggregator.feeds.FaviconFinder;
 import com.tughi.aggregator.feeds.FeedParser;
 import com.tughi.aggregator.feeds.FeedParserException;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * A {@link Fragment} used to preview and configure a feed before adding.
@@ -189,14 +186,12 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
         public Cursor loadInBackground() {
             try {
                 // parse feed
-                URL url = new URL(feedUrl);
-                URLConnection urlConnection = url.openConnection();
-                result = FeedParser.parse(urlConnection);
+                result = FeedParser.parse(feedUrl);
 
                 if (result.status == HttpURLConnection.HTTP_OK) {
                     // load favicon
                     try {
-                        feedFavicon = FaviconFinder.find(new URL(result.feed.link).openConnection()).faviconUrl;
+                        feedFavicon = FaviconFinder.find(result.feed.link).faviconUrl;
                     } catch (Exception exception) {
                         // not fatal
                         Log.w(getClass().getName(), "Failed to find the favicon", exception);
@@ -217,8 +212,6 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
 
                     return cursor;
                 }
-            } catch (IOException exception) {
-                Log.e(getClass().getName(), "Loader failed", exception);
             } catch (FeedParserException exception) {
                 Log.e(getClass().getName(), "Loader failed", exception);
             }

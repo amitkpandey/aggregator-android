@@ -21,8 +21,6 @@ import com.tughi.aggregator.feeds.FeedParserException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -56,13 +54,10 @@ import java.util.ArrayList;
         Log.i(getClass().getName(), "Updating feed " + feedId);
 
         try {
-            // open connection
-            URLConnection connection = new URL(feedUrl).openConnection();
-
             // parse feed
             FeedParser.Result result;
             try {
-                result = FeedParser.parse(connection);
+                result = FeedParser.parse(feedUrl);
             } catch (FeedParserException exception) {
                 throw new IOException(exception);
             }
@@ -73,7 +68,7 @@ import java.util.ArrayList;
 
                 // update feed values
                 ContentValues feedSyncValues = new ContentValues();
-                feedSyncValues.put(FeedColumns.URL, connection.getURL().toString());
+                feedSyncValues.put(FeedColumns.URL, result.url);
                 feedSyncValues.put(FeedColumns.TITLE, result.feed.title);
                 feedSyncValues.put(FeedColumns.LINK, result.feed.link);
                 feedSyncValues.put(FeedColumns.ENTRY_COUNT, result.feed.entries.size());
