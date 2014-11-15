@@ -61,7 +61,7 @@ public class BaselinedImageView extends ImageView {
             throw new IllegalArgumentException("The provided height must be exact");
         }
 
-        setBaseline((height - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top);
+        setBaseline((height - fontMetrics.descent + fontMetrics.ascent) / 2 - fontMetrics.ascent);
     }
 
 }

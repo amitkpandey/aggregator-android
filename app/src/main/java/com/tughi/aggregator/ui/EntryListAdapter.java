@@ -87,9 +87,13 @@ import java.util.Calendar;
         ViewTag tag = (ViewTag) view.getTag();
         tag.section = sections.get(cursor.getPosition());
         tag.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE_INDEX)));
-        int flagRead = cursor.getInt(ENTRY_FLAG_READ_INDEX);
-        tag.titleTextView.setTypeface(flagRead == 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        tag.stateImageView.setImageLevel(flagRead);
+        if (cursor.getInt(ENTRY_FLAG_READ_INDEX) == 0) {
+            tag.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
+            tag.stateImageView.setActivated(true);
+        } else {
+            tag.titleTextView.setTypeface(Typeface.DEFAULT);
+            tag.stateImageView.setActivated(false);
+        }
         tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
         tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
         if (tag.headerTextView != null) {
