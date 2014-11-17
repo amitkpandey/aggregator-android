@@ -14,11 +14,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:21.0.0'
-    compile 'com.squareup.picasso:picasso:2.4.0'
     compile project(':sqlite')
     compile project(':core')
     compile project(':xml')
+    compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.android.support:recyclerview-v7:21.0.0'
+    compile 'com.squareup.picasso:picasso:2.4.0'
 }
 
 task generateDrawables << {

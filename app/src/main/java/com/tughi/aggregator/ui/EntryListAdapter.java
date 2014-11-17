@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -22,7 +23,7 @@ import java.util.Calendar;
 /**
  * A {@link CursorAdapter} used to populate a {@link SectionListView} with feed entries.
  */
-/*local*/ class EntryListAdapter extends CursorAdapter implements SectionListAdapter {
+/*local*/ class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.ViewHolder> implements SectionListAdapter {
 
     public static final String[] ENTRY_PROJECTION = {
             EntryColumns.ID,
@@ -49,19 +50,28 @@ import java.util.Calendar;
 
     private SparseArray<String> sections = new SparseArray<String>(2000);
 
-    public EntryListAdapter(Context context) {
-        super(context, null, false);
+    private Cursor cursor;
 
+    public EntryListAdapter(Context context) {
         this.context = context;
 
         timeFormat = android.text.format.DateFormat.getTimeFormat(context);
         dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
     }
 
+    public void setCursor(Cursor cursor) {
+        this.cursor = cursor;
+
+        sections.clear();
+        updateSections();
+
+        notifyDataSetChanged();
+    }
+
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layout;
-        switch (getItemViewType(cursor.getPosition())) {
+        switch (viewType) {
             case 1:
                 layout = R.layout.entry_list_header_item;
                 break;
@@ -69,22 +79,17 @@ import java.util.Calendar;
                 layout = R.layout.entry_list_item;
         }
         View view = LayoutInflater.from(context).inflate(layout, parent, false);
-
-        ViewTag tag = new ViewTag();
-        tag.titleTextView = (TextView) view.findViewById(R.id.title);
-        tag.faviconImageView = (ImageView) view.findViewById(R.id.favicon);
-        tag.feedTextView = (TextView) view.findViewById(R.id.feed);
-        tag.dateTextView = (TextView) view.findViewById(R.id.date);
-        tag.stateImageView = (ImageView) view.findViewById(R.id.state);
-        tag.headerTextView = (TextView) view.findViewById(R.id.header);
-        view.setTag(tag);
-
-        return view;
+        return new ViewHolder(view);
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        ViewTag tag = (ViewTag) view.getTag();
+    public void onBindViewHolder(ViewHolder tag, int position) {
+        Cursor cursor = this.cursor;
+
+        if (!cursor.moveToPosition(position)) {
+            throw new IllegalStateException("Invalid cursor position: " + position);
+        }
+
         tag.section = sections.get(cursor.getPosition());
         tag.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE_INDEX)));
         if (cursor.getInt(ENTRY_FLAG_READ_INDEX) == 0) {
@@ -108,15 +113,6 @@ import java.util.Calendar;
         } else {
             tag.faviconImageView.setImageResource(R.drawable.favicon_placeholder);
         }
-    }
-
-    @Override
-    public Cursor swapCursor(Cursor newCursor) {
-        sections.clear();
-
-        updateSections();
-
-        return super.swapCursor(newCursor);
     }
 
     /**
@@ -158,15 +154,20 @@ import java.util.Calendar;
     }
 
     @Override
-    public int getViewTypeCount() {
-        return 2;
+    public int getItemCount() {
+        return cursor != null ? cursor.getCount() : 0;
     }
 
     @Override
     public String getItemSection(int position) {
         String section = sections.get(position);
+
+        if (!cursor.moveToPosition(position)) {
+            throw new IllegalStateException("Invalid cursor position: " + position);
+        }
+
         if (section == null) {
-            section = getItemSection((Cursor) getItem(position));
+            section = getItemSection(cursor);
             sections.put(position, section);
         }
         return section;
@@ -183,7 +184,7 @@ import java.util.Calendar;
         return dateFormat.format(updated);
     }
 
-    private class ViewTag implements SectionTag {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private String section;
 
         private TextView titleTextView;
@@ -193,7 +194,17 @@ import java.util.Calendar;
         private ImageView stateImageView;
         private TextView headerTextView;
 
-        @Override
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            titleTextView = (TextView) itemView.findViewById(R.id.title);
+            faviconImageView = (ImageView) itemView.findViewById(R.id.favicon);
+            feedTextView = (TextView) itemView.findViewById(R.id.feed);
+            dateTextView = (TextView) itemView.findViewById(R.id.date);
+            stateImageView = (ImageView) itemView.findViewById(R.id.state);
+            headerTextView = (TextView) itemView.findViewById(R.id.header);
+        }
+
         public String getSection() {
             return section;
         }

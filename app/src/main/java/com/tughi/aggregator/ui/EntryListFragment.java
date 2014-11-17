@@ -1,15 +1,13 @@
 package com.tughi.aggregator.ui;
 
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.tughi.aggregator.BuildConfig;
@@ -27,10 +24,10 @@ import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
 
 /**
- * A {@link ListFragment} for feed entries.
+ * A {@link Fragment} for feed entries.
  * The displayed entries depend on the provided entries {@link Uri}.
  */
-public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EntryListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * The entries {@link Uri}
@@ -58,7 +55,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         feedId = Long.parseLong(entriesUri.getPathSegments().get(1));
         feedUri = Uris.newFeedUri(feedId);
 
-        setListAdapter(adapter = new EntryListAdapter(applicationContext));
+        adapter = new EntryListAdapter(applicationContext);
 
         getLoaderManager().initLoader(LOADER_FEED, null, this);
         getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
@@ -71,6 +68,12 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.entry_list_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        SectionListView listView = (SectionListView) view.findViewById(R.id.entries);
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -95,21 +98,21 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onListItemClick(ListView view, View itemView, int position, long id) {
-        // mark entry as read
-        new AsyncTask<Object, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Object... params) {
-                final Context context = (Context) params[0];
-                final long id = (Long) params[1];
-
-                ContentValues values = new ContentValues();
-                values.put(EntryColumns.FLAG_READ, true);
-                return context.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
-            }
-        }.execute(applicationContext, id);
-    }
+//    @Override
+//    public void onListItemClick(ListView view, View itemView, int position, long id) {
+//        // mark entry as read
+//        new AsyncTask<Object, Void, Boolean>() {
+//            @Override
+//            protected Boolean doInBackground(Object... params) {
+//                final Context context = (Context) params[0];
+//                final long id = (Long) params[1];
+//
+//                ContentValues values = new ContentValues();
+//                values.put(EntryColumns.FLAG_READ, true);
+//                return context.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
+//            }
+//        }.execute(applicationContext, id);
+//    }
 
     private static final String[] FEED_PROJECTION = {
             FeedColumns.ID,
@@ -164,7 +167,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 }
                 break;
             case LOADER_ENTRIES:
-                adapter.swapCursor(cursor);
+                adapter.setCursor(cursor);
                 break;
         }
     }
@@ -173,7 +176,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         if (loader.getId() == LOADER_ENTRIES) {
             // release the loader's cursor
-            adapter.swapCursor(null);
+            adapter.setCursor(null);
         }
     }
 

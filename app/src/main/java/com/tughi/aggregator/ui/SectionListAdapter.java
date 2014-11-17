@@ -1,12 +1,11 @@
 package com.tughi.aggregator.ui;
 
-import android.widget.ListAdapter;
+import android.support.v7.widget.RecyclerView;
 
 /**
- * Extends the {@link ListAdapter} with the {@link #getItemSection(int)} method
- * which is required by {@link SectionListView}.
+ * Additional interface to be implemented by {@link RecyclerView.Adapter}s that contain sections.
  */
-public interface SectionListAdapter extends ListAdapter {
+public interface SectionListAdapter {
 
     /**
      * Returns the section of a specific item.

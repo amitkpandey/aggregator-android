@@ -16,6 +16,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -78,7 +79,7 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
             titleEditText.setText(feedTitle);
         }
 
-        ListView listView = (ListView) view.findViewById(R.id.entries);
+        RecyclerView listView = (RecyclerView) view.findViewById(R.id.entries);
         listView.setAdapter(entryListAdapter);
 
         return view;
@@ -161,12 +162,12 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
         feedFavicon = feedLoader.feedFavicon;
 
         titleEditText.setText(feedTitle);
-        entryListAdapter.swapCursor(cursor);
+        entryListAdapter.setCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        entryListAdapter.swapCursor(null);
+        entryListAdapter.setCursor(null);
     }
 
     private static class FeedLoader extends AsyncTaskLoader<Cursor> {
