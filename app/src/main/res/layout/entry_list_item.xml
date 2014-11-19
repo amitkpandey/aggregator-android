@@ -3,27 +3,46 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
+    <FrameLayout
         android:id="@+id/swipe_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|left"
-        android:paddingLeft="16dp"
-        android:paddingRight="0dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/accent"
+        android:visibility="gone">
 
-    <TextView
+        <TextView
+            android:id="@+id/swipe_left_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:paddingLeft="16dp"
+            android:paddingRight="0dp"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/swipe_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|right"
-        android:paddingLeft="0dp"
-        android:paddingRight="16dp"
-        android:text="@string/junk"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="@color/junk"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/junk"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/swipe_right_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:paddingLeft="0dp"
+            android:paddingRight="16dp"
+            android:text="@string/junk"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textStyle="bold" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/swipe_content"

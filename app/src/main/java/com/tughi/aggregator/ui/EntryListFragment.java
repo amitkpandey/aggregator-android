@@ -186,6 +186,11 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
         }.execute();
     }
 
+    private void markEntryJunk(final long id) {
+        // TODO: mark entry as junk
+        Toast.makeText(applicationContext, "Not implemented", Toast.LENGTH_SHORT).show();
+    }
+
     /**
      * A {@link RecyclerView.OnItemTouchListener} that detects an item swipe.
      */
@@ -288,11 +293,11 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                     velocityTracker.addMovement(event);
 
                     if (deltaX < 0) {
-                        viewHolder.swipeLeftTextView.setVisibility(View.GONE);
-                        viewHolder.swipeRightTextView.setVisibility(View.VISIBLE);
+                        viewHolder.swipeLeftView.setVisibility(View.GONE);
+                        viewHolder.swipeRightView.setVisibility(View.VISIBLE);
                     } else {
-                        viewHolder.swipeLeftTextView.setVisibility(View.VISIBLE);
-                        viewHolder.swipeRightTextView.setVisibility(View.GONE);
+                        viewHolder.swipeLeftView.setVisibility(View.VISIBLE);
+                        viewHolder.swipeRightView.setVisibility(View.GONE);
                     }
 
                     // move view
@@ -303,20 +308,20 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                 }
                 case MotionEvent.ACTION_UP: {
                     velocityTracker.addMovement(event);
+                    velocityTracker.computeCurrentVelocity(1000, maximumFlingVelocity);
+                    final float velocity = velocityTracker.getXVelocity();
 
-                    boolean swipe = false;
-                    boolean swipeRight = false;
+                    final boolean swipe;
+                    final boolean swipeRight;
                     if (Math.abs(deltaX) > width / 2) {
                         swipe = true;
                         swipeRight = deltaX > 0;
+                    } else if (Math.abs(velocity) >= minimumFlingVelocity && velocity * deltaX > 0) {
+                        swipe = true;
+                        swipeRight = velocity > 0;
                     } else {
-                        velocityTracker.computeCurrentVelocity(1000, maximumFlingVelocity);
-                        final float velocity = velocityTracker.getXVelocity();
-
-                        if (Math.abs(velocity) >= minimumFlingVelocity && velocity * deltaX > 0) {
-                            swipe = true;
-                            swipeRight = velocity > 0;
-                        }
+                        swipe = false;
+                        swipeRight = false;
                     }
 
                     if (swipe) {
@@ -331,7 +336,11 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                                 .setListener(new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
-                                        markEntryRead(entryId, entryNewRead);
+                                        if (swipeRight) {
+                                            markEntryRead(entryId, entryNewRead);
+                                        } else {
+                                            markEntryJunk(entryId);
+                                        }
                                     }
                                 });
                     } else {

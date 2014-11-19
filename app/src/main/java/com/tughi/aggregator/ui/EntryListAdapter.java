@@ -215,8 +215,9 @@ import java.util.Calendar;
         final TextView headerTextView;
 
         final View swipeContentView;
+        final View swipeLeftView;
         final TextView swipeLeftTextView;
-        final TextView swipeRightTextView;
+        final View swipeRightView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -229,8 +230,9 @@ import java.util.Calendar;
             headerTextView = (TextView) itemView.findViewById(R.id.header);
 
             swipeContentView = itemView.findViewById(R.id.swipe_content);
-            swipeLeftTextView = (TextView) itemView.findViewById(R.id.swipe_left);
-            swipeRightTextView = (TextView) itemView.findViewById(R.id.swipe_right);
+            swipeLeftView = itemView.findViewById(R.id.swipe_left);
+            swipeLeftTextView = (TextView) swipeLeftView.findViewById(R.id.swipe_left_text);
+            swipeRightView = itemView.findViewById(R.id.swipe_right);
         }
 
         public String getSection() {
