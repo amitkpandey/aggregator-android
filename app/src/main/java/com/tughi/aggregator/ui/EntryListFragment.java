@@ -348,7 +348,8 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                         swipeContentView.animate()
                                 .translationX(0)
                                 .alpha(1)
-                                .setDuration(animationTime);
+                                .setDuration(animationTime)
+                                .setListener(null);
                     }
 
                     break;
