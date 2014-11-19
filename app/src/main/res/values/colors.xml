@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#ff424242</color>
+    <color name="background">#ff212121</color>
     <color name="primary">#ff3f51b5</color>
     <color name="primary_dark">#ff303f9f</color>
     <color name="accent">#ffff9100</color>
     <color name="pressed_shade">#33000000</color>
     <color name="sync_log">#1fffffff</color>
     <color name="drawer">#ffffb74d</color>
+    <color name="entry_list_item">#ff424242</color>
+    <color name="junk">#ffd50000</color>
 </resources>

@@ -9,11 +9,16 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.MotionEventCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -72,8 +77,9 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        SectionListView listView = (SectionListView) view.findViewById(R.id.entries);
-        listView.setAdapter(adapter);
+        RecyclerView entriesRecyclerView = (RecyclerView) view.findViewById(R.id.entries);
+        entriesRecyclerView.setAdapter(adapter);
+        entriesRecyclerView.addOnItemTouchListener(new OnItemTouchListener());
     }
 
     @Override
@@ -178,6 +184,160 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
             // release the loader's cursor
             adapter.setCursor(null);
         }
+    }
+
+    /**
+     * A {@link RecyclerView.OnItemTouchListener} that detects an item swipe.
+     */
+    private class OnItemTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private final float touchSlopSquare;
+        private final int minimumFlingVelocity;
+        private final int maximumFlingVelocity;
+        private final int animationTime;
+
+        private MotionEvent downEvent;
+        private float downX;
+        private float downY;
+
+        private boolean swipeDetection;
+
+        private VelocityTracker velocityTracker;
+
+        private EntryListAdapter.ViewHolder viewHolder;
+
+        private OnItemTouchListener() {
+            ViewConfiguration configuration = ViewConfiguration.get(applicationContext);
+            final int touchSlop = configuration.getScaledTouchSlop();
+            touchSlopSquare = touchSlop * touchSlop;
+            minimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
+            maximumFlingVelocity = configuration.getScaledMaximumFlingVelocity();
+
+            animationTime = applicationContext.getResources().getInteger(android.R.integer.config_shortAnimTime);
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+            final float x = event.getX();
+            final float y = event.getY();
+
+            switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                    swipeDetection = true;
+
+                    downX = x;
+                    downY = y;
+
+                    if (downEvent != null) {
+                        downEvent.recycle();
+                    }
+                    downEvent = MotionEvent.obtain(event);
+
+                    if (velocityTracker != null) {
+                        velocityTracker.recycle();
+                    }
+                    velocityTracker = VelocityTracker.obtain();
+                    velocityTracker.addMovement(event);
+
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if (swipeDetection) {
+                        final int deltaX = (int) (x - downX);
+                        final int deltaY = (int) (y - downY);
+                        final int distance = (deltaX * deltaX) + (deltaY * deltaY);
+                        if (distance > touchSlopSquare) {
+                            // scroll detected
+
+                            swipeDetection = false;
+
+                            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                                // swipe detected
+
+                                View itemView = recyclerView.findChildViewUnder(downX, downY);
+                                if (itemView != null) {
+                                    viewHolder = (EntryListAdapter.ViewHolder) recyclerView.getChildViewHolder(itemView);
+
+                                    // start swiping
+                                    onTouchEvent(recyclerView, event);
+
+                                    // receive next swipe events in onTouchEvent(...)
+                                    return true;
+                                }
+                            }
+                        } else {
+                            velocityTracker.addMovement(event);
+                        }
+                    }
+
+                    break;
+            }
+
+            // intercept next event
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+            final View swipeContentView = viewHolder.swipeContentView;
+            final float width = swipeContentView.getWidth();
+
+            final float deltaX = event.getX() - downX;
+
+            switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
+                case MotionEvent.ACTION_MOVE: {
+                    velocityTracker.addMovement(event);
+
+                    if (deltaX < 0) {
+                        viewHolder.swipeLeftTextView.setVisibility(View.GONE);
+                        viewHolder.swipeRightTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        viewHolder.swipeLeftTextView.setVisibility(View.VISIBLE);
+                        viewHolder.swipeRightTextView.setVisibility(View.GONE);
+                    }
+
+                    // move view
+                    swipeContentView.setTranslationX(deltaX);
+                    swipeContentView.setAlpha(1 - Math.abs(deltaX) / width);
+
+                    break;
+                }
+                case MotionEvent.ACTION_UP: {
+                    velocityTracker.addMovement(event);
+
+                    boolean swipe = false;
+                    boolean swipeRight = false;
+                    if (Math.abs(deltaX) > width / 2) {
+                        swipe = true;
+                        swipeRight = deltaX > 0;
+                    } else {
+                        velocityTracker.computeCurrentVelocity(1000, maximumFlingVelocity);
+                        final float velocity = velocityTracker.getXVelocity();
+
+                        if (Math.abs(velocity) >= minimumFlingVelocity && velocity * deltaX > 0) {
+                            swipe = true;
+                            swipeRight = velocity > 0;
+                        }
+                    }
+
+                    if (swipe) {
+                        // swiped
+                        swipeContentView.animate()
+                                .translationX(swipeRight ? width : -width)
+                                .alpha(0)
+                                .setDuration(animationTime);
+                    } else {
+                        // swipe canceled
+                        swipeContentView.animate()
+                                .translationX(0)
+                                .alpha(1)
+                                .setDuration(animationTime);
+                    }
+
+                    break;
+                }
+            }
+        }
+
     }
 
 }

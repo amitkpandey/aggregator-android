@@ -48,7 +48,7 @@ import java.util.Calendar;
     private long todayStart;
     private long yesterdayStart;
 
-    private SparseArray<String> sections = new SparseArray<String>(2000);
+    private SparseArray<String> sections = new SparseArray<String>();
 
     private Cursor cursor;
 
@@ -83,35 +83,37 @@ import java.util.Calendar;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder tag, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Cursor cursor = this.cursor;
 
         if (!cursor.moveToPosition(position)) {
             throw new IllegalStateException("Invalid cursor position: " + position);
         }
 
-        tag.section = sections.get(cursor.getPosition());
-        tag.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE_INDEX)));
+        holder.section = sections.get(cursor.getPosition());
+        holder.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE_INDEX)));
         if (cursor.getInt(ENTRY_FLAG_READ_INDEX) == 0) {
-            tag.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
-            tag.stateImageView.setActivated(true);
+            holder.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
+            holder.stateImageView.setActivated(true);
+            holder.swipeLeftTextView.setText(R.string.read);
         } else {
-            tag.titleTextView.setTypeface(Typeface.DEFAULT);
-            tag.stateImageView.setActivated(false);
+            holder.titleTextView.setTypeface(Typeface.DEFAULT);
+            holder.stateImageView.setActivated(false);
+            holder.swipeLeftTextView.setText(R.string.unread);
         }
-        tag.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
-        tag.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
-        if (tag.headerTextView != null) {
-            tag.headerTextView.setText(tag.section);
+        holder.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
+        holder.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
+        if (holder.headerTextView != null) {
+            holder.headerTextView.setText(holder.section);
         }
 
         if (!cursor.isNull(ENTRY_FEED_FAVICON_INDEX)) {
             Picasso.with(context)
                     .load(cursor.getString(ENTRY_FEED_FAVICON_INDEX))
                     .placeholder(R.drawable.favicon_placeholder)
-                    .into(tag.faviconImageView);
+                    .into(holder.faviconImageView);
         } else {
-            tag.faviconImageView.setImageResource(R.drawable.favicon_placeholder);
+            holder.faviconImageView.setImageResource(R.drawable.favicon_placeholder);
         }
     }
 
@@ -187,12 +189,16 @@ import java.util.Calendar;
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private String section;
 
-        private TextView titleTextView;
-        private ImageView faviconImageView;
-        private TextView feedTextView;
-        private TextView dateTextView;
-        private ImageView stateImageView;
-        private TextView headerTextView;
+        final TextView titleTextView;
+        final ImageView faviconImageView;
+        final TextView feedTextView;
+        final TextView dateTextView;
+        final ImageView stateImageView;
+        final TextView headerTextView;
+
+        final View swipeContentView;
+        final TextView swipeLeftTextView;
+        final TextView swipeRightTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -203,11 +209,16 @@ import java.util.Calendar;
             dateTextView = (TextView) itemView.findViewById(R.id.date);
             stateImageView = (ImageView) itemView.findViewById(R.id.state);
             headerTextView = (TextView) itemView.findViewById(R.id.header);
+
+            swipeContentView = itemView.findViewById(R.id.swipe_content);
+            swipeLeftTextView = (TextView) itemView.findViewById(R.id.swipe_left);
+            swipeRightTextView = (TextView) itemView.findViewById(R.id.swipe_right);
         }
 
         public String getSection() {
             return section;
         }
+
     }
 
 }

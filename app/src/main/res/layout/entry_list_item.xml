@@ -1,68 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="12dp"
-    android:paddingEnd="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingStart="16dp"
-    android:paddingTop="12dp">
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/swipe_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:paddingLeft="16dp"
+        android:paddingRight="0dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/swipe_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:paddingLeft="0dp"
+        android:paddingRight="16dp"
+        android:text="@string/junk"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="@color/junk"
+        android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/swipe_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@color/entry_list_item"
+        android:orientation="vertical"
+        android:paddingBottom="12dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
 
-        <com.tughi.aggregator.ui.BaselinedImageView
-            android:id="@+id/favicon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/favicon_placeholder"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+            <com.tughi.aggregator.ui.BaselinedImageView
+                android:id="@+id/favicon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginRight="8dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/favicon_placeholder"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+            <TextView
+                android:id="@+id/feed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+
+            <com.tughi.aggregator.ui.BaselinedImageView
+                android:id="@+id/state"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/entry_state"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/feed"
-            android:layout_width="0dp"
+            android:id="@+id/title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_weight="1"
-            android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-
-        <com.tughi.aggregator.ui.BaselinedImageView
-            android:id="@+id/state"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/entry_state"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-</LinearLayout>
+</FrameLayout>
