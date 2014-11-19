@@ -1,13 +1,17 @@
 package com.tughi.aggregator.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
@@ -104,22 +108,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onListItemClick(ListView view, View itemView, int position, long id) {
-//        // mark entry as read
-//        new AsyncTask<Object, Void, Boolean>() {
-//            @Override
-//            protected Boolean doInBackground(Object... params) {
-//                final Context context = (Context) params[0];
-//                final long id = (Long) params[1];
-//
-//                ContentValues values = new ContentValues();
-//                values.put(EntryColumns.FLAG_READ, true);
-//                return context.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
-//            }
-//        }.execute(applicationContext, id);
-//    }
-
     private static final String[] FEED_PROJECTION = {
             FeedColumns.ID,
             FeedColumns.TITLE,
@@ -184,6 +172,18 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
             // release the loader's cursor
             adapter.setCursor(null);
         }
+    }
+
+    private void markEntryRead(final long id, final boolean read) {
+        // mark entry as read
+        new AsyncTask<Object, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Object... params) {
+                ContentValues values = new ContentValues();
+                values.put(EntryColumns.FLAG_READ, read);
+                return applicationContext.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
+            }
+        }.execute();
     }
 
     /**
@@ -320,11 +320,20 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                     }
 
                     if (swipe) {
+                        final long entryId = viewHolder.getItemId();
+                        final boolean entryNewRead = !viewHolder.isRead();
+
                         // swiped
                         swipeContentView.animate()
                                 .translationX(swipeRight ? width : -width)
                                 .alpha(0)
-                                .setDuration(animationTime);
+                                .setDuration(animationTime)
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        markEntryRead(entryId, entryNewRead);
+                                    }
+                                });
                     } else {
                         // swipe canceled
                         swipeContentView.animate()

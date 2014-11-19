@@ -33,11 +33,12 @@ import java.util.Calendar;
             EntryColumns.FEED_FAVICON,
             EntryColumns.FLAG_READ,
     };
-    public static final int ENTRY_TITLE_INDEX = 1;
-    public static final int ENTRY_UPDATED_INDEX = 2;
-    public static final int ENTRY_FEED_TITLE_INDEX = 3;
-    public static final int ENTRY_FEED_FAVICON_INDEX = 4;
-    public static final int ENTRY_FLAG_READ_INDEX = 5;
+    public static final int ENTRY_ID = 0;
+    public static final int ENTRY_TITLE = 1;
+    public static final int ENTRY_UPDATED = 2;
+    public static final int ENTRY_FEED_TITLE = 3;
+    public static final int ENTRY_FEED_FAVICON = 4;
+    public static final int ENTRY_FLAG_READ = 5;
 
     private Context context;
 
@@ -57,6 +58,8 @@ import java.util.Calendar;
 
         timeFormat = android.text.format.DateFormat.getTimeFormat(context);
         dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
+
+        setHasStableIds(true);
     }
 
     public void setCursor(Cursor cursor) {
@@ -90,26 +93,31 @@ import java.util.Calendar;
             throw new IllegalStateException("Invalid cursor position: " + position);
         }
 
+        holder.swipeContentView.setTranslationX(0);
+        holder.swipeContentView.setAlpha(1);
+
         holder.section = sections.get(cursor.getPosition());
-        holder.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE_INDEX)));
-        if (cursor.getInt(ENTRY_FLAG_READ_INDEX) == 0) {
+        holder.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE)));
+        if (cursor.getInt(ENTRY_FLAG_READ) == 0) {
+            holder.read = false;
             holder.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
             holder.stateImageView.setActivated(true);
             holder.swipeLeftTextView.setText(R.string.read);
         } else {
+            holder.read = true;
             holder.titleTextView.setTypeface(Typeface.DEFAULT);
             holder.stateImageView.setActivated(false);
             holder.swipeLeftTextView.setText(R.string.unread);
         }
-        holder.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE_INDEX));
-        holder.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED_INDEX)));
+        holder.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE));
+        holder.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED)));
         if (holder.headerTextView != null) {
             holder.headerTextView.setText(holder.section);
         }
 
-        if (!cursor.isNull(ENTRY_FEED_FAVICON_INDEX)) {
+        if (!cursor.isNull(ENTRY_FEED_FAVICON)) {
             Picasso.with(context)
-                    .load(cursor.getString(ENTRY_FEED_FAVICON_INDEX))
+                    .load(cursor.getString(ENTRY_FEED_FAVICON))
                     .placeholder(R.drawable.favicon_placeholder)
                     .into(holder.faviconImageView);
         } else {
@@ -156,6 +164,15 @@ import java.util.Calendar;
     }
 
     @Override
+    public long getItemId(int position) {
+        if (cursor.moveToPosition(position)) {
+            return cursor.getLong(ENTRY_ID);
+        }
+
+        throw new IllegalArgumentException("Invalid position: " + position);
+    }
+
+    @Override
     public int getItemCount() {
         return cursor != null ? cursor.getCount() : 0;
     }
@@ -176,7 +193,7 @@ import java.util.Calendar;
     }
 
     private String getItemSection(Cursor cursor) {
-        long updated = cursor.getLong(ENTRY_UPDATED_INDEX);
+        long updated = cursor.getLong(ENTRY_UPDATED);
         if (updated >= todayStart) {
             return context.getString(R.string.today);
         }
@@ -188,6 +205,7 @@ import java.util.Calendar;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private String section;
+        private boolean read;
 
         final TextView titleTextView;
         final ImageView faviconImageView;
@@ -217,6 +235,10 @@ import java.util.Calendar;
 
         public String getSection() {
             return section;
+        }
+
+        public boolean isRead() {
+            return read;
         }
 
     }
