@@ -5,8 +5,7 @@ CREATE TABLE feed_sync (
     title TEXT,
     link TEXT,
     etag TEXT,
-    modified TEXT,
-    entry_count INTEGER NOT NULL DEFAULT 0
+    modified TEXT
 );
 
 -- the feed_user table is updated by the user
@@ -19,17 +18,19 @@ CREATE TABLE feed_user (
 );
 
 -- a trigger that inserts a new feed_user row for each new feed_sync
-CREATE TRIGGER create_feed_user
+CREATE TRIGGER after_insert_feed_sync
     AFTER INSERT ON feed_sync
     BEGIN
         INSERT INTO feed_user (_id) VALUES (NEW._id);
     END;
 
--- a trigger that deletes the associated feed_user when a feed_sync is deleted
-CREATE TRIGGER delete_feed_user
+-- a trigger that deletes the feed data when a feed_sync is deleted
+CREATE TRIGGER after_delete_feed_sync
     AFTER DELETE ON feed_sync
     BEGIN
         DELETE FROM feed_user WHERE _id = OLD._id;
+        DELETE FROM entry_sync WHERE feed_id = OLD._id;
+        DELETE FROM sync_log WHERE feed_id = OLD._id;
     END;
 
 -- the entry_sync table is updated by the sync service
@@ -58,14 +59,14 @@ CREATE TABLE entry_user (
 );
 
 -- a trigger that inserts a new entry_user row for each new entry_sync
-CREATE TRIGGER create_entry_user
+CREATE TRIGGER after_insert_entry_sync
     AFTER INSERT ON entry_sync
     BEGIN
         INSERT INTO entry_user (feed_id, guid, poll) VALUES (NEW.feed_id, NEW.guid, NEW.poll);
     END;
 
 -- a trigger that deletes the associated entry_user when an entry_sync is deleted
-CREATE TRIGGER delete_entry_user
+CREATE TRIGGER after_delete_entry_sync
     AFTER DELETE ON entry_sync
     BEGIN
         DELETE FROM entry_user WHERE feed_id = OLD.feed_id AND guid = OLD.guid;
@@ -143,24 +144,19 @@ CREATE VIEW feed_view AS
                 feed_user._id = feed_sync._id
             ORDER BY _type, title;
 
--- a view for the feed updates
-CREATE VIEW sync_log AS
-    SELECT
-        feed_sync._id AS feed_id,
-        entry_user.poll AS poll,
-        COUNT(1) AS entry_count,
-        feed_sync.entry_count AS entry_count_max
-    FROM
-        feed_sync,
-        entry_user
-    WHERE
-        feed_sync._id = entry_user.feed_id
-    GROUP BY entry_user.poll, feed_sync._id
-    ORDER BY entry_user.poll DESC;
+-- a table that tracks all feed syncs
+CREATE TABLE sync_log (
+    feed_id INTEGER NOT NULL,
+    poll INTEGER NOT NULL,
+    error TEXT,
+    entries_total INTEGER,
+    entries_new INTEGER
+);
 
+-- a trigger that updates the entries_new column for each new sync_log
+CREATE TRIGGER after_insert_sync_log
+    AFTER INSERT ON sync_log
+    BEGIN
+        UPDATE sync_log SET entries_new = (SELECT COUNT(1) FROM entry_user es WHERE es.feed_id = NEW.feed_id AND es.poll = NEW.poll) WHERE feed_id = NEW.feed_id;
+    END;
 
--- add test feed
-INSERT INTO feed_sync (url, title, link) VALUES ('http://www.tughi.com/feed', 'Tughi''s Blog', 'http://www.tughi.com');
-
--- add test feed
-INSERT INTO feed_sync (url, title, link) VALUES ('https://github.com/tughi.atom', 'Tughi''s Github', 'https://github.com/tughi');

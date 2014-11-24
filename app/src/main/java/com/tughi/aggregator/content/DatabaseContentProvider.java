@@ -29,6 +29,7 @@ public class DatabaseContentProvider extends ContentProvider {
     private static final String TABLE_FEED_USER = "feed_user";
     private static final String TABLE_ENTRY_SYNC = "entry_sync";
     private static final String TABLE_ENTRY_USER = "entry_user";
+    private static final String TABLE_SYNC_LOG = "sync_log";
 
     private static final String VIEW_FEED = "feed_view";
     private static final String VIEW_ENTRY = "entry_view";
@@ -113,6 +114,8 @@ public class DatabaseContentProvider extends ContentProvider {
                 return insertEntry(uri, values);
             case Uris.MATCHED_SYNC_FEEDS_URI:
                 return insertFeed(uri, values);
+            case Uris.MATCHED_FEEDS_SYNC_LOG_URI:
+                return insertSyncLog(uri, values);
         }
 
         throw new UnsupportedOperationException(uri.toString());
@@ -154,6 +157,18 @@ public class DatabaseContentProvider extends ContentProvider {
         }
 
         return Uris.newSyncFeedUri(feedId);
+    }
+
+    public Uri insertSyncLog(Uri uri, ContentValues values) {
+        SQLiteDatabase database = helper.getWritableDatabase();
+
+        long feedId = database.insert(TABLE_SYNC_LOG, null, values);
+
+        if (feedId > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return null;
     }
 
     @Override

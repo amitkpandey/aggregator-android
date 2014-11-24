@@ -15,6 +15,7 @@ import com.tughi.aggregator.content.DatabaseContentProvider;
 import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.FeedUpdateModes;
+import com.tughi.aggregator.content.SyncLogColumns;
 import com.tughi.aggregator.content.Uris;
 import com.tughi.aggregator.feeds.FeedParser;
 import com.tughi.aggregator.feeds.FeedParserException;
@@ -51,7 +52,13 @@ import java.util.ArrayList;
 
         final Uri feedEntriesUri = Uris.newFeedEntriesUri(feedId);
 
+        final ContentResolver contentResolver = context.getContentResolver();
+
         Log.i(getClass().getName(), "Updating feed " + feedId);
+
+        ContentValues syncLogValues = new ContentValues();
+        syncLogValues.put(SyncLogColumns.FEED_ID, feedId);
+        syncLogValues.put(SyncLogColumns.POLL, poll);
 
         try {
             // parse feed
@@ -62,67 +69,73 @@ import java.util.ArrayList;
                 throw new IOException(exception);
             }
 
-            if (result.status == HttpURLConnection.HTTP_OK) {
-                // prepare content batch
-                ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>(result.feed.entries.size() + 1);
+            if (result.status != HttpURLConnection.HTTP_OK) {
+                throw new IOException("unexpected HTTP response: " + result.status);
+            }
 
-                // update feed values
-                ContentValues feedSyncValues = new ContentValues();
-                feedSyncValues.put(FeedColumns.URL, result.url);
-                feedSyncValues.put(FeedColumns.TITLE, result.feed.title);
-                feedSyncValues.put(FeedColumns.LINK, result.feed.link);
-                feedSyncValues.put(FeedColumns.ENTRY_COUNT, result.feed.entries.size());
+            syncLogValues.put(SyncLogColumns.ENTRIES_TOTAL, result.feed.entries.size());
+
+            // prepare content batch
+            ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>(result.feed.entries.size() + 1);
+
+            // update feed values
+            ContentValues feedSyncValues = new ContentValues();
+            feedSyncValues.put(FeedColumns.URL, result.url);
+            feedSyncValues.put(FeedColumns.TITLE, result.feed.title);
+            feedSyncValues.put(FeedColumns.LINK, result.feed.link);
+            batch.add(
+                    ContentProviderOperation
+                            .newUpdate(Uris.newSyncFeedUri(feedId))
+                            .withValues(feedSyncValues)
+                            .build()
+            );
+
+            for (FeedParser.Result.Feed.Entry entry : result.feed.entries) {
+                // insert/update feed entry
+                ContentValues entryValues = new ContentValues();
+                entryValues.put(EntryColumns.FEED_ID, feedId);
+                entryValues.put(EntryColumns.GUID, entry.id);
+                entryValues.put(EntryColumns.TITLE, entry.title);
+                entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp != null ? entry.updatedTimestamp : poll);
+                entryValues.put(EntryColumns.POLL, poll);
+                entryValues.put(EntryColumns.DATA, entry.title);
                 batch.add(
                         ContentProviderOperation
-                                .newUpdate(Uris.newSyncFeedUri(feedId))
-                                .withValues(feedSyncValues)
+                                .newInsert(feedEntriesUri)
+                                .withValues(entryValues)
                                 .build()
                 );
+            }
 
-                for (FeedParser.Result.Feed.Entry entry : result.feed.entries) {
-                    // insert/update feed entry
-                    ContentValues entryValues = new ContentValues();
-                    entryValues.put(EntryColumns.FEED_ID, feedId);
-                    entryValues.put(EntryColumns.GUID, entry.id);
-                    entryValues.put(EntryColumns.TITLE, entry.title);
-                    entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp != null ? entry.updatedTimestamp : poll);
-                    entryValues.put(EntryColumns.POLL, poll);
-                    entryValues.put(EntryColumns.DATA, entry.title);
-                    batch.add(
-                            ContentProviderOperation
-                                    .newInsert(feedEntriesUri)
-                                    .withValues(entryValues)
-                                    .build()
-                    );
-                }
-
-                // execute batch
-                ContentResolver contentResolver = context.getContentResolver();
-                try {
-                    contentResolver.applyBatch(DatabaseContentProvider.AUTHORITY, batch);
-
-                    contentResolver.notifyChange(Uris.newFeedsUri(), null);
-                    contentResolver.notifyChange(Uris.newSyncFeedsUri(), null);
-                } catch (Exception exception) {
-                    throw new IOException("batch failed", exception);
-                }
-
-                // schedule next sync
-                ContentValues feedUserValues = new ContentValues();
-                feedUserValues.put(FeedColumns.NEXT_SYNC, findNextSync(feedId, feedUpdateMode, poll));
-                contentResolver.update(Uris.newUserFeedUri(feedId), feedUserValues, null, null);
-
-                FeedSyncScheduler.scheduleAlarm(context, poll);
-            } else {
-                Log.w(getClass().getName(), "feed update failed: " + result.status);
+            // execute batch
+            try {
+                contentResolver.applyBatch(DatabaseContentProvider.AUTHORITY, batch);
+            } catch (Exception exception) {
+                throw new IOException("batch failed", exception);
             }
         } catch (IOException exception) {
+            syncLogValues.put(SyncLogColumns.ERROR, exception.getMessage());
+
             if (BuildConfig.DEBUG) {
                 Log.w(getClass().getName(), "feed update failed", exception);
             } else {
                 Log.w(getClass().getName(), "feed update failed: " + exception.getMessage());
             }
+        } finally {
+            // update sync log
+            contentResolver.insert(Uris.newFeedsSyncLogUri(), syncLogValues);
+
+            // update next sync
+            ContentValues feedUserValues = new ContentValues();
+            feedUserValues.put(FeedColumns.NEXT_SYNC, findNextSync(feedId, feedUpdateMode, poll));
+            contentResolver.update(Uris.newUserFeedUri(feedId), feedUserValues, null, null);
+
+            // schedule next sync
+            FeedSyncScheduler.scheduleAlarm(context, poll);
         }
+
+        contentResolver.notifyChange(Uris.newFeedsUri(), null);
+        contentResolver.notifyChange(Uris.newSyncFeedsUri(), null);
 
         return null;
     }

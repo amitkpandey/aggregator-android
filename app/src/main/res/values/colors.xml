@@ -6,6 +6,7 @@
     <color name="accent">#ffff9100</color>
     <color name="pressed_shade">#33000000</color>
     <color name="sync_log">#1fffffff</color>
+    <color name="sync_error">#42d50000</color>
     <color name="drawer">#ffffb74d</color>
     <color name="entry_list_item">#ff424242</color>
     <color name="junk">#ffd50000</color>

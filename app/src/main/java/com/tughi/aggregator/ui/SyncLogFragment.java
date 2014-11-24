@@ -35,12 +35,14 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
     private static final String[] SYNC_LOG_PROJECTION = {
             SyncLogColumns.POLL,
-            SyncLogColumns.ENTRY_COUNT,
-            SyncLogColumns.ENTRY_COUNT_MAX,
+            SyncLogColumns.ERROR,
+            SyncLogColumns.ENTRIES_TOTAL,
+            SyncLogColumns.ENTRIES_NEW,
     };
     private static final int SYNC_LOG_POLL = 0;
-    private static final int SYNC_LOG_ENTRY_COUNT = 1;
-    private static final int SYNC_LOG_ENTRY_COUNT_MAX = 2;
+    private static final int SYNC_LOG_ERROR = 1;
+    private static final int SYNC_LOG_ENTRIES_TOTAL = 2;
+    private static final int SYNC_LOG_ENTRIES_NEW = 3;
 
     private Context context;
 
@@ -83,11 +85,12 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
             ArrayList<LogItem> logItemList = new ArrayList<LogItem>(cursor.getCount());
 
             do {
-                LogItem lastLogItem = new LogItem();
-                lastLogItem.poll = cursor.getLong(SYNC_LOG_POLL);
-                lastLogItem.entryCount = cursor.getInt(SYNC_LOG_ENTRY_COUNT);
-                lastLogItem.entryCountMax = Math.max(cursor.getInt(SYNC_LOG_ENTRY_COUNT_MAX), lastLogItem.entryCountMax);
-                logItemList.add(lastLogItem);
+                LogItem logItem = new LogItem();
+                logItem.poll = cursor.getLong(SYNC_LOG_POLL);
+                logItem.error = cursor.getString(SYNC_LOG_ERROR);
+                logItem.entriesTotal = cursor.getInt(SYNC_LOG_ENTRIES_TOTAL);
+                logItem.entriesNew = cursor.getInt(SYNC_LOG_ENTRIES_NEW);
+                logItemList.add(logItem);
             } while (cursor.moveToNext());
 
             syncLogView.setLogItems(logItemList.toArray(new LogItem[logItemList.size()]));
@@ -101,8 +104,9 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
     private class LogItem {
         private long poll;
-        private long entryCount;
-        private long entryCountMax;
+        private String error;
+        private long entriesNew;
+        private long entriesTotal;
     }
 
     /**
@@ -112,7 +116,8 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
         private int step;
 
-        private Paint rulerPaint;
+        private Paint logPaint;
+        private Paint errorPaint;
 
         private LogItem[] logItems;
 
@@ -129,10 +134,13 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
             step = strokeWidth + strokeWidth / 2;
 
-            rulerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            rulerPaint.setColor(resources.getColor(R.color.sync_log));
-            rulerPaint.setStrokeWidth(strokeWidth);
-            rulerPaint.setStrokeCap(Paint.Cap.ROUND);
+            logPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            logPaint.setColor(resources.getColor(R.color.sync_log));
+            logPaint.setStrokeWidth(strokeWidth);
+            logPaint.setStrokeCap(Paint.Cap.ROUND);
+
+            errorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            errorPaint.setColor(resources.getColor(R.color.sync_error));
         }
 
         public void setLogItems(LogItem[] logItems) {
@@ -158,16 +166,19 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
             int width = getWidth();
             int height = getHeight();
-            canvas.drawLine(0, height / 2, width, height / 2, rulerPaint);
+            canvas.drawLine(0, height / 2, width, height / 2, logPaint);
 
             if (logItems != null && scaleFactor > 0) {
                 int size = logItems.length;
                 for (int index = 0; index < size; index++) {
                     LogItem logItem = logItems[index];
-                    int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - (int) rulerPaint.getStrokeWidth() / 2;
-                    float y = (logItem.entryCount * height / 2 / logItem.entryCountMax) * scaleFactor;
-
-                    canvas.drawLine(x, height / 2 - y, x, height / 2 + y, rulerPaint);
+                    int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - (int) logPaint.getStrokeWidth() / 2;
+                    if (logItem.error == null) {
+                        float y = (logItem.entriesNew * height / 2 / logItem.entriesTotal) * scaleFactor;
+                        canvas.drawLine(x, height / 2 - y, x, height / 2 + y, logPaint);
+                    } else {
+                        canvas.drawCircle(x, height / 2, step / 2, errorPaint);
+                    }
                 }
             }
         }

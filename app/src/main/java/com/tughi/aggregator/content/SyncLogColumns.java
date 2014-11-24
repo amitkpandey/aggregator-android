@@ -9,8 +9,10 @@ public interface SyncLogColumns {
 
     public static final String POLL = "poll";
 
-    public static final String ENTRY_COUNT = "entry_count";
+    public static final String ERROR = "error";
 
-    public static final String ENTRY_COUNT_MAX = "entry_count_max";
+    public static final String ENTRIES_TOTAL = "entries_total";
+
+    public static final String ENTRIES_NEW = "entries_new";
 
 }
