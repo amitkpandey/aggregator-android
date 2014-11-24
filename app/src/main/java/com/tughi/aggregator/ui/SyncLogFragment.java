@@ -174,7 +174,7 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                     LogItem logItem = logItems[index];
                     int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - (int) logPaint.getStrokeWidth() / 2;
                     if (logItem.error == null) {
-                        float y = (logItem.entriesNew * height / 2 / logItem.entriesTotal) * scaleFactor;
+                        float y = (logItem.entriesNew * height / logItem.entriesTotal) / 2 * scaleFactor;
                         canvas.drawLine(x, height / 2 - y, x, height / 2 + y, logPaint);
                     } else {
                         canvas.drawCircle(x, height / 2, step / 2, errorPaint);

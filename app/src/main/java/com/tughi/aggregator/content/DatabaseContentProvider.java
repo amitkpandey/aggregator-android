@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.tughi.aggregator.BuildConfig;
 import com.tughi.android.database.sqlite.DatabaseOpenHelper;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
  */
 public class DatabaseContentProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "com.tughi.aggregator";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID;
 
     private SQLiteOpenHelper helper;
 
