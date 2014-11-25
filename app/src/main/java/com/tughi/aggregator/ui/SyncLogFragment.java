@@ -118,8 +118,9 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
         private int step;
 
         private Paint logPaint;
-        private final int logPaintAlpha;
+        private int logPaintAlpha;
         private Paint errorPaint;
+        private int errorPaintAlpha;
 
         private LogItem[] logItems;
 
@@ -144,6 +145,7 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
             errorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             errorPaint.setColor(resources.getColor(R.color.sync_error));
+            errorPaintAlpha = errorPaint.getAlpha();
         }
 
         public void setLogItems(LogItem[] logItems) {
@@ -167,6 +169,7 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
         protected void onDraw(Canvas canvas) {
             if (scaleFactor > 0) {
                 logPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * logPaintAlpha), 255)));
+                errorPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * errorPaintAlpha), 255)));
 
                 int width = getWidth();
                 int height = getHeight();
@@ -180,10 +183,10 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                         LogItem logItem = logItems[index];
                         int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - stroke / 2;
                         if (logItem.error == null) {
-                            float y = (logItem.entriesNew * height / logItem.entriesTotal) / 2 * scaleFactor;
+                            float y = (step + (logItem.entriesNew * (height - step) / logItem.entriesTotal) / 2) * scaleFactor;
                             canvas.drawLine(x, height / 2 - y, x, height / 2 + y, logPaint);
                         } else {
-                            canvas.drawCircle(x, height / 2, logPaint.getStrokeWidth(), errorPaint);
+                            canvas.drawCircle(x, height / 2, step / 2, errorPaint);
                         }
                     }
                 }
