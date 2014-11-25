@@ -150,13 +150,16 @@ CREATE TABLE sync_log (
     poll INTEGER NOT NULL,
     error TEXT,
     entries_total INTEGER,
-    entries_new INTEGER
+    entries_new INTEGER,
+    UNIQUE (feed_id, poll)
 );
 
 -- a trigger that updates the entries_new column for each new sync_log
 CREATE TRIGGER after_insert_sync_log
     AFTER INSERT ON sync_log
     BEGIN
-        UPDATE sync_log SET entries_new = (SELECT COUNT(1) FROM entry_user es WHERE es.feed_id = NEW.feed_id AND es.poll = NEW.poll) WHERE feed_id = NEW.feed_id;
+        UPDATE sync_log
+            SET entries_new = (SELECT COUNT(1) FROM entry_user es WHERE es.feed_id = NEW.feed_id AND es.poll = NEW.poll)
+            WHERE feed_id = NEW.feed_id AND poll = NEW.poll;
     END;
 

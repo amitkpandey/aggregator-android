@@ -114,9 +114,11 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
      */
     private class SyncLogView extends View {
 
+        private int stroke;
         private int step;
 
         private Paint logPaint;
+        private final int logPaintAlpha;
         private Paint errorPaint;
 
         private LogItem[] logItems;
@@ -127,16 +129,17 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
             super(context);
 
             Resources resources = context.getResources();
-            int strokeWidth = Math.round(resources.getDisplayMetrics().density * 2);
-            if (strokeWidth % 2 == 1) {
-                strokeWidth++;
+            stroke = Math.round(resources.getDisplayMetrics().density * 2);
+            if (stroke % 2 == 1) {
+                stroke++;
             }
 
-            step = strokeWidth + strokeWidth / 2;
+            step = stroke + stroke / 2;
 
             logPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             logPaint.setColor(resources.getColor(R.color.sync_log));
-            logPaint.setStrokeWidth(strokeWidth);
+            logPaintAlpha = logPaint.getAlpha();
+            logPaint.setStrokeWidth(stroke);
             logPaint.setStrokeCap(Paint.Cap.ROUND);
 
             errorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -162,22 +165,26 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
         @Override
         protected void onDraw(Canvas canvas) {
-            long currentTime = System.currentTimeMillis();
+            if (scaleFactor > 0) {
+                logPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * logPaintAlpha), 255)));
 
-            int width = getWidth();
-            int height = getHeight();
-            canvas.drawLine(0, height / 2, width, height / 2, logPaint);
+                int width = getWidth();
+                int height = getHeight();
+                canvas.drawLine(0, height / 2, width, height / 2, logPaint);
 
-            if (logItems != null && scaleFactor > 0) {
-                int size = logItems.length;
-                for (int index = 0; index < size; index++) {
-                    LogItem logItem = logItems[index];
-                    int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - (int) logPaint.getStrokeWidth() / 2;
-                    if (logItem.error == null) {
-                        float y = (logItem.entriesNew * height / logItem.entriesTotal) / 2 * scaleFactor;
-                        canvas.drawLine(x, height / 2 - y, x, height / 2 + y, logPaint);
-                    } else {
-                        canvas.drawCircle(x, height / 2, step / 2, errorPaint);
+                long currentTime = System.currentTimeMillis();
+
+                if (logItems != null) {
+                    int size = logItems.length;
+                    for (int index = 0; index < size; index++) {
+                        LogItem logItem = logItems[index];
+                        int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - stroke / 2;
+                        if (logItem.error == null) {
+                            float y = (logItem.entriesNew * height / logItem.entriesTotal) / 2 * scaleFactor;
+                            canvas.drawLine(x, height / 2 - y, x, height / 2 + y, logPaint);
+                        } else {
+                            canvas.drawCircle(x, height / 2, logPaint.getStrokeWidth(), errorPaint);
+                        }
                     }
                 }
             }
