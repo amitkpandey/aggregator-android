@@ -239,6 +239,12 @@ import java.util.ArrayList;
             nextSync = (nextSync / TIME_15_MINUTES) * TIME_15_MINUTES + TIME_15_MINUTES;
         }
 
+        // next sync cannot be in the past
+        long earliestSync = (System.currentTimeMillis() / TIME_15_MINUTES) * TIME_15_MINUTES + TIME_15_MINUTES;
+        if (earliestSync > nextSync) {
+            nextSync = earliestSync;
+        }
+
         return nextSync;
     }
 
