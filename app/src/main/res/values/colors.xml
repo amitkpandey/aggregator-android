@@ -9,5 +9,6 @@
     <color name="sync_error">#42d50000</color>
     <color name="drawer">#ff29b6f6</color>
     <color name="entry_list_item">#ff424242</color>
+    <color name="entry_list_divider">#31212121</color>
     <color name="junk">#ffd50000</color>
 </resources>

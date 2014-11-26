@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -50,7 +51,7 @@
         android:layout_height="wrap_content"
         android:background="@color/entry_list_item"
         android:orientation="vertical"
-        android:paddingBottom="12dp"
+        android:paddingBottom="14dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="12dp">
@@ -60,21 +61,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-
-            <com.tughi.aggregator.ui.BaselinedImageView
-                android:id="@+id/favicon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="8dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/favicon_placeholder"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
             <TextView
                 android:id="@+id/feed"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
                 android:layout_marginRight="16dp"
                 android:layout_weight="1"
                 android:textAllCaps="true"
@@ -87,6 +78,31 @@
                 android:gravity="center_vertical"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.tughi.aggregator.ui.BaselinedImageView
+                android:id="@+id/favicon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginRight="8dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/favicon_placeholder"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
             <com.tughi.aggregator.ui.BaselinedImageView
                 android:id="@+id/state"
@@ -94,19 +110,17 @@
                 android:layout_height="16dp"
                 android:layout_marginLeft="8dp"
                 android:src="@drawable/entry_state"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1sp"
+        android:layout_gravity="bottom"
+        android:background="@color/entry_list_divider"
+        tools:ignore="SmallSp" />
 
 </FrameLayout>
