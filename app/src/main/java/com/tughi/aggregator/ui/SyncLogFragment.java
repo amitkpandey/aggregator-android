@@ -143,7 +143,7 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
             logPaint.setStrokeWidth(stroke);
             logPaint.setStrokeCap(Paint.Cap.ROUND);
 
-            errorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            errorPaint = new Paint(logPaint);
             errorPaint.setColor(resources.getColor(R.color.sync_error));
             errorPaintAlpha = errorPaint.getAlpha();
         }
@@ -183,10 +183,11 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                         LogItem logItem = logItems[index];
                         int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - stroke / 2;
                         if (logItem.error == null) {
-                            float y = (step + (logItem.entriesNew * (height - step) / logItem.entriesTotal) / 2) * scaleFactor;
+                            float y = (step / 2 + (logItem.entriesNew * (height - step / 2) / logItem.entriesTotal) / 2) * scaleFactor;
                             canvas.drawLine(x, height / 2 - y, x, height / 2 + y, logPaint);
                         } else {
-                            canvas.drawCircle(x, height / 2, step / 2, errorPaint);
+                            float y = (step / 2) * scaleFactor;
+                            canvas.drawLine(x, height / 2 - y, x, height / 2 + y, errorPaint);
                         }
                     }
                 }

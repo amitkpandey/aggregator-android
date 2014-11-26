@@ -148,69 +148,98 @@ import java.util.ArrayList;
         }
     }
 
+    private static final long TIME_15_MINUTES = 15 * 60 * 1000;
+    private static final long TIME_30_MINUTES = TIME_15_MINUTES * 2;
+    private static final long TIME_60_MINUTES = TIME_30_MINUTES * 2;
+    private static final long TIME_03_HOURS = TIME_60_MINUTES * 3;
+    private static final long TIME_06_HOURS = TIME_60_MINUTES * 6;
+    private static final long TIME_12_HOURS = TIME_60_MINUTES * 12;
+    private static final long TIME_24_HOURS = TIME_60_MINUTES * 24;
+    private static final long TIME_02_DAYS = TIME_24_HOURS * 2;
+    private static final long TIME_03_DAYS = TIME_24_HOURS * 3;
+    private static final long TIME_04_DAYS = TIME_24_HOURS * 4;
+    private static final long TIME_07_DAYS = TIME_24_HOURS * 7;
+
     private long findNextAutoSync(long feedId, long poll) {
         ContentResolver contentResolver = context.getContentResolver();
 
         Uri feedEntriesUri = Uris.newFeedEntriesUri(feedId);
-        final String[] projection = {EntryColumns.ID};
+        final String[] projection = {EntryColumns.UPDATED};
         final String selection = EntryColumns.UPDATED + " >= CAST(? AS INTEGER)";
         final String[] selectionArgs = new String[1];
+        final String sortOrder = EntryColumns.UPDATED + " DESC";
         Cursor cursor;
 
+        long lastUpdated = poll;
+
         // get aggregated number of entries in the last 24 hours
-        selectionArgs[0] = Long.toString(poll - 86400000);
-        cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, null);
+        selectionArgs[0] = Long.toString(poll - TIME_24_HOURS);
+        cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, sortOrder);
         int day_entries = cursor.getCount();
+        if (cursor.moveToFirst()) {
+            lastUpdated = Math.min(lastUpdated, cursor.getLong(0));
+        }
         cursor.close();
 
-        int poll_rate;
+        long poll_rate;
         if (day_entries > 0) {
-            poll_rate = 86400000 / day_entries;
+            poll_rate = TIME_24_HOURS / day_entries;
         } else {
             // get aggregated number of entries in the last 7 * 24 hours
-            selectionArgs[0] = Long.toString(poll - 604800000);
-            cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, null);
+            selectionArgs[0] = Long.toString(poll - TIME_07_DAYS);
+            cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, sortOrder);
             int week_entries = cursor.getCount();
+            if (cursor.moveToFirst()) {
+                lastUpdated = Math.min(lastUpdated, cursor.getLong(0));
+            }
             cursor.close();
 
             if (week_entries > 0) {
-                poll_rate = 604800000 / week_entries;
+                poll_rate = TIME_07_DAYS / week_entries;
             } else {
-                poll_rate = 345600000;
+                poll_rate = TIME_04_DAYS;
             }
         }
 
-        if (poll_rate < 1800000) {
+        long nextSync;
+        if (poll_rate < TIME_30_MINUTES) {
             // schedule new poll in 15 minutes
-            return poll + 900000;
-        } else if (poll_rate < 3600000) {
+            nextSync = lastUpdated + TIME_15_MINUTES;
+        } else if (poll_rate < TIME_60_MINUTES) {
             // schedule new poll in 30 minutes
-            return poll + 1800000;
-        } else if (poll_rate < 10800000) {
+            nextSync = lastUpdated + TIME_30_MINUTES;
+        } else if (poll_rate < TIME_03_HOURS) {
             // schedule new poll in 1 hour
-            return poll + 3600000;
-        } else if (poll_rate < 21600000) {
+            nextSync = lastUpdated + TIME_60_MINUTES;
+        } else if (poll_rate < TIME_06_HOURS) {
             // schedule new poll in 3 hours
-            return poll + 10800000;
-        } else if (poll_rate < 43200000) {
+            nextSync = lastUpdated + TIME_03_HOURS;
+        } else if (poll_rate < TIME_12_HOURS) {
             // schedule new poll in 6 hours
-            return poll + 21600000;
-        } else if (poll_rate < 86400000) {
+            nextSync = lastUpdated + TIME_06_HOURS;
+        } else if (poll_rate < TIME_24_HOURS) {
             // schedule new poll in 12 hours
-            return poll + 43200000;
-        } else if (poll_rate < 172800000) {
+            nextSync = lastUpdated + TIME_12_HOURS;
+        } else if (poll_rate < TIME_02_DAYS) {
             // schedule new poll in 1 day
-            return poll + 86400000;
-        } else if (poll_rate < 259200000) {
+            nextSync = lastUpdated + TIME_24_HOURS;
+        } else if (poll_rate < TIME_03_DAYS) {
             // schedule new poll in 2 day
-            return poll + 172800000;
-        } else if (poll_rate < 345600000) {
+            nextSync = lastUpdated + TIME_02_DAYS;
+        } else if (poll_rate < TIME_04_DAYS) {
             // schedule new poll in 3 day
-            return poll + 259200000;
+            nextSync = lastUpdated + TIME_03_DAYS;
         } else {
             // schedule new poll in 4 days
-            return poll + 345600000;
+            nextSync = lastUpdated + TIME_04_DAYS;
         }
+
+        // align to a 15 minutes update rate
+        if (nextSync % TIME_15_MINUTES != 0) {
+            nextSync = (nextSync / TIME_15_MINUTES) * TIME_15_MINUTES + TIME_15_MINUTES;
+        }
+
+        return nextSync;
     }
 
     @Override
