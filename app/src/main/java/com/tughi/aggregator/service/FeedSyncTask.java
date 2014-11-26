@@ -96,7 +96,7 @@ import java.util.ArrayList;
                 entryValues.put(EntryColumns.FEED_ID, feedId);
                 entryValues.put(EntryColumns.GUID, entry.id);
                 entryValues.put(EntryColumns.TITLE, entry.title);
-                entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp != null ? entry.updatedTimestamp : poll);
+                entryValues.put(EntryColumns.UPDATED, entry.updatedTimestamp);
                 entryValues.put(EntryColumns.POLL, poll);
                 entryValues.put(EntryColumns.DATA, entry.title);
                 batch.add(
@@ -153,7 +153,7 @@ import java.util.ArrayList;
 
         Uri feedEntriesUri = Uris.newFeedEntriesUri(feedId);
         final String[] projection = {EntryColumns.ID};
-        final String selection = EntryColumns.UPDATED + " >= ?";
+        final String selection = EntryColumns.UPDATED + " >= CAST(? AS INTEGER)";
         final String[] selectionArgs = new String[1];
         Cursor cursor;
 

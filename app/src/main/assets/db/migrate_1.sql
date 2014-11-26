@@ -79,7 +79,7 @@ CREATE VIEW entry_view AS
         entry_user.feed_id AS feed_id,
         entry_user.guid AS guid,
         entry_sync.title AS title,
-        entry_sync.updated AS updated,
+        COALESCE(entry_sync.updated, entry_user.poll) AS updated,
         entry_sync.data AS data,
         entry_user.flag_read AS flag_read,
         entry_user.flag_star AS flag_star,
