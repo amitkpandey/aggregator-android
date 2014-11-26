@@ -23,39 +23,29 @@ dependencies {
 }
 
 task generateDrawables << {
+    def inkscapeCmd = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
+
     def svgDir = new File(projectDir, ['src', 'main', 'svg'].join(File.separator))
     def resDir = new File(projectDir, ['src', 'main', 'res'].join(File.separator))
 
-    def DENSITY_RATIOS = ['mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4]
+    def DENSITIES = [
+            'drawable-mdpi'   : 90,
+            'drawable-hdpi'   : 135,
+            'drawable-xhdpi'  : 180,
+            'drawable-xxhdpi' : 270,
+            'drawable-xxxhdpi': 360
+    ]
 
-    def generateDrawable = { svg, drawable, width, height, densities=['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']->
-        def svgFile = new File(svgDir, svg + '.svg')
-
-        densities.each() { density ->
-            def drawableFile = new File(resDir, 'drawable-' + density + File.separator + (drawable ?: svg) + '.png')
-
-            if (!drawableFile.exists() || drawableFile.lastModified() < svgFile.lastModified()) {
-                def w = (int) width * DENSITY_RATIOS[density]
-                def h = (int) height * DENSITY_RATIOS[density]
-                def command = "inkscape -e $drawableFile -w$w -h$h $svgFile"
-
-                def process = command.execute()
-                process.waitFor()
+    new File(svgDir, 'drawable').eachFileMatch(~/.*\.svg/) { svg ->
+        DENSITIES.each { type, dpi ->
+            def png = new File(new File(resDir, type), svg.name.replace('.svg', '.png'))
+            if (!png.exists() || png.lastModified() < svg.lastModified()) {
+                "$inkscapeCmd -e $png -d$dpi $svg"
+                        .execute()
+                        .waitFor()
             }
         }
     }
-
-    generateDrawable('ic_launcher', null, 48, 48, ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi'])
-
-    generateDrawable('entry_state_default', null, 16, 16)
-    generateDrawable('entry_state_activated', null, 16, 16)
-
-    generateDrawable('favicon_unread', null, 16, 16)
-    generateDrawable('favicon_starred', null, 16, 16)
-    generateDrawable('favicon_placeholder', null, 16, 16)
-
-    generateDrawable('ic_action_add', null, 24, 24)
-    generateDrawable('ic_action_color_lens', null, 24, 24)
-    generateDrawable('ic_action_done', null, 24, 24)
-
 }
+
+preBuild.dependsOn generateDrawables
