@@ -26,7 +26,7 @@ public class FeedSyncScheduler {
     };
     private static final int USER_FEED_NEXT_SYNC = 0;
 
-    private static final String USER_FEED_SELECTION = FeedColumns.NEXT_SYNC + " > :poll:";
+    private static final String USER_FEED_SELECTION = FeedColumns.NEXT_SYNC + " > CAST(? AS INTEGER)";
 
     private static final String USER_FEED_SORT_ORDER = FeedColumns.NEXT_SYNC;
 
@@ -46,8 +46,8 @@ public class FeedSyncScheduler {
         ContentResolver contentResolver = context.getContentResolver();
 
         // find next sync
-        final String selection = USER_FEED_SELECTION.replace(":poll:", Long.toString(poll));
-        Cursor cursor = contentResolver.query(Uris.newUserFeedsUri(), USER_FEED_PROJECTION, selection, null, USER_FEED_SORT_ORDER);
+        final String[] selectionArgs = {Long.toString(poll)};
+        Cursor cursor = contentResolver.query(Uris.newUserFeedsUri(), USER_FEED_PROJECTION, USER_FEED_SELECTION, selectionArgs, USER_FEED_SORT_ORDER);
         if (cursor.moveToFirst()) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

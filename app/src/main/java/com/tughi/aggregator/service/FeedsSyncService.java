@@ -16,6 +16,11 @@ import com.tughi.aggregator.content.Uris;
  */
 public class FeedsSyncService extends IntentService {
 
+    /**
+     * Boolean extra used to force a sync, by ignoring the next sync value.
+     */
+    public static final String EXTRA_FORCE = "force";
+
     private static final String[] FEED_PROJECTION = {
             FeedColumns.ID,
             FeedColumns.URL,
@@ -25,10 +30,6 @@ public class FeedsSyncService extends IntentService {
     private static final int FEED_URL_INDEX = 1;
     private static final int FEED_UPDATE_MODE = 2;
 
-    private static final String FEED_SELECTION = FeedColumns.ID + " > 0 AND "
-            + FeedColumns.UPDATE_MODE + " != " + FeedUpdateModes.DISABLED + " AND "
-            + FeedColumns.NEXT_SYNC + " < :poll:";
-
     public FeedsSyncService() {
         super(FeedsSyncService.class.getSimpleName());
     }
@@ -37,10 +38,20 @@ public class FeedsSyncService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         long poll = System.currentTimeMillis();
 
-        // find feeds to sync
-        String selection = FEED_SELECTION.replace(":poll:", Long.toString(poll));
         ContentResolver contentResolver = this.getContentResolver();
-        Cursor cursor = contentResolver.query(Uris.newFeedsUri(), FEED_PROJECTION, selection, null, null);
+
+        // find feeds to sync
+        Cursor cursor;
+        if (intent.getBooleanExtra(EXTRA_FORCE, false)) {
+            String selection = FeedColumns.ID + " > 0";
+            cursor = contentResolver.query(Uris.newFeedsUri(), FEED_PROJECTION, selection, null, null);
+        } else {
+            String selection = FeedColumns.ID + " > 0 AND "
+                    + FeedColumns.UPDATE_MODE + " != " + FeedUpdateModes.DISABLED + " AND "
+                    + FeedColumns.NEXT_SYNC + " < CAST(? AS INTEGER)";
+            String[] selectionArgs = {Long.toString(poll)};
+            cursor = contentResolver.query(Uris.newFeedsUri(), FEED_PROJECTION, selection, selectionArgs, null);
+        }
         if (cursor.moveToFirst()) {
             do {
                 // sync feed on a separated thread

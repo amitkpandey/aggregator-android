@@ -162,7 +162,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 startActivity(new Intent(this, AddFeedActivity.class));
                 return true;
             case R.id.sync:
-                startService(new Intent(this, FeedsSyncService.class));
+                startService(new Intent(this, FeedsSyncService.class).putExtra(FeedsSyncService.EXTRA_FORCE, true));
                 return true;
         }
 
