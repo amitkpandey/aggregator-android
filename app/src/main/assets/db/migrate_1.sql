@@ -148,6 +148,7 @@ CREATE VIEW feed_view AS
 CREATE TABLE sync_log (
     feed_id INTEGER NOT NULL,
     poll INTEGER NOT NULL,
+    poll_delta INTEGER,
     error TEXT,
     entries_total INTEGER,
     entries_new INTEGER,
@@ -159,7 +160,47 @@ CREATE TRIGGER after_insert_sync_log
     AFTER INSERT ON sync_log
     BEGIN
         UPDATE sync_log
-            SET entries_new = (SELECT COUNT(1) FROM entry_user es WHERE es.feed_id = NEW.feed_id AND es.poll = NEW.poll)
+            SET
+                entries_new = (SELECT COUNT(1) FROM entry_user es WHERE es.feed_id = NEW.feed_id AND es.poll = NEW.poll),
+                poll_delta = NEW.poll - (SELECT sl.poll FROM sync_log sl WHERE sl.feed_id = NEW.feed_id AND sl.poll < NEW.poll AND sl.error IS NULL ORDER BY sl.poll DESC LIMIT 1)
             WHERE feed_id = NEW.feed_id AND poll = NEW.poll;
     END;
 
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://android-developers.blogspot.com/feeds/posts/default');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://feeds.arstechnica.com/arstechnica/index/');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://www.autoblog.com/rss.xml');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://www.bonjourmadame.fr/rss');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://daringfireball.net/feeds/main');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('https://dribbble.com/tags/android.rss');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('https://news.ycombinator.com/rss');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://feeds2.feedburner.com/mangafox/latest_manga_chapters');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://www.questionablecontent.net/QCRSS.xml');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://rss.slashdot.org/Slashdot/slashdot');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://www.theverge.com/rss/index.xml');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('http://www.tughi.com/feed');
+
+-- add test feed
+INSERT INTO feed_sync (url) VALUES ('https://github.com/tughi.atom');

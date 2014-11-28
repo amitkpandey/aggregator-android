@@ -9,6 +9,8 @@ public interface SyncLogColumns {
 
     public static final String POLL = "poll";
 
+    public static final String POLL_DELTA = "poll_delta";
+
     public static final String ERROR = "error";
 
     public static final String ENTRIES_TOTAL = "entries_total";

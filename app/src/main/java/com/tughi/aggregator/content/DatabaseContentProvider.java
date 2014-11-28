@@ -73,6 +73,8 @@ public class DatabaseContentProvider extends ContentProvider {
                 selection = and(SyncLogColumns.FEED_ID + " = " + feedId, selection);
             case Uris.MATCHED_FEEDS_SYNC_LOG_URI:
                 return querySyncLog(uri, projection, selection, selectionArgs, orderBy);
+            case Uris.MATCHED_FEED_SYNC_LOG_STATS_URI:
+                return queryFeedSyncStatsLog(uri, projection, selection, selectionArgs, orderBy);
         }
         throw new UnsupportedOperationException(uri.toString());
     }
@@ -106,6 +108,23 @@ public class DatabaseContentProvider extends ContentProvider {
         Cursor cursor = database.query(VIEW_SYNC_LOG, projection, selection, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
+    }
+
+    private static final String FEED_SYNC_STATS_QUERY = "SELECT " +
+            "COUNT(1) AS " + FeedSyncStatsColumns.POLL_COUNT + "," +
+            SyncLogColumns.POLL + " AS " + FeedSyncStatsColumns.LAST_POLL + "," +
+            SyncLogColumns.ENTRIES_TOTAL + " AS " + FeedSyncStatsColumns.LAST_ENTRIES_TOTAL + "," +
+            SyncLogColumns.ENTRIES_NEW + " AS " + FeedSyncStatsColumns.LAST_ENTRIES_NEW + "," +
+            "AVG(" + SyncLogColumns.POLL_DELTA + ") AS " + FeedSyncStatsColumns.POLL_DELTA_AVERAGE + "," +
+            "AVG(" + SyncLogColumns.ENTRIES_NEW + ") AS " + FeedSyncStatsColumns.ENTRIES_NEW_AVERAGE + "," +
+            "(SELECT " + SyncLogColumns.ENTRIES_NEW + " FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL ORDER BY " + SyncLogColumns.ENTRIES_NEW + " LIMIT 1 OFFSET (SELECT COUNT(1) FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL) / 2) AS " + FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN +
+            " FROM (SELECT * FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL ORDER BY " + SyncLogColumns.POLL + ")";
+
+    private Cursor queryFeedSyncStatsLog(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
+        SQLiteDatabase database = helper.getReadableDatabase();
+        String feedId = uri.getPathSegments().get(2);
+        String[] queryArgs = {feedId, feedId, feedId};
+        return database.rawQuery(FEED_SYNC_STATS_QUERY, queryArgs);
     }
 
     @Override

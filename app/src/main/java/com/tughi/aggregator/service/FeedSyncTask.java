@@ -14,6 +14,7 @@ import com.tughi.aggregator.BuildConfig;
 import com.tughi.aggregator.content.DatabaseContentProvider;
 import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
+import com.tughi.aggregator.content.FeedSyncStatsColumns;
 import com.tughi.aggregator.content.FeedUpdateModes;
 import com.tughi.aggregator.content.SyncLogColumns;
 import com.tughi.aggregator.content.Uris;
@@ -149,96 +150,64 @@ import java.util.ArrayList;
     }
 
     private static final long TIME_15_MINUTES = 15 * 60 * 1000;
-    private static final long TIME_30_MINUTES = TIME_15_MINUTES * 2;
-    private static final long TIME_60_MINUTES = TIME_30_MINUTES * 2;
-    private static final long TIME_03_HOURS = TIME_60_MINUTES * 3;
-    private static final long TIME_06_HOURS = TIME_60_MINUTES * 6;
-    private static final long TIME_12_HOURS = TIME_60_MINUTES * 12;
-    private static final long TIME_24_HOURS = TIME_60_MINUTES * 24;
-    private static final long TIME_02_DAYS = TIME_24_HOURS * 2;
-    private static final long TIME_03_DAYS = TIME_24_HOURS * 3;
-    private static final long TIME_04_DAYS = TIME_24_HOURS * 4;
-    private static final long TIME_07_DAYS = TIME_24_HOURS * 7;
 
     private long findNextAutoSync(long feedId, long poll) {
-        ContentResolver contentResolver = context.getContentResolver();
+        long nextPollDelta;
 
-        Uri feedEntriesUri = Uris.newFeedEntriesUri(feedId);
-        final String[] projection = {EntryColumns.UPDATED};
-        final String selection = EntryColumns.UPDATED + " >= CAST(? AS INTEGER)";
-        final String[] selectionArgs = new String[1];
-        final String sortOrder = EntryColumns.UPDATED + " DESC";
-        Cursor cursor;
-
-        long lastUpdated = poll;
-
-        // get aggregated number of entries in the last 24 hours
-        selectionArgs[0] = Long.toString(poll - TIME_24_HOURS);
-        cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, sortOrder);
-        int day_entries = cursor.getCount();
+        Uri feedSyncLogStatsUri = Uris.newFeedSyncLogStatsUri(feedId);
+        final String[] projection = {
+                FeedSyncStatsColumns.POLL_COUNT,
+                FeedSyncStatsColumns.LAST_POLL,
+                FeedSyncStatsColumns.LAST_ENTRIES_TOTAL,
+                FeedSyncStatsColumns.LAST_ENTRIES_NEW,
+                FeedSyncStatsColumns.POLL_DELTA_AVERAGE,
+                FeedSyncStatsColumns.ENTRIES_NEW_AVERAGE,
+                FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN
+        };
+        // final int pollCountIndex = 0;
+        // final int lastPollIndex = 1;
+        final int lastEntriesTotalIndex = 2;
+        final int lastEntriesNewIndex = 3;
+        final int pollDeltaAverageIndex = 4;
+        final int entriesNewAverageIndex = 5;
+        final int entriesNewMedianIndex = 6;
+        Cursor cursor = context.getContentResolver().query(feedSyncLogStatsUri, projection, null, null, null);
         if (cursor.moveToFirst()) {
-            lastUpdated = Math.min(lastUpdated, cursor.getLong(0));
+            int lastEntriesTotal = cursor.getInt(lastEntriesTotalIndex);
+            int lastEntriesNew = cursor.getInt(lastEntriesNewIndex);
+            if (lastEntriesNew > lastEntriesTotal / 2) {
+                // try to not loose any new entries if the feed gets updated very fast
+                nextPollDelta = TIME_15_MINUTES;
+            } else {
+                long pollDeltaAverage = cursor.getLong(pollDeltaAverageIndex);
+                int entriesNewAverage = cursor.getInt(entriesNewAverageIndex);
+                int entriesNewMedian = cursor.getInt(entriesNewMedianIndex);
+                if (entriesNewMedian == 0) {
+                    // polls were made too frequent
+                    nextPollDelta = pollDeltaAverage + TIME_15_MINUTES;
+                } else if (entriesNewMedian > entriesNewAverage) {
+                    // polls were made not frequent enough
+                    nextPollDelta = pollDeltaAverage - TIME_15_MINUTES;
+                } else {
+                    // use the current poll delta
+                    nextPollDelta = pollDeltaAverage;
+                }
+            }
+        } else {
+            // fallback
+            nextPollDelta = TIME_15_MINUTES;
         }
         cursor.close();
 
-        long poll_rate;
-        if (day_entries > 0) {
-            poll_rate = TIME_24_HOURS / day_entries;
-        } else {
-            // get aggregated number of entries in the last 7 * 24 hours
-            selectionArgs[0] = Long.toString(poll - TIME_07_DAYS);
-            cursor = contentResolver.query(feedEntriesUri, projection, selection, selectionArgs, sortOrder);
-            int week_entries = cursor.getCount();
-            if (cursor.moveToFirst()) {
-                lastUpdated = Math.min(lastUpdated, cursor.getLong(0));
-            }
-            cursor.close();
+        // TODO: nextPollDelta can be 24 hours at the max
+        // TODO: if nextPollDelta > 24h then align the next sync with the last updated entry
 
-            if (week_entries > 0) {
-                poll_rate = TIME_07_DAYS / week_entries;
-            } else {
-                poll_rate = TIME_04_DAYS;
-            }
-        }
-
-        long nextSync;
-        if (poll_rate < TIME_30_MINUTES) {
-            // schedule new poll in 15 minutes
-            nextSync = lastUpdated + TIME_15_MINUTES;
-        } else if (poll_rate < TIME_60_MINUTES) {
-            // schedule new poll in 30 minutes
-            nextSync = lastUpdated + TIME_30_MINUTES;
-        } else if (poll_rate < TIME_03_HOURS) {
-            // schedule new poll in 1 hour
-            nextSync = lastUpdated + TIME_60_MINUTES;
-        } else if (poll_rate < TIME_06_HOURS) {
-            // schedule new poll in 3 hours
-            nextSync = lastUpdated + TIME_03_HOURS;
-        } else if (poll_rate < TIME_12_HOURS) {
-            // schedule new poll in 6 hours
-            nextSync = lastUpdated + TIME_06_HOURS;
-        } else if (poll_rate < TIME_24_HOURS) {
-            // schedule new poll in 12 hours
-            nextSync = lastUpdated + TIME_12_HOURS;
-        } else if (poll_rate < TIME_02_DAYS) {
-            // schedule new poll in 1 day
-            nextSync = lastUpdated + TIME_24_HOURS;
-        } else if (poll_rate < TIME_03_DAYS) {
-            // schedule new poll in 2 day
-            nextSync = lastUpdated + TIME_02_DAYS;
-        } else if (poll_rate < TIME_04_DAYS) {
-            // schedule new poll in 3 day
-            nextSync = lastUpdated + TIME_03_DAYS;
-        } else {
-            // schedule new poll in 4 days
-            nextSync = lastUpdated + TIME_04_DAYS;
-        }
+        long nextSync = poll + nextPollDelta;
 
         // align to a 15 minutes update rate
         if (nextSync % TIME_15_MINUTES != 0) {
             nextSync = (nextSync / TIME_15_MINUTES) * TIME_15_MINUTES + TIME_15_MINUTES;
         }
-
         // next sync cannot be in the past
         long earliestSync = (System.currentTimeMillis() / TIME_15_MINUTES) * TIME_15_MINUTES + TIME_15_MINUTES;
         if (earliestSync > nextSync) {
