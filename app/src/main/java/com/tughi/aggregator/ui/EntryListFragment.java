@@ -24,6 +24,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.tughi.aggregator.BuildConfig;
@@ -54,6 +55,10 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
     private EntryListAdapter adapter;
 
+    private RecyclerView entriesRecyclerView;
+    private ProgressBar progressBar;
+    private View emptyView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,9 +86,12 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        RecyclerView entriesRecyclerView = (RecyclerView) view.findViewById(R.id.entries);
+        entriesRecyclerView = (RecyclerView) view.findViewById(R.id.entries);
         entriesRecyclerView.setAdapter(adapter);
         entriesRecyclerView.addOnItemTouchListener(new OnItemTouchListener());
+
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        emptyView = view.findViewById(R.id.empty);
     }
 
     @Override
@@ -161,6 +169,15 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                 }
                 break;
             case LOADER_ENTRIES:
+                progressBar.setVisibility(View.GONE);
+                if (cursor.getCount() > 0) {
+                    entriesRecyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                } else {
+                    entriesRecyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                }
+
                 adapter.setCursor(cursor);
                 break;
         }

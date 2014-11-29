@@ -8,6 +8,23 @@
         android:id="@+id/entries"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawablePadding="16dp"
+        android:drawableTop="@drawable/ic_empty_emblem"
+        android:text="@string/entry_list_empty"
+        android:visibility="gone" />
 
 </FrameLayout>

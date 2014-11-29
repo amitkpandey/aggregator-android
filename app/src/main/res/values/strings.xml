@@ -29,4 +29,6 @@
     <string name="read">Read</string>
     <string name="unread">Unread</string>
 
+    <string name="entry_list_empty">No new feed entries.</string>
+
 </resources>
