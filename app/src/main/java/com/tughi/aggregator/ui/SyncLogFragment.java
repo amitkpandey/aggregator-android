@@ -83,14 +83,26 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor.moveToFirst()) {
             ArrayList<LogItem> logItemList = new ArrayList<LogItem>(cursor.getCount());
+            LogItem logItem = new LogItem();
 
             do {
-                LogItem logItem = new LogItem();
-                logItem.poll = cursor.getLong(SYNC_LOG_POLL);
-                logItem.error = cursor.getString(SYNC_LOG_ERROR);
-                logItem.entriesTotal = cursor.getInt(SYNC_LOG_ENTRIES_TOTAL);
-                logItem.entriesNew = cursor.getInt(SYNC_LOG_ENTRIES_NEW);
-                logItemList.add(logItem);
+                long poll = cursor.getLong(SYNC_LOG_POLL);
+                if (logItem.poll != poll) {
+                    logItem = new LogItem();
+                    logItem.poll = poll;
+                    logItemList.add(logItem);
+                }
+                if (!cursor.isNull(SYNC_LOG_ERROR)) {
+                    logItem.error = true;
+                } else {
+                    int entriesNew = cursor.getInt(SYNC_LOG_ENTRIES_NEW);
+                    if (entriesNew == 0) {
+                        logItem.empty = true;
+                    } else {
+                        float entriesTotal = cursor.getFloat(SYNC_LOG_ENTRIES_TOTAL);
+                        logItem.success = Math.max(logItem.success, entriesNew / entriesTotal);
+                    }
+                }
             } while (cursor.moveToNext());
 
             syncLogView.setLogItems(logItemList.toArray(new LogItem[logItemList.size()]));
@@ -104,9 +116,9 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
     private class LogItem {
         private long poll;
-        private String error;
-        private long entriesNew;
-        private long entriesTotal;
+        private boolean error;
+        private boolean empty;
+        private float success;
     }
 
     /**
@@ -117,8 +129,9 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
         private int stroke;
         private int step;
 
-        private Paint logPaint;
-        private int logPaintAlpha;
+        private Paint successPaint;
+        private int successPaintAlpha;
+        private Paint emptyPaint;
         private Paint errorPaint;
         private int errorPaintAlpha;
 
@@ -135,15 +148,19 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                 stroke++;
             }
 
-            step = stroke + stroke / 2;
+            step = stroke * 2;
 
-            logPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            logPaint.setColor(resources.getColor(R.color.sync_log));
-            logPaintAlpha = logPaint.getAlpha();
-            logPaint.setStrokeWidth(stroke);
-            logPaint.setStrokeCap(Paint.Cap.ROUND);
+            successPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            successPaint.setColor(resources.getColor(R.color.primary_dark));
+            successPaintAlpha = successPaint.getAlpha();
+            successPaint.setStrokeWidth(stroke);
+            successPaint.setStrokeCap(Paint.Cap.ROUND);
+            successPaint.setStyle(Paint.Style.FILL);
 
-            errorPaint = new Paint(logPaint);
+            emptyPaint = new Paint(successPaint);
+            emptyPaint.setColor(resources.getColor(R.color.primary));
+
+            errorPaint = new Paint(successPaint);
             errorPaint.setColor(resources.getColor(R.color.sync_error));
             errorPaintAlpha = errorPaint.getAlpha();
         }
@@ -168,12 +185,12 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
         @Override
         protected void onDraw(Canvas canvas) {
             if (scaleFactor > 0) {
-                logPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * logPaintAlpha), 255)));
+                successPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * successPaintAlpha), 255)));
                 errorPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * errorPaintAlpha), 255)));
 
                 int width = getWidth();
                 int height = getHeight();
-                canvas.drawLine(0, height / 2, width, height / 2, logPaint);
+                canvas.drawLine(0, height / 2, width, height / 2, successPaint);
 
                 long currentTime = System.currentTimeMillis();
 
@@ -182,12 +199,15 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                     for (int index = 0; index < size; index++) {
                         LogItem logItem = logItems[index];
                         int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - stroke / 2;
-                        if (logItem.error == null) {
-                            float y = (step / 2 + (logItem.entriesNew * (height - step / 2) / logItem.entriesTotal) / 2) * scaleFactor;
-                            canvas.drawLine(x, height / 2 - y, x, height / 2 + y, logPaint);
-                        } else {
-                            float y = (step / 2) * scaleFactor;
-                            canvas.drawLine(x, height / 2 - y, x, height / 2 + y, errorPaint);
+                        if (logItem.success > 0) {
+                            float y = Math.round(stroke * 2 + (height / 2 - stroke * 2) * logItem.success) * scaleFactor;
+                            canvas.drawRect(x - stroke / 2, height / 2 - y, x + stroke / 2, height / 2 + y, successPaint);
+                        }
+                        if (logItem.error) {
+                            canvas.drawRect(x - stroke, height / 2 - stroke, x + stroke, height / 2 + stroke, errorPaint);
+                        }
+                        if (logItem.empty) {
+                            canvas.drawRect(x - stroke / 2, height / 2 - stroke / 2, x + stroke / 2, height / 2 + stroke / 2, emptyPaint);
                         }
                     }
                 }
