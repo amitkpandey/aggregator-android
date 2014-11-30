@@ -11,10 +11,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.tughi.aggregator.BuildConfig;
 import com.tughi.android.database.sqlite.DatabaseOpenHelper;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -38,7 +40,23 @@ public class DatabaseContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        helper = new DatabaseOpenHelper(getContext(), "content.db", 1);
+        helper = new DatabaseOpenHelper(getContext(), "content.db", 1) {
+            @Override
+            public void onConfigure(SQLiteDatabase db) {
+                if (BuildConfig.DEBUG) {
+                    // try to change the database file access mode
+                    try {
+                        Class fileUtils = Class.forName("android.os.FileUtils");
+                        Method setPermissions = fileUtils.getMethod("setPermissions", String.class, int.class, int.class, int.class);
+                        setPermissions.invoke(null, db.getPath(), 0666, -1, -1);
+                    } catch (Exception exception) {
+                        // failed
+                        Log.e(getClass().getName(), "Failed to change the database file permissions");
+                    }
+                }
+            }
+        };
+
         return true;
     }
 
