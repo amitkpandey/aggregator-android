@@ -29,23 +29,28 @@ task generateDrawables << {
     def resDir = new File(projectDir, ['src', 'main', 'res'].join(File.separator))
 
     def DENSITIES = [
-            'drawable-mdpi'   : 90,
-            'drawable-hdpi'   : 135,
-            'drawable-xhdpi'  : 180,
-            'drawable-xxhdpi' : 270,
-            'drawable-xxxhdpi': 360
+            '-mdpi'   : 90,
+            '-hdpi'   : 135,
+            '-xhdpi'  : 180,
+            '-xxhdpi' : 270,
+            '-xxxhdpi': 360
     ]
 
-    new File(svgDir, 'drawable').eachFileMatch(~/.*\.svg/) { svg ->
-        DENSITIES.each { type, dpi ->
-            def png = new File(new File(resDir, type), svg.name.replace('.svg', '.png'))
-            if (!png.exists() || png.lastModified() < svg.lastModified()) {
-                "$inkscapeCmd -e $png -d$dpi $svg"
-                        .execute()
-                        .waitFor()
+    def generate = { String drawable ->
+        new File(svgDir, drawable).eachFileMatch(~/.*\.svg/) { svg ->
+            DENSITIES.each { type, dpi ->
+                def png = new File(new File(resDir, drawable + type), svg.name.replace('.svg', '.png'))
+                if (!png.exists() || png.lastModified() < svg.lastModified()) {
+                    "$inkscapeCmd -e $png -d$dpi $svg"
+                            .execute()
+                            .waitFor()
+                }
             }
         }
     }
+
+    generate('drawable')
+    generate('mipmap')
 }
 
 preBuild.dependsOn generateDrawables
