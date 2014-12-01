@@ -188,9 +188,10 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                 successPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * successPaintAlpha), 255)));
                 errorPaint.setAlpha(Math.max(0, Math.min(Math.round(scaleFactor * errorPaintAlpha), 255)));
 
-                int width = getWidth();
-                int height = getHeight();
-                canvas.drawLine(0, height / 2, width, height / 2, successPaint);
+                final int width = getWidth();
+                final int height = getHeight();
+                final int bottom = height - 2 * stroke;
+                canvas.drawLine(0, bottom, width, bottom, successPaint);
 
                 long currentTime = System.currentTimeMillis();
 
@@ -200,14 +201,14 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
                         LogItem logItem = logItems[index];
                         int x = width - (int) ((currentTime - logItem.poll) / (float) STEP_TIME * step) - stroke / 2;
                         if (logItem.success > 0) {
-                            float y = Math.round(stroke * 2 + (height / 2 - stroke * 2) * logItem.success) * scaleFactor;
-                            canvas.drawRect(x - stroke / 2, height / 2 - y, x + stroke / 2, height / 2 + y, successPaint);
+                            float y = Math.round(stroke * 2 + (bottom - stroke * 4) * logItem.success) * scaleFactor;
+                            canvas.drawRect(x - stroke / 2, bottom - y, x + stroke / 2, bottom, successPaint);
                         }
                         if (logItem.error) {
-                            canvas.drawRect(x - stroke, height / 2 - stroke, x + stroke, height / 2 + stroke, errorPaint);
+                            canvas.drawRect(x - stroke, bottom - stroke, x + stroke, bottom + stroke, errorPaint);
                         }
                         if (logItem.empty) {
-                            canvas.drawRect(x - stroke / 2, height / 2 - stroke / 2, x + stroke / 2, height / 2 + stroke / 2, emptyPaint);
+                            canvas.drawRect(x - stroke / 2, bottom - stroke / 2, x + stroke / 2, bottom + stroke / 2, emptyPaint);
                         }
                     }
                 }
