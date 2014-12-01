@@ -4,25 +4,26 @@
     android:layout_height="match_parent"
     android:background="@drawable/drawer_feed_item"
     android:gravity="center_vertical"
+    android:minHeight="48dp"
     android:orientation="horizontal"
     android:padding="8dp">
 
     <com.tughi.aggregator.ui.BaselinedImageView
         android:id="@+id/favicon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
+        android:padding="4dp"
         android:src="@drawable/favicon_placeholder"
         android:textAppearance="@style/TextAppearance.AppCompat.Menu" />
-
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="32dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="40dp"
         android:layout_weight="1"
