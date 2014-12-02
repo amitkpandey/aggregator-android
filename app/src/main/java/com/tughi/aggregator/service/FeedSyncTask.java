@@ -180,6 +180,10 @@ import java.util.ArrayList;
                 nextPollDelta = TIME_15_MINUTES;
             } else {
                 long pollDeltaAverage = cursor.getLong(pollDeltaAverageIndex);
+                if (pollDeltaAverage % TIME_15_MINUTES != TIME_15_MINUTES) {
+                    // rounding
+                    pollDeltaAverage = (pollDeltaAverage / TIME_15_MINUTES) * TIME_15_MINUTES + TIME_15_MINUTES;
+                }
                 int entriesNewAverage = cursor.getInt(entriesNewAverageIndex);
                 int entriesNewMedian = cursor.getInt(entriesNewMedianIndex);
                 if (entriesNewMedian == 0) {
