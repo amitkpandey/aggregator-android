@@ -31,6 +31,7 @@ import com.tughi.aggregator.BuildConfig;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.EntryColumns;
 import com.tughi.aggregator.content.FeedColumns;
+import com.tughi.aggregator.content.FeedSyncStatsColumns;
 import com.tughi.aggregator.content.Uris;
 
 /**
@@ -71,11 +72,60 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
         adapter = new EntryListAdapter(applicationContext);
 
-        getLoaderManager().initLoader(LOADER_FEED, null, this);
-        getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
+        LoaderManager loaderManager = getLoaderManager();
+        loaderManager.initLoader(LOADER_FEED, null, this);
+        loaderManager.initLoader(LOADER_ENTRIES, null, this);
 
         if (feedId > 0) {
             setHasOptionsMenu(true);
+        }
+
+        if (BuildConfig.DEBUG) {
+            if (feedId > 0) {
+                loaderManager.initLoader(0, null, new LoaderManager.LoaderCallbacks<Cursor>() {
+                    private final String[] FEED_SYNC_STATS_PROJECTION = {
+                            FeedSyncStatsColumns.POLL_COUNT,
+                            FeedSyncStatsColumns.LAST_POLL,
+                            FeedSyncStatsColumns.LAST_ENTRIES_TOTAL,
+                            FeedSyncStatsColumns.LAST_ENTRIES_NEW,
+                            FeedSyncStatsColumns.POLL_DELTA_AVERAGE,
+                            FeedSyncStatsColumns.ENTRIES_NEW_AVERAGE,
+                            FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN,
+                    };
+                    private final int FEED_SYNC_STATS_POLL_COUNT = 0;
+                    private final int FEED_SYNC_STATS_LAST_POLL = 1;
+                    private final int FEED_SYNC_STATS_LAST_ENTRIES_TOTAL = 2;
+                    private final int FEED_SYNC_STATS_LAST_ENTRIES_NEW = 3;
+                    private final int FEED_SYNC_STATS_POLL_DELTA_AVERAGE = 4;
+                    private final int FEED_SYNC_STATS_ENTRIES_NEW_AVERAGE = 5;
+                    private final int FEED_SYNC_STATS_ENTRIES_NEW_MEDIAN = 6;
+
+                    @Override
+                    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                        Uri feedSyncLogStatsUri = Uris.newFeedSyncLogStatsUri(feedId);
+                        return new CursorLoader(applicationContext, feedSyncLogStatsUri, FEED_SYNC_STATS_PROJECTION, null, null, null);
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                        if (cursor.moveToFirst()) {
+                            StringBuilder builder = new StringBuilder();
+                            builder.append(cursor.getColumnName(FEED_SYNC_STATS_POLL_COUNT)).append(": ").append(cursor.getInt(FEED_SYNC_STATS_POLL_COUNT)).append("\n");
+                            builder.append(cursor.getColumnName(FEED_SYNC_STATS_LAST_POLL)).append(": ").append(String.format("%tc", cursor.getLong(FEED_SYNC_STATS_LAST_POLL))).append("\n");
+                            builder.append(cursor.getColumnName(FEED_SYNC_STATS_LAST_ENTRIES_TOTAL)).append(": ").append(cursor.getInt(FEED_SYNC_STATS_LAST_ENTRIES_TOTAL)).append("\n");
+                            builder.append(cursor.getColumnName(FEED_SYNC_STATS_LAST_ENTRIES_NEW)).append(": ").append(cursor.getInt(FEED_SYNC_STATS_LAST_ENTRIES_NEW)).append("\n");
+                            builder.append(cursor.getColumnName(FEED_SYNC_STATS_POLL_DELTA_AVERAGE)).append(": ").append(cursor.getLong(FEED_SYNC_STATS_POLL_DELTA_AVERAGE) / 3600000f).append("h\n");
+                            builder.append(cursor.getColumnName(FEED_SYNC_STATS_ENTRIES_NEW_AVERAGE)).append(": ").append(cursor.getFloat(FEED_SYNC_STATS_ENTRIES_NEW_AVERAGE)).append("\n");
+                            builder.append(cursor.getColumnName(FEED_SYNC_STATS_ENTRIES_NEW_MEDIAN)).append(": ").append(cursor.getInt(FEED_SYNC_STATS_ENTRIES_NEW_MEDIAN));
+                            Toast.makeText(applicationContext, builder, Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Cursor> loader) {
+                    }
+                });
+            }
         }
     }
 
@@ -119,11 +169,9 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     private static final String[] FEED_PROJECTION = {
             FeedColumns.ID,
             FeedColumns.TITLE,
-            FeedColumns.NEXT_SYNC,
     };
     private static final int FEED_ID = 0;
     private static final int FEED_TITLE = 1;
-    private static final int FEED_NEXT_SYNC = 2;
 
     private static final String ENTRY_SELECTION = EntryColumns.RO_FLAG_READ + " = 0";
     private static final String ENTRY_ORDER = EntryColumns.UPDATED + " ASC";
@@ -159,13 +207,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                             title = cursor.getString(FEED_TITLE);
                     }
                     getActivity().setTitle(title);
-
-                    if (BuildConfig.DEBUG) {
-                        if (feedId > 0) {
-                            String text = String.format("Next sync: %tc", cursor.getLong(FEED_NEXT_SYNC));
-                            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show();
-                        }
-                    }
                 }
                 break;
             case LOADER_ENTRIES:

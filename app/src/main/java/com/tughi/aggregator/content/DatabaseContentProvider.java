@@ -18,6 +18,9 @@ import com.tughi.android.database.sqlite.DatabaseOpenHelper;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link ContentProvider} that stores the aggregated feeds.
@@ -128,21 +131,56 @@ public class DatabaseContentProvider extends ContentProvider {
         return cursor;
     }
 
-    private static final String FEED_SYNC_STATS_QUERY = "SELECT " +
-            "COUNT(1) AS " + FeedSyncStatsColumns.POLL_COUNT + "," +
-            SyncLogColumns.POLL + " AS " + FeedSyncStatsColumns.LAST_POLL + "," +
-            SyncLogColumns.ENTRIES_TOTAL + " AS " + FeedSyncStatsColumns.LAST_ENTRIES_TOTAL + "," +
-            SyncLogColumns.ENTRIES_NEW + " AS " + FeedSyncStatsColumns.LAST_ENTRIES_NEW + "," +
-            "AVG(" + SyncLogColumns.POLL_DELTA + ") AS " + FeedSyncStatsColumns.POLL_DELTA_AVERAGE + "," +
-            "AVG(" + SyncLogColumns.ENTRIES_NEW + ") AS " + FeedSyncStatsColumns.ENTRIES_NEW_AVERAGE + "," +
-            "(SELECT " + SyncLogColumns.ENTRIES_NEW + " FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL ORDER BY " + SyncLogColumns.ENTRIES_NEW + " LIMIT 1 OFFSET (SELECT COUNT(1) FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL) / 2) AS " + FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN +
-            " FROM (SELECT * FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL ORDER BY " + SyncLogColumns.POLL + ")";
+    private static final String[] FEED_SYNC_STATS_QUERY_PROJECTION = {
+            FeedSyncStatsColumns.POLL_COUNT,
+            FeedSyncStatsColumns.LAST_POLL,
+            FeedSyncStatsColumns.LAST_ENTRIES_TOTAL,
+            FeedSyncStatsColumns.LAST_ENTRIES_NEW,
+            FeedSyncStatsColumns.POLL_DELTA_AVERAGE,
+            FeedSyncStatsColumns.ENTRIES_NEW_AVERAGE,
+            FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN,
+    };
+
+    private static final Map<String, String> FEED_SYNC_STATS_QUERY_PROJECTION_MAP;
+
+    static {
+        Map<String, String> map = FEED_SYNC_STATS_QUERY_PROJECTION_MAP = new HashMap<String, String>();
+        map.put(FeedSyncStatsColumns.POLL_COUNT, "COUNT(1) AS " + FeedSyncStatsColumns.POLL_COUNT);
+        map.put(FeedSyncStatsColumns.LAST_POLL, SyncLogColumns.POLL + " AS " + FeedSyncStatsColumns.LAST_POLL);
+        map.put(FeedSyncStatsColumns.LAST_ENTRIES_TOTAL, SyncLogColumns.ENTRIES_TOTAL + " AS " + FeedSyncStatsColumns.LAST_ENTRIES_TOTAL);
+        map.put(FeedSyncStatsColumns.LAST_ENTRIES_NEW, SyncLogColumns.ENTRIES_NEW + " AS " + FeedSyncStatsColumns.LAST_ENTRIES_NEW);
+        map.put(FeedSyncStatsColumns.POLL_DELTA_AVERAGE, "AVG(" + SyncLogColumns.POLL_DELTA + ") AS " + FeedSyncStatsColumns.POLL_DELTA_AVERAGE);
+        map.put(FeedSyncStatsColumns.ENTRIES_NEW_AVERAGE, "AVG(" + SyncLogColumns.ENTRIES_NEW + ") AS " + FeedSyncStatsColumns.ENTRIES_NEW_AVERAGE);
+        map.put(FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN, "(SELECT " + SyncLogColumns.ENTRIES_NEW + " FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL ORDER BY " + SyncLogColumns.ENTRIES_NEW + " LIMIT 1 OFFSET (SELECT COUNT(1) FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL) / 2) AS " + FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN);
+    }
+
+    private static final String FEED_SYNC_STATS_SOURCE = "(SELECT * FROM " + TABLE_SYNC_LOG + " WHERE " + SyncLogColumns.FEED_ID + " = ? AND " + SyncLogColumns.ERROR + " IS NULL ORDER BY " + SyncLogColumns.POLL + ")";
 
     private Cursor queryFeedSyncStatsLog(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
-        SQLiteDatabase database = helper.getReadableDatabase();
         String feedId = uri.getPathSegments().get(2);
-        String[] queryArgs = {feedId, feedId, feedId};
-        return database.rawQuery(FEED_SYNC_STATS_QUERY, queryArgs);
+
+        if (projection == null) {
+            projection = FEED_SYNC_STATS_QUERY_PROJECTION;
+        }
+
+        StringBuilder queryBuilder = new StringBuilder("SELECT ");
+        List<String> queryArgs = new ArrayList<String>();
+        for (int index = 0; index < projection.length; index++) {
+            if (index != 0) {
+                queryBuilder.append(", ");
+            }
+            String column = projection[index];
+            queryBuilder.append(FEED_SYNC_STATS_QUERY_PROJECTION_MAP.get(column));
+            if (FeedSyncStatsColumns.ENTRIES_NEW_MEDIAN.equals(column)) {
+                queryArgs.add(feedId);
+                queryArgs.add(feedId);
+            }
+        }
+        queryBuilder.append(" FROM ").append(FEED_SYNC_STATS_SOURCE);
+        queryArgs.add(feedId);
+
+        SQLiteDatabase database = helper.getReadableDatabase();
+        return database.rawQuery(queryBuilder.toString(), queryArgs.toArray(new String[queryArgs.size()]));
     }
 
     @Override
