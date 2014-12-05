@@ -10,9 +10,8 @@
         android:background="@color/primary"
         android:elevation="8dp">
 
-        <fragment
+        <FrameLayout
             android:id="@+id/sync_log"
-            android:name="com.tughi.aggregator.ui.SyncLogFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

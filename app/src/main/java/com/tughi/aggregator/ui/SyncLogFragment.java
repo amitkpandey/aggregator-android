@@ -2,24 +2,23 @@ package com.tughi.aggregator.ui;
 
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.SyncLogColumns;
-import com.tughi.aggregator.content.Uris;
 
 import java.util.ArrayList;
 
@@ -27,6 +26,8 @@ import java.util.ArrayList;
  * A {@link Fragment} used to display the sync log.
  */
 public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    public static final String ARG_SYNC_LOG_URI = "sync_log_uri";
 
     private static final int STEP_TIME = 15 * 60 * 1000; // 15 minutes
 
@@ -46,20 +47,12 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
     private Context context;
 
-    private Uri syncLogUri = Uris.newFeedsSyncLogUri();
-
     private SyncLogView syncLogView;
 
-    public void setSyncLogUri(Uri syncLogUri) {
-        this.syncLogUri = syncLogUri;
-
-        Bundle args = new Bundle();
-        args.putLong(SYNC_LOG_LOADER_FIRST_POLL, System.currentTimeMillis() - syncLogView.getWidth() * STEP_TIME / syncLogView.step);
-        getLoaderManager().restartLoader(SYNC_LOG_LOADER, args, this);
-    }
-
     public void setScaleFactor(float scaleFactor) {
-        syncLogView.setScaleFactor(scaleFactor);
+        if (syncLogView != null) {
+            syncLogView.setScaleFactor(scaleFactor);
+        }
     }
 
     @Override
@@ -76,6 +69,7 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int loader, Bundle args) {
+        Uri syncLogUri = getArguments().getParcelable(ARG_SYNC_LOG_URI);
         return new CursorLoader(context, syncLogUri, SYNC_LOG_PROJECTION, null, null, null);
     }
 
@@ -178,7 +172,9 @@ public class SyncLogFragment extends Fragment implements LoaderManager.LoaderCal
         @Override
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
             if (w > 0) {
-                setSyncLogUri(syncLogUri);
+                Bundle args = new Bundle();
+                args.putLong(SYNC_LOG_LOADER_FIRST_POLL, System.currentTimeMillis() - w * STEP_TIME / syncLogView.step);
+                getLoaderManager().restartLoader(SYNC_LOG_LOADER, args, SyncLogFragment.this);
             }
         }
 

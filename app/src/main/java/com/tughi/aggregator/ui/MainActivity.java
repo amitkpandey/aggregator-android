@@ -1,6 +1,5 @@
 package com.tughi.aggregator.ui;
 
-import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -54,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         Toolbar actionBar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(actionBar);
 
-        syncLogFragment = (SyncLogFragment) getSupportFragmentManager().findFragmentById(R.id.sync_log);
+        syncLogFragment = (SyncLogFragment) getFragmentManager().findFragmentById(R.id.sync_log);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -97,8 +96,10 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         title = getTitle();
 
-        // show the 'unread' feed by default
-        selectDrawerItem(0, -1);
+        if (savedInstanceState == null) {
+            // show the 'unread' feed by default
+            selectDrawerItem(0, -1);
+        }
     }
 
     @Override
@@ -181,16 +182,23 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     }
 
     private void selectDrawerItem(int position, long feedId) {
-        // create fragment
-        Fragment fragment = new EntryListFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(EntryListFragment.ARG_ENTRIES_URI, Uris.newFeedEntriesUri(feedId));
-        fragment.setArguments(args);
+        // create new entries fragment
+        EntryListFragment entryListFragment = new EntryListFragment();
+        Bundle entryListFragmentArgs = new Bundle();
+        entryListFragmentArgs.putParcelable(EntryListFragment.ARG_ENTRIES_URI, Uris.newFeedEntriesUri(feedId));
+        entryListFragment.setArguments(entryListFragmentArgs);
+
+        // create new sync log fragment
+        syncLogFragment = new SyncLogFragment();
+        Bundle syncLogFragmentArgs = new Bundle();
+        syncLogFragmentArgs.putParcelable(SyncLogFragment.ARG_SYNC_LOG_URI, Uris.newFeedSyncLogUri(feedId));
+        syncLogFragment.setArguments(syncLogFragmentArgs);
 
         // replace existing fragment with the new one
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content, fragment)
+                .replace(R.id.content, entryListFragment)
+                .replace(R.id.sync_log, syncLogFragment)
                 .commit();
 
         // mark position as active
@@ -201,8 +209,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
         // finish
         drawerLayout.closeDrawer(drawerListView);
-
-        syncLogFragment.setSyncLogUri(Uris.newFeedSyncLogUri(feedId));
     }
 
     private static final String[] FEED_PROJECTION = {
