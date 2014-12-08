@@ -1,9 +1,6 @@
 [submodule "xml"]
 	path = xml
 	url = git@github.com:tughi/xml.git
-[submodule "sqlite"]
-	path = sqlite
-	url = git@github.com:tughi/sqlite-open-helper.git
 [submodule "core"]
 	path = core
 	url = git@github.com:tughi/aggregator-core.git
