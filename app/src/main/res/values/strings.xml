@@ -25,10 +25,6 @@
 
     <string name="done">Done</string>
 
-    <string name="junk">Junk</string>
-    <string name="read">Read</string>
-    <string name="unread">Unread</string>
-
     <string name="entry_list_empty">No new feed entries.</string>
 
 </resources>

@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -255,28 +256,34 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     private class OnItemTouchListener implements RecyclerView.OnItemTouchListener {
 
         private final float touchSlopSquare;
-        private final int minimumFlingVelocity;
-        private final int maximumFlingVelocity;
         private final int animationTime;
+        private final int swipeGestureTrigger;
 
         private MotionEvent downEvent;
         private float downX;
         private float downY;
 
         private boolean swipeDetection;
-
-        private VelocityTracker velocityTracker;
+        private boolean swipeCancelled;
 
         private EntryListAdapter.ViewHolder viewHolder;
+
+        private int junkColor;
+        private int readColor;
+        private int unreadColor;
 
         private OnItemTouchListener() {
             ViewConfiguration configuration = ViewConfiguration.get(applicationContext);
             final int touchSlop = configuration.getScaledTouchSlop();
             touchSlopSquare = touchSlop * touchSlop;
-            minimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
-            maximumFlingVelocity = configuration.getScaledMaximumFlingVelocity();
 
-            animationTime = applicationContext.getResources().getInteger(android.R.integer.config_shortAnimTime);
+            Resources resources = applicationContext.getResources();
+            swipeGestureTrigger = (int) (120 * resources.getDisplayMetrics().density);
+
+            animationTime = resources.getInteger(android.R.integer.config_shortAnimTime);
+            junkColor = resources.getColor(R.color.junk);
+            readColor = resources.getColor(R.color.entry_read);
+            unreadColor = resources.getColor(R.color.entry_unread);
         }
 
         @Override
@@ -295,12 +302,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                         downEvent.recycle();
                     }
                     downEvent = MotionEvent.obtain(event);
-
-                    if (velocityTracker != null) {
-                        velocityTracker.recycle();
-                    }
-                    velocityTracker = VelocityTracker.obtain();
-                    velocityTracker.addMovement(event);
 
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -321,14 +322,13 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                                     viewHolder = (EntryListAdapter.ViewHolder) recyclerView.getChildViewHolder(itemView);
 
                                     // start swiping
+                                    swipeCancelled = false;
                                     onTouchEvent(recyclerView, event);
 
                                     // receive next swipe events in onTouchEvent(...)
                                     return true;
                                 }
                             }
-                        } else {
-                            velocityTracker.addMovement(event);
                         }
                     }
 
@@ -341,6 +341,10 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
         @Override
         public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+            if (swipeCancelled) {
+                return;
+            }
+
             final View swipeContentView = viewHolder.swipeContentView;
             final float width = swipeContentView.getWidth();
 
@@ -348,66 +352,84 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
             switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
                 case MotionEvent.ACTION_MOVE: {
-                    velocityTracker.addMovement(event);
-
-                    if (deltaX < 0) {
-                        viewHolder.swipeLeftView.setVisibility(View.GONE);
-                        viewHolder.swipeRightView.setVisibility(View.VISIBLE);
-                    } else {
-                        viewHolder.swipeLeftView.setVisibility(View.VISIBLE);
-                        viewHolder.swipeRightView.setVisibility(View.GONE);
-                    }
-
                     // move view
                     swipeContentView.setTranslationX(deltaX);
-                    swipeContentView.setAlpha(1 - Math.abs(deltaX) / width);
+
+                    if (deltaX < 0) {
+                        // gesture: mark as junk
+                        viewHolder.itemView.setBackgroundColor(junkColor);
+                        swipeContentView.setAlpha(1 - Math.abs(deltaX) / width);
+
+                        if (-deltaX > Math.min(swipeGestureTrigger << 1, width / 2)) {
+                            swipeCancelled = true;
+
+                            // apply gesture
+                            final long entryId = viewHolder.getItemId();
+                            swipeContentView.animate()
+                                    .translationX(-width)
+                                    .alpha(0)
+                                    .setDuration(animationTime)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            markEntryJunk(entryId);
+                                        }
+                                    });
+                        }
+                    } else {
+                        // gesture: toggle read state
+                        int fromColor;
+                        int toColor;
+                        if (viewHolder.isRead()) {
+                            fromColor = readColor;
+                            toColor = unreadColor;
+                        } else {
+                            fromColor = unreadColor;
+                            toColor = readColor;
+                        }
+                        int delta = Math.min((int) deltaX, swipeGestureTrigger);
+                        int deltaColor = Color.rgb(
+                                (Color.red(toColor) - Color.red(fromColor)) * delta / swipeGestureTrigger + Color.red(fromColor),
+                                (Color.green(toColor) - Color.green(fromColor)) * delta / swipeGestureTrigger + Color.green(fromColor),
+                                (Color.blue(toColor) - Color.blue(fromColor)) * delta / swipeGestureTrigger + Color.blue(fromColor)
+                        );
+                        viewHolder.itemView.setBackgroundColor(deltaColor);
+                        viewHolder.stateView.setBackgroundColor(deltaColor);
+
+                        if (deltaX > swipeGestureTrigger) {
+                            swipeCancelled = true;
+
+                            // apply gesture
+                            final long entryId = viewHolder.getItemId();
+                            final boolean entryNewRead = !viewHolder.isRead();
+                            swipeContentView.animate()
+                                    .translationX(0)
+                                    .setDuration(animationTime)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            markEntryRead(entryId, entryNewRead);
+                                        }
+                                    });
+                        }
+                    }
 
                     break;
                 }
+                case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP: {
-                    velocityTracker.addMovement(event);
-                    velocityTracker.computeCurrentVelocity(1000, maximumFlingVelocity);
-                    final float velocity = velocityTracker.getXVelocity();
+                    // swipe cancelled
 
-                    final boolean swipe;
-                    final boolean swipeRight;
-                    if (Math.abs(deltaX) > width / 2) {
-                        swipe = true;
-                        swipeRight = deltaX > 0;
-                    } else if (Math.abs(velocity) >= minimumFlingVelocity && velocity * deltaX > 0) {
-                        swipe = true;
-                        swipeRight = velocity > 0;
-                    } else {
-                        swipe = false;
-                        swipeRight = false;
-                    }
-
-                    if (swipe) {
-                        final long entryId = viewHolder.getItemId();
-                        final boolean entryNewRead = !viewHolder.isRead();
-
-                        // swiped
-                        swipeContentView.animate()
-                                .translationX(swipeRight ? width : -width)
-                                .alpha(0)
-                                .setDuration(animationTime)
-                                .setListener(new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        if (swipeRight) {
-                                            markEntryRead(entryId, entryNewRead);
-                                        } else {
-                                            markEntryJunk(entryId);
-                                        }
-                                    }
-                                });
-                    } else {
-                        // swipe canceled
+                    if (deltaX < 0) {
                         swipeContentView.animate()
                                 .translationX(0)
                                 .alpha(1)
-                                .setDuration(animationTime)
-                                .setListener(null);
+                                .setDuration(animationTime);
+                    } else {
+                        viewHolder.stateView.setBackgroundColor(viewHolder.isRead() ? readColor : unreadColor);
+                        swipeContentView.animate()
+                                .translationX(0)
+                                .setDuration(animationTime);
                     }
 
                     break;

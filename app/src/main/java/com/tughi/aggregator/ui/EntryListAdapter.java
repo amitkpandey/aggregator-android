@@ -1,8 +1,8 @@
 package com.tughi.aggregator.ui;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -41,6 +41,8 @@ import java.util.Calendar;
     public static final int ENTRY_FLAG_READ = 5;
 
     private Context context;
+    private int unreadColor;
+    private int readColor;
 
     private DateFormat timeFormat;
     private DateFormat dateFormat;
@@ -55,6 +57,10 @@ import java.util.Calendar;
 
     public EntryListAdapter(Context context) {
         this.context = context;
+
+        Resources resources = context.getResources();
+        readColor = resources.getColor(R.color.entry_read);
+        unreadColor = resources.getColor(R.color.entry_unread);
 
         timeFormat = android.text.format.DateFormat.getTimeFormat(context);
         dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
@@ -100,14 +106,10 @@ import java.util.Calendar;
         holder.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE)));
         if (cursor.getInt(ENTRY_FLAG_READ) == 0) {
             holder.read = false;
-            holder.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
-            holder.stateImageView.setActivated(true);
-            holder.swipeLeftTextView.setText(R.string.read);
+            holder.stateView.setBackgroundColor(unreadColor);
         } else {
             holder.read = true;
-            holder.titleTextView.setTypeface(Typeface.DEFAULT);
-            holder.stateImageView.setActivated(false);
-            holder.swipeLeftTextView.setText(R.string.unread);
+            holder.stateView.setBackgroundColor(readColor);
         }
         holder.feedTextView.setText(cursor.getString(ENTRY_FEED_TITLE));
         holder.dateTextView.setText(timeFormat.format(cursor.getLong(ENTRY_UPDATED)));
@@ -211,13 +213,10 @@ import java.util.Calendar;
         final ImageView faviconImageView;
         final TextView feedTextView;
         final TextView dateTextView;
-        final ImageView stateImageView;
+        final View stateView;
         final TextView headerTextView;
 
         final View swipeContentView;
-        final View swipeLeftView;
-        final TextView swipeLeftTextView;
-        final View swipeRightView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -226,13 +225,10 @@ import java.util.Calendar;
             faviconImageView = (ImageView) itemView.findViewById(R.id.favicon);
             feedTextView = (TextView) itemView.findViewById(R.id.feed);
             dateTextView = (TextView) itemView.findViewById(R.id.date);
-            stateImageView = (ImageView) itemView.findViewById(R.id.state);
+            stateView = itemView.findViewById(R.id.state);
             headerTextView = (TextView) itemView.findViewById(R.id.header);
 
             swipeContentView = itemView.findViewById(R.id.swipe_content);
-            swipeLeftView = itemView.findViewById(R.id.swipe_left);
-            swipeLeftTextView = (TextView) swipeLeftView.findViewById(R.id.swipe_left_text);
-            swipeRightView = itemView.findViewById(R.id.swipe_right);
         }
 
         public String getSection() {
