@@ -5,9 +5,10 @@
     android:layout_height="wrap_content">
 
     <View
-        android:id="@+id/swipe_action"
+        android:id="@+id/swipe_junk"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/junk"
         android:visibility="gone" />
 
     <FrameLayout
@@ -70,8 +71,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:textColor="?android:textColorPrimary"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="?android:textColorPrimary" />
 
             </LinearLayout>
 

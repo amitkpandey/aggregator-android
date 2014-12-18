@@ -216,6 +216,7 @@ import java.util.Calendar;
         final View stateView;
         final TextView headerTextView;
 
+        final View swipeJunkView;
         final View swipeContentView;
 
         public ViewHolder(View itemView) {
@@ -228,6 +229,7 @@ import java.util.Calendar;
             stateView = itemView.findViewById(R.id.state);
             headerTextView = (TextView) itemView.findViewById(R.id.header);
 
+            swipeJunkView = itemView.findViewById(R.id.swipe_junk);
             swipeContentView = itemView.findViewById(R.id.swipe_content);
         }
 

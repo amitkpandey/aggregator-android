@@ -357,7 +357,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
                     if (deltaX < 0) {
                         // gesture: mark as junk
-                        viewHolder.itemView.setBackgroundColor(junkColor);
+                        viewHolder.swipeJunkView.setVisibility(View.VISIBLE);
                         swipeContentView.setAlpha(1 - Math.abs(deltaX) / width);
 
                         if (-deltaX > Math.min(swipeGestureTrigger << 1, width / 2)) {
@@ -393,7 +393,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                                 (Color.green(toColor) - Color.green(fromColor)) * delta / swipeGestureTrigger + Color.green(fromColor),
                                 (Color.blue(toColor) - Color.blue(fromColor)) * delta / swipeGestureTrigger + Color.blue(fromColor)
                         );
-                        viewHolder.itemView.setBackgroundColor(deltaColor);
+                        viewHolder.swipeJunkView.setVisibility(View.GONE);
                         viewHolder.stateView.setBackgroundColor(deltaColor);
 
                         if (deltaX > swipeGestureTrigger) {
