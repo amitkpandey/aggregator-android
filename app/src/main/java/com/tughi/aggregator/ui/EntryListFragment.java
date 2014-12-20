@@ -292,7 +292,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
             final float y = event.getY();
 
             switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
-                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_DOWN: {
                     swipeDetection = true;
 
                     downX = x;
@@ -304,7 +304,8 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                     downEvent = MotionEvent.obtain(event);
 
                     break;
-                case MotionEvent.ACTION_MOVE:
+                }
+                case MotionEvent.ACTION_MOVE: {
                     if (swipeDetection) {
                         final int deltaX = (int) (x - downX);
                         final int deltaY = (int) (y - downY);
@@ -333,6 +334,14 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                     }
 
                     break;
+                }
+                case MotionEvent.ACTION_UP: {
+                    // item clicked
+
+                    // TODO: open item
+
+                    return true;
+                }
             }
 
             // intercept next event
