@@ -53,6 +53,7 @@ CREATE TABLE entry_user (
     poll INTEGER NOT NULL,
     flag_read INTEGER NOT NULL DEFAULT 0,
     flag_star INTEGER NOT NULL DEFAULT 0,
+    flag_junk INTEGER NOT NULL DEFAULT 0,
     ro_flag_read INTEGER NOT NULL DEFAULT 0,
     UNIQUE (feed_id, guid),
     FOREIGN KEY (feed_id) REFERENCES feed (_id)
@@ -92,6 +93,7 @@ CREATE VIEW entry_view AS
         feed_user,
         feed_sync
     WHERE
+        entry_user.flag_junk = 0 AND
         entry_user.feed_id = entry_sync.feed_id AND
         entry_user.guid = entry_sync.guid AND
         entry_user.feed_id = feed_user._id AND

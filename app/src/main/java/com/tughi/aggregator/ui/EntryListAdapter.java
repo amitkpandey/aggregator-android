@@ -99,8 +99,8 @@ import java.util.Calendar;
             throw new IllegalStateException("Invalid cursor position: " + position);
         }
 
-        holder.swipeContentView.setTranslationX(0);
-        holder.swipeContentView.setAlpha(1);
+        holder.entryView.setTranslationX(0);
+        holder.entryView.setAlpha(1);
 
         holder.section = sections.get(cursor.getPosition());
         holder.titleTextView.setText(Html.fromHtml(cursor.getString(ENTRY_TITLE)));
@@ -216,8 +216,7 @@ import java.util.Calendar;
         final View stateView;
         final TextView headerTextView;
 
-        final View swipeJunkView;
-        final View swipeContentView;
+        final View entryView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -229,8 +228,7 @@ import java.util.Calendar;
             stateView = itemView.findViewById(R.id.state);
             headerTextView = (TextView) itemView.findViewById(R.id.header);
 
-            swipeJunkView = itemView.findViewById(R.id.swipe_junk);
-            swipeContentView = itemView.findViewById(R.id.swipe_content);
+            entryView = itemView.findViewById(R.id.entry);
         }
 
         public String getSection() {

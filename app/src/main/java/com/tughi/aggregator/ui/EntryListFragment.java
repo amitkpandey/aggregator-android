@@ -60,6 +60,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     private RecyclerView entriesRecyclerView;
     private ProgressBar progressBar;
     private View emptyView;
+    private View junkNotificationView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,8 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         emptyView = view.findViewById(R.id.empty);
+
+        junkNotificationView = view.findViewById(R.id.junk_notification);
     }
 
     @Override
@@ -245,9 +248,65 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
         }.execute();
     }
 
-    private void markEntryJunk(final long id) {
-        // TODO: mark entry as junk
-        Toast.makeText(applicationContext, "Not implemented", Toast.LENGTH_SHORT).show();
+    private void markEntryJunk(final long id, final boolean junk) {
+        new AsyncTask<Object, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Object... params) {
+                ContentValues values = new ContentValues();
+                values.put(EntryColumns.FLAG_JUNK, junk);
+                return applicationContext.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
+            }
+        }.execute();
+
+        if (junk) {
+            // update undo view
+            junkNotificationView.setTag(id);
+            if (junkNotificationView.getVisibility() == View.GONE) {
+                // show undo view
+                junkNotificationView.setAlpha(0);
+                junkNotificationView.setVisibility(View.VISIBLE);
+                junkNotificationView
+                        .animate()
+                        .alpha(1)
+                        .setListener(null);
+            }
+            // register click listener
+            junkNotificationView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    markEntryJunk(id, false);
+
+                    // hide notification
+                    junkNotificationView
+                            .animate()
+                            .alpha(0)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    junkNotificationView.setVisibility(View.GONE);
+                                }
+                            });
+                }
+            });
+            // hide notification after 2 seconds
+            junkNotificationView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (junkNotificationView.getVisibility() != View.GONE &&
+                            id == (Long) junkNotificationView.getTag()) {
+                        junkNotificationView
+                                .animate()
+                                .alpha(0)
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        junkNotificationView.setVisibility(View.GONE);
+                                    }
+                                });
+                    }
+                }
+            }, 2000);
+        }
     }
 
     /**
@@ -340,7 +399,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
                     // TODO: open item
 
-                    return true;
+                    break;
                 }
             }
 
@@ -354,7 +413,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                 return;
             }
 
-            final View swipeContentView = viewHolder.swipeContentView;
+            final View swipeContentView = viewHolder.entryView;
             final float width = swipeContentView.getWidth();
 
             final float deltaX = event.getX() - downX;
@@ -366,7 +425,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
                     if (deltaX < 0) {
                         // gesture: mark as junk
-                        viewHolder.swipeJunkView.setVisibility(View.VISIBLE);
                         swipeContentView.setAlpha(1 - Math.abs(deltaX) / width);
 
                         if (-deltaX > Math.min(swipeGestureTrigger << 1, width / 2)) {
@@ -381,7 +439,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                                     .setListener(new AnimatorListenerAdapter() {
                                         @Override
                                         public void onAnimationEnd(Animator animation) {
-                                            markEntryJunk(entryId);
+                                            markEntryJunk(entryId, true);
                                         }
                                     });
                         }
@@ -402,7 +460,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                                 (Color.green(toColor) - Color.green(fromColor)) * delta / swipeGestureTrigger + Color.green(fromColor),
                                 (Color.blue(toColor) - Color.blue(fromColor)) * delta / swipeGestureTrigger + Color.blue(fromColor)
                         );
-                        viewHolder.swipeJunkView.setVisibility(View.GONE);
                         viewHolder.stateView.setBackgroundColor(deltaColor);
 
                         if (deltaX > swipeGestureTrigger) {
