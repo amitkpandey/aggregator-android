@@ -413,26 +413,26 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                 return;
             }
 
-            final View swipeContentView = viewHolder.entryView;
-            final float width = swipeContentView.getWidth();
+            final View entryView = viewHolder.entryView;
+            final float width = entryView.getWidth();
 
             final float deltaX = event.getX() - downX;
 
             switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
                 case MotionEvent.ACTION_MOVE: {
                     // move view
-                    swipeContentView.setTranslationX(deltaX);
+                    entryView.setTranslationX(deltaX);
 
                     if (deltaX < 0) {
                         // gesture: mark as junk
-                        swipeContentView.setAlpha(1 - Math.abs(deltaX) / width);
+                        entryView.setAlpha(1 - Math.abs(deltaX) / width);
 
                         if (-deltaX > Math.min(swipeGestureTrigger << 1, width / 2)) {
                             swipeCancelled = true;
 
                             // apply gesture
                             final long entryId = viewHolder.getItemId();
-                            swipeContentView.animate()
+                            entryView.animate()
                                     .translationX(-width)
                                     .alpha(0)
                                     .setDuration(animationTime)
@@ -468,7 +468,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                             // apply gesture
                             final long entryId = viewHolder.getItemId();
                             final boolean entryNewRead = !viewHolder.isRead();
-                            swipeContentView.animate()
+                            entryView.animate()
                                     .translationX(0)
                                     .setDuration(animationTime)
                                     .setListener(new AnimatorListenerAdapter() {
@@ -487,15 +487,17 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                     // swipe cancelled
 
                     if (deltaX < 0) {
-                        swipeContentView.animate()
+                        entryView.animate()
                                 .translationX(0)
                                 .alpha(1)
-                                .setDuration(animationTime);
+                                .setDuration(animationTime)
+                                .setListener(null);
                     } else {
                         viewHolder.stateView.setBackgroundColor(viewHolder.isRead() ? readColor : unreadColor);
-                        swipeContentView.animate()
+                        entryView.animate()
                                 .translationX(0)
-                                .setDuration(animationTime);
+                                .setDuration(animationTime)
+                                .setListener(null);
                     }
 
                     break;
