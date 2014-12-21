@@ -327,7 +327,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
         private EntryListAdapter.ViewHolder viewHolder;
 
-        private int junkColor;
         private int readColor;
         private int unreadColor;
 
@@ -340,7 +339,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
             swipeGestureTrigger = (int) (120 * resources.getDisplayMetrics().density);
 
             animationTime = resources.getInteger(android.R.integer.config_shortAnimTime);
-            junkColor = resources.getColor(R.color.junk);
             readColor = resources.getColor(R.color.entry_read);
             unreadColor = resources.getColor(R.color.entry_unread);
         }
@@ -425,23 +423,14 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
                     if (deltaX < 0) {
                         // gesture: mark as junk
-                        entryView.setAlpha(1 - Math.abs(deltaX) / width);
+                        float maxDeltaX = Math.min(swipeGestureTrigger << 1, width / 2);
+                        entryView.setAlpha(1 - Math.abs(deltaX) / maxDeltaX);
 
-                        if (-deltaX > Math.min(swipeGestureTrigger << 1, width / 2)) {
+                        if (-deltaX > maxDeltaX) {
                             swipeCancelled = true;
 
                             // apply gesture
-                            final long entryId = viewHolder.getItemId();
-                            entryView.animate()
-                                    .translationX(-width)
-                                    .alpha(0)
-                                    .setDuration(animationTime)
-                                    .setListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            markEntryJunk(entryId, true);
-                                        }
-                                    });
+                            markEntryJunk(viewHolder.getItemId(), true);
                         }
                     } else {
                         // gesture: toggle read state
@@ -455,7 +444,8 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                             toColor = readColor;
                         }
                         int delta = Math.min((int) deltaX, swipeGestureTrigger);
-                        int deltaColor = Color.rgb(
+                        int deltaColor = Color.argb(
+                                (Color.alpha(toColor) - Color.alpha(fromColor)) * delta / swipeGestureTrigger + Color.alpha(fromColor),
                                 (Color.red(toColor) - Color.red(fromColor)) * delta / swipeGestureTrigger + Color.red(fromColor),
                                 (Color.green(toColor) - Color.green(fromColor)) * delta / swipeGestureTrigger + Color.green(fromColor),
                                 (Color.blue(toColor) - Color.blue(fromColor)) * delta / swipeGestureTrigger + Color.blue(fromColor)

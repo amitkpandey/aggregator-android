@@ -10,6 +10,6 @@
     <color name="entry_list_item">#ff424242</color>
     <color name="entry_list_divider">#31212121</color>
     <color name="junk">#ffd50000</color>
-    <color name="entry_read">@color/entry_list_item</color>
+    <color name="entry_read">@android:color/transparent</color>
     <color name="entry_unread">@color/accent</color>
 </resources>
