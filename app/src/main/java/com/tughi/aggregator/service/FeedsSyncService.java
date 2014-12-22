@@ -46,7 +46,7 @@ public class FeedsSyncService extends IntentService {
                 private final AtomicInteger counter = new AtomicInteger(1);
 
                 public Thread newThread(Runnable runnable) {
-                    return new Thread(runnable, FeedsSyncService.class.getSimpleName() + " #" + counter.getAndIncrement());
+                    return new Thread(runnable, FeedsSyncService.class.getSimpleName() + "#" + counter.getAndIncrement());
                 }
             }
     );

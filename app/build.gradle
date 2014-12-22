@@ -21,8 +21,8 @@ android {
 }
 
 dependencies {
-    compile 'com.tughi:sqlite-open-helper:0.5'
-    compile 'com.tughi:sax-framework:2.0'
+    compile 'com.tughi.android:sqlite-open-helper:0.5'
+    compile 'com.tughi.sax:sax-framework:2.0'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'com.squareup.picasso:picasso:2.4.0'
