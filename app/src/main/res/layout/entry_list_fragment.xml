@@ -35,7 +35,7 @@
         android:layout_marginBottom="48dp"
         android:background="@android:drawable/toast_frame"
         android:drawablePadding="16dp"
-        android:drawableRight="@android:drawable/ic_menu_revert"
+        android:drawableRight="@drawable/ic_action_revert"
         android:gravity="center_vertical"
         android:text="@string/entry_marked_as_junk"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
