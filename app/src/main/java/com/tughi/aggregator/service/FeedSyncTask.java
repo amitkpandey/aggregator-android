@@ -55,7 +55,7 @@ import java.util.ArrayList;
 
         final ContentResolver contentResolver = context.getContentResolver();
 
-        Log.i(getClass().getName(), "Updating feed " + feedId);
+        Log.i(getClass().getName(), "Updating feed " + feedId + " on " + Thread.currentThread().getName());
 
         ContentValues syncLogValues = new ContentValues();
         syncLogValues.put(SyncLogColumns.FEED_ID, feedId);

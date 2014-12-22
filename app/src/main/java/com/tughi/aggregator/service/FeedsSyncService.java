@@ -4,12 +4,18 @@ import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.FeedUpdateModes;
 import com.tughi.aggregator.content.Uris;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A {@link IntentService} that syncs the feeds.
@@ -29,6 +35,21 @@ public class FeedsSyncService extends IntentService {
     private static final int FEED_ID_INDEX = 0;
     private static final int FEED_URL_INDEX = 1;
     private static final int FEED_UPDATE_MODE = 2;
+
+    private static final Executor EXECUTOR = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors() + 1,
+            Runtime.getRuntime().availableProcessors() * 2 + 1,
+            1,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(),
+            new ThreadFactory() {
+                private final AtomicInteger counter = new AtomicInteger(1);
+
+                public Thread newThread(Runnable runnable) {
+                    return new Thread(runnable, FeedsSyncService.class.getSimpleName() + " #" + counter.getAndIncrement());
+                }
+            }
+    );
 
     public FeedsSyncService() {
         super(FeedsSyncService.class.getSimpleName());
@@ -57,7 +78,7 @@ public class FeedsSyncService extends IntentService {
                 // sync feed on a separated thread
                 new FeedSyncTask(this)
                         .executeOnExecutor(
-                                AsyncTask.THREAD_POOL_EXECUTOR,
+                                EXECUTOR,
                                 cursor.getLong(FEED_ID_INDEX),
                                 cursor.getString(FEED_URL_INDEX),
                                 cursor.getInt(FEED_UPDATE_MODE),
