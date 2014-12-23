@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aggregator="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/mark_unread"
+        android:title="Keep as unread"
+        android:icon="@drawable/ic_action_mark_unread"
+        aggregator:showAsAction="always" />
+    <item
+        android:id="@+id/mark_read"
+        android:title="Keep as read"
+        android:icon="@drawable/ic_action_mark_read"
+        aggregator:showAsAction="always" />
+    <item
+        android:id="@+id/share"
+        android:icon="@drawable/ic_action_share"
+        android:title="Share"
+        aggregator:showAsAction="always" />
+</menu>

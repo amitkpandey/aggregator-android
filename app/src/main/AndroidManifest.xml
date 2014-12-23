@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.ReaderActivity" />
+
         <activity android:name=".ui.FeedUpdateModeActivity" />
 
         <activity

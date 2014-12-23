@@ -12,4 +12,7 @@
     <color name="junk">#ffd50000</color>
     <color name="entry_read">@android:color/transparent</color>
     <color name="entry_unread">@color/accent</color>
+    <color name="reader_background">@color/entry_list_item</color>
+    <color name="progressbar_background">@android:color/transparent</color>
+    <color name="progressbar_progress">@color/accent</color>
 </resources>

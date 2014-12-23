@@ -350,15 +350,22 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
             switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN: {
-                    swipeDetection = true;
-
                     downX = x;
                     downY = y;
 
-                    if (downEvent != null) {
-                        downEvent.recycle();
+                    View itemView = recyclerView.findChildViewUnder(downX, downY);
+                    if (itemView != null) {
+                        viewHolder = (EntryListAdapter.ViewHolder) recyclerView.getChildViewHolder(itemView);
+                        swipeDetection = true;
+
+                        if (downEvent != null) {
+                            downEvent.recycle();
+                        }
+                        downEvent = MotionEvent.obtain(event);
+                    } else {
+                        viewHolder = null;
+                        swipeDetection = false;
                     }
-                    downEvent = MotionEvent.obtain(event);
 
                     break;
                 }
@@ -373,19 +380,12 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                             swipeDetection = false;
 
                             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                                // swipe detected
+                                // start swiping
+                                swipeCancelled = false;
+                                onTouchEvent(recyclerView, event);
 
-                                View itemView = recyclerView.findChildViewUnder(downX, downY);
-                                if (itemView != null) {
-                                    viewHolder = (EntryListAdapter.ViewHolder) recyclerView.getChildViewHolder(itemView);
-
-                                    // start swiping
-                                    swipeCancelled = false;
-                                    onTouchEvent(recyclerView, event);
-
-                                    // receive next swipe events in onTouchEvent(...)
-                                    return true;
-                                }
+                                // receive next swipe events in onTouchEvent(...)
+                                return true;
                             }
                         }
                     }
@@ -393,9 +393,14 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                     break;
                 }
                 case MotionEvent.ACTION_UP: {
-                    // item clicked
+                    if (swipeDetection) {
+                        // item clicked
 
-                    // TODO: open item
+                        Intent intent = new Intent(applicationContext, ReaderActivity.class);
+                        intent.setData(entriesUri);
+                        intent.putExtra(ReaderActivity.EXTRA_CURSOR_POSITION, viewHolder.getPosition());
+                        startActivity(intent);
+                    }
 
                     break;
                 }
