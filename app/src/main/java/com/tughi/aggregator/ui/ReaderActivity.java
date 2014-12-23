@@ -22,7 +22,7 @@ public class ReaderActivity extends ActionBarActivity implements LoaderManager.L
     public static final String EXTRA_CURSOR_POSITION = "cursor_position";
 
     private ViewPager pager;
-    protected Adapter adapter;
+    protected Adapter adapter = new Adapter();
     protected Cursor cursor;
 
     private Intent resultData;
@@ -37,7 +37,7 @@ public class ReaderActivity extends ActionBarActivity implements LoaderManager.L
         pager.setOnPageChangeListener(this);
         pager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.reader_pager_margin));
         pager.setPageMarginDrawable(R.drawable.reader_pager_margin);
-        pager.setAdapter(adapter = new Adapter());
+        pager.setAdapter(adapter);
 
         LoaderManager loaderManager = getSupportLoaderManager();
         loaderManager.initLoader(0, null, this);

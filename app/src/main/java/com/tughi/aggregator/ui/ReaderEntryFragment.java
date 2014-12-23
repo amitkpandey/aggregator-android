@@ -13,6 +13,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -114,6 +115,7 @@ public class ReaderEntryFragment extends Fragment {
         setHasOptionsMenu(true);
 
         final ReaderActivity activity = (ReaderActivity) getActivity();
+        Log.i(getClass().getName(), "activity: " + activity);
         activity.adapter.registerDataSetObserver(dataSetObserver = new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -181,7 +183,10 @@ public class ReaderEntryFragment extends Fragment {
         registerForContextMenu(descriptionWebView);
 
         // force load
-        dataSetObserver.onChanged();
+        ReaderActivity activity = (ReaderActivity) getActivity();
+        if (activity.cursor != null) {
+            dataSetObserver.onChanged();
+        }
 
         return fragmentView;
     }
