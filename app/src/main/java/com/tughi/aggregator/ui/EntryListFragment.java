@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tughi.aggregator.BuildConfig;
@@ -58,6 +59,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     private EntryListAdapter adapter;
 
     private RecyclerView entriesRecyclerView;
+    private TextView unreadCountTextView;
     private ProgressBar progressBar;
     private View emptyView;
     private View junkNotificationView;
@@ -142,6 +144,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
         entriesRecyclerView.setAdapter(adapter);
         entriesRecyclerView.addOnItemTouchListener(new OnItemTouchListener());
 
+        unreadCountTextView = (TextView) view.findViewById(R.id.unread_count);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         emptyView = view.findViewById(R.id.empty);
 
@@ -173,9 +176,11 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     private static final String[] FEED_PROJECTION = {
             FeedColumns.ID,
             FeedColumns.TITLE,
+            FeedColumns.UNREAD_COUNT,
     };
     private static final int FEED_ID = 0;
     private static final int FEED_TITLE = 1;
+    private static final int FEED_UNREAD_COUNT = 2;
 
     private static final String ENTRY_SELECTION = EntryColumns.RO_FLAG_READ + " = 0";
     private static final String ENTRY_ORDER = EntryColumns.UPDATED + " ASC";
@@ -197,8 +202,8 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         switch (loader.getId()) {
             case LOADER_FEED:
-                // update the activity title
                 if (cursor.moveToFirst()) {
+                    // update the activity title
                     String title;
                     switch (cursor.getInt(FEED_ID)) {
                         case -2:
@@ -211,6 +216,15 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                             title = cursor.getString(FEED_TITLE);
                     }
                     getActivity().setTitle(title);
+
+                    // show the remaining unread count
+                    int unreadCount = cursor.getInt(FEED_UNREAD_COUNT);
+                    if (unreadCount > 0) {
+                        unreadCountTextView.setVisibility(View.VISIBLE);
+                        unreadCountTextView.setText(Integer.toString(unreadCount));
+                    } else {
+                        unreadCountTextView.setVisibility(View.GONE);
+                    }
                 }
                 break;
             case LOADER_ENTRIES:
