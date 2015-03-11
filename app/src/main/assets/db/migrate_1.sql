@@ -190,9 +190,6 @@ INSERT INTO feed_sync (url) VALUES ('https://dribbble.com/tags/android.rss');
 INSERT INTO feed_sync (url) VALUES ('https://news.ycombinator.com/rss');
 
 -- add test feed
-INSERT INTO feed_sync (url) VALUES ('http://feeds2.feedburner.com/mangafox/latest_manga_chapters');
-
--- add test feed
 INSERT INTO feed_sync (url) VALUES ('http://www.questionablecontent.net/QCRSS.xml');
 
 -- add test feed
