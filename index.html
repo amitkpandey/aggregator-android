@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Aggregator</title>
 <head>
     <style>
         html, body {
@@ -10,7 +11,7 @@
         color: white;
         }
     </style>
-    <style media="screen and (max-width: 599px)">
+    <style media="(orientation: portrait)">
         #icon > img {
         display: block;
         width: 64px;
@@ -24,23 +25,87 @@
         }
 
         #phone {
-            position: absolute;
-            left: 0;
-            right: 0;
-            padding: 64px 32px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        padding: 64px 32px;
         }
         #phone > img {
-            position: relative;
-            display: block;
-            width: 100%;
+        position: relative;
+        display: block;
+        width: 100%;
+        }
+    </style>
+    <style media="(orientation: portrait) and (min-width: 380px)">
+        #icon > img {
+        width: 96px;
+        height: 96px;
+        }
+
+        #phone {
+        padding-left: 64px;
+        padding-right: 64px;
+        }
+    </style>
+    <style media="(orientation: portrait) and (min-width: 480px)">
+        #content {
+        position: relative;
+        width: 480px;
+        margin: 0 auto;
+        }
+    </style>
+    <style media="(orientation: landscape) and (max-width: 639px)">
+        #icon {
+        position: fixed;
+        width: 50%;
+        bottom: 50%;
+        padding-bottom: 8px;
+        }
+        #icon > img {
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto;
+        }
+        #slogan {
+        position: fixed;
+        width: 50%;
+        top: 50%;
+        }
+        #slogan > #title {
+        display: block;
+        text-align: center;
+        }
+        #slogan > #separator {
+        display: block;
+        visibility: hidden;
+        text-align: center;
+        }
+        #slogan > #text {
+        display: block;
+        text-align: center;
+        padding: 0 16px;
+        }
+        #phone {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 50%;
+        }
+        #phone > img {
+        position: relative;
+        display: block;
+        width: 100%;
         }
     </style>
 </head>
 <body>
-<div id="icon"><img src="icon.png"></div>
-<div id="slogan">
-    <span>Aggregator</span><span>:&nbsp;</span><span>This is how I like to read my feeds.</span>
+<div id="content">
+    <div id="icon"><img src="icon.png"></div>
+    <div id="slogan">
+        <span id="title">Aggregator</span><span id="separator">:&nbsp;</span><span id="text">This is how I like to read my feeds.</span>
+    </div>
+    <div id="phone"><img src="phone.png"></div>
 </div>
-<div id="phone"><img src="phone.png"></div>
 </body>
 </html>
