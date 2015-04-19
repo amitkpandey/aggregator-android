@@ -54,20 +54,20 @@
         margin: 0 auto;
         }
     </style>
-    <style media="(orientation: landscape) and (max-width: 639px)">
+    <style media="(orientation: landscape)">
         #icon {
         position: fixed;
         width: 50%;
         bottom: 50%;
-        padding-bottom: 8px;
+        text-align: center;
         }
         #icon > img {
-        display: block;
         width: 64px;
         height: 64px;
-        margin: 0 auto;
+        padding-bottom: 8px;
         }
         #slogan {
+        display: block;
         position: fixed;
         width: 50%;
         top: 50%;
@@ -77,25 +77,42 @@
         text-align: center;
         }
         #slogan > #separator {
-        display: block;
-        visibility: hidden;
-        text-align: center;
+        display: none;
         }
         #slogan > #text {
         display: block;
         text-align: center;
-        padding: 0 16px;
+        padding: 16px;
+        }
+        #phone-container {
+        position: relative;
+        left: 50%;
+        width: 50%;
         }
         #phone {
         position: absolute;
-        left: 50%;
-        top: 0;
-        width: 50%;
+        right: 16px;
         }
         #phone > img {
-        position: relative;
         display: block;
         width: 100%;
+        padding: 16px 0;
+        }
+    </style>
+    <style media="(orientation: landscape) and (min-width: 640px)">
+        #icon > img {
+        width: 96px;
+        height: 96px;
+        }
+        #slogan > #text {
+        padding-left: 32px;
+        padding-right: 32px;
+        }
+        #phone {
+        right: 32px;
+        }
+        #phone > img {
+        padding: 32px 0;
         }
     </style>
 </head>
@@ -105,7 +122,9 @@
     <div id="slogan">
         <span id="title">Aggregator</span><span id="separator">:&nbsp;</span><span id="text">This is how I like to read my feeds.</span>
     </div>
-    <div id="phone"><img src="phone.png"></div>
+    <div id="phone-container">
+        <div id="phone"><img src="phone.png"></div>
+    </div>
 </div>
 </body>
 </html>
