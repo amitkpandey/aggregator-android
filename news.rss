@@ -9,6 +9,8 @@
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
       <description>
         <![CDATA[
+          <p>Aggregator is not dead... development is just (very) slow.</p>
+          <p>So what's new?</b>
           <ul>
             <li>redesigned UI</li>
             <li>exclude and include rules for feed entries</li>
@@ -16,8 +18,10 @@
             <li>feed:// support</li>
             <li>pinned entries: which are shown are unread until manually marked as read</li>
           </ul>
+          <img src="https://lh6.googleusercontent.com/-BVPJ48zWJmY/VSkQfjIMwCI/AAAAAAAAJB0/8YW2qQmCaPg/w540-h900-no/Screenshot_2015-04-11-14-13-33.png" />
         ]]>
       </description>
+      <pubDate>Wed, 24 June 2015 20:00:00 GMT</pubDate>
     </item>
   </channel>
 </rss>
