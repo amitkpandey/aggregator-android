@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>Aggregator News</title>
+    <link>http://tughi.github.io/aggregator-android</link>
+    <description>Latest news about Aggregator</description>
+    <item>
+       <title>Aggregator 2.6.0</title>
+       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+       <description>
+         <ul>
+           <li>redesigned UI</li>
+           <li>exclude and include rules for feed entries</li>
+           <li>entry reader with new "show original" option</li>
+           <li>feed:// support</li>
+           <li>pinned entries: which are shown are unread until manually marked as read</li>
+         </ul>
+       </description>
+    </item>
+  </channel>
+</rss>
