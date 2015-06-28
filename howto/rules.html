@@ -1,0 +1,61 @@
+<html>
+<head>
+  <style media="screen">
+    .content {
+      width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .marked {
+      background-color: #ffeecc;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>Entry rules</h1>
+    <p>
+      <b>Aggregator</b> uses entry rules to filter out the entries of a feed.
+    </p>
+    <p>
+      There are two types of rules: <b>exclude rules</b>, used to mark which entries
+      should be hidden while aggregating a feed, and <b>include rules</b>, used to
+      cancel the effect of some exclude rules.
+    </p>
+    <p>
+      Every entry rule defines a <b>mask</b> used to match the entries for which
+      the rule <b>action</b> is applied. The <i class="marked">%</i> character
+      is used to match zero, one or multiple characters, and can be used multiple
+      times in a <b>mask</b>.
+    </p>
+    <p>
+      For example, the <i class="marked">%aggregator%</i> title mask will match
+      every entry that contains <i class="marked">aggregator</i> in the title.
+      While the <i class="marked">% Vol % Ch %</i> title mask will match every
+      entry that contains both <i class="marked">&nbsp;Vol&nbsp;</i> and
+      <i class="marked">&nbsp;Ch&nbsp;</i> (in the same order as present in the
+       mask) in the title.
+    </p>
+    <h2>Excluding unwished entries</h2>
+    <p>
+      The easyest way to define rules that hide entries of a feed is by using the
+      <b>Exclude</b> action:
+      <ol>
+        <li>
+          Select the entry which you want to exclude by <i>long pressing</i> it.
+        </li>
+        <li>
+          Click the <i>Exclude</i> action from the action bar.<br>
+        </li>
+      </ol>
+    </p>
+    <p>
+      <i>NOTE 1: Depending on your device type, this action can be found as icon
+        or as option in the overflow menu.</i><br>
+    </p>
+    <p>
+      <i>NOTE 2: Long pressing an icon in the action bar reveals the action name.</i>
+    </p>
+  </div>
+</body>
+</html>
