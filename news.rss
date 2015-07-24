@@ -5,7 +5,7 @@
     <link>http://tughi.github.io/aggregator-android</link>
     <description>Latest news about Aggregator</description>
     <item>
-      <guid>c1b9222c-1daf-11e5-9a21-1697f925ec7b</guid>
+      <guid isPermaLink="false">c1b9222c-1daf-11e5-9a21-1697f925ec7b</guid>
       <title>Aggregator 2.6.0</title>
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
       <description>
@@ -25,7 +25,7 @@
       <pubDate>Wed, 24 Jun 2015 20:00:00 GMT</pubDate>
     </item>
     <item>
-      <guid>addc60ac-1daf-11e5-9a21-1697f925ec7b</guid>
+      <guid isPermaLink="false">addc60ac-1daf-11e5-9a21-1697f925ec7b</guid>
       <title>Aggregator Howto » Entry Rules</title>
       <description>
         <![CDATA[
