@@ -1,0 +1,4 @@
+[submodule "_gh-pages"]
+	path = _gh-pages
+	url = git@github.com:tughi/aggregator-android.git
+	branch = gh-pages
