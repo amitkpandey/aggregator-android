@@ -1,11 +1,9 @@
 *---
 template: howto.html.jinja2
 title: Howto » Entry Rules
+content_title: Entry rules
 uid: addc60ac-1daf-11e5-9a21-1697f925ec7b
 ---*
-
-Entry rules
-===========
 
 **Aggregator** uses user-defined entry rules to filter out the entries of a feed.
 
@@ -15,7 +13,7 @@ and **include rules**, used to cancel the effect of some exclude rules.
 Every entry rule defines a **mask** used to match the entries for which the rule **action** is applied. The `%`
 character is used to match zero, one or multiple characters, and can be used multiple times in a **mask**.
 
-For example, the `%aggregator%` title mask will match every entry that contains `aggregator` in the title. While the `% 
+For example, the `%aggregator%` title mask will match every entry that contains `aggregator` in the title. While the `%
 Vol % Ch %` title mask will match every entry that contains both `Vol` and `Ch` (in the same order as present in the
 mask) in the title.
 
