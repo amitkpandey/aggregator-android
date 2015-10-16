@@ -9,12 +9,12 @@
 <body>
 <div class="container">
     <h1>Entry rules</h1>
-<p><strong>Aggregator</strong> uses user-defined entry rules to filter out the entries of a feed.</p>
+    <p><strong>Aggregator</strong> uses user-defined entry rules to filter out the entries of a feed.</p>
 <p>There are two types of rules: <strong>exclude rules</strong>, used to mark which entries should be hidden while aggregating a feed,
 and <strong>include rules</strong>, used to cancel the effect of some exclude rules.</p>
 <p>Every entry rule defines a <strong>mask</strong> used to match the entries for which the rule <strong>action</strong> is applied. The <code>%</code>
 character is used to match zero, one or multiple characters, and can be used multiple times in a <strong>mask</strong>.</p>
-<p>For example, the <code>%aggregator%</code> title mask will match every entry that contains <code>aggregator</code> in the title. While the <code>% 
+<p>For example, the <code>%aggregator%</code> title mask will match every entry that contains <code>aggregator</code> in the title. While the <code>%
 Vol % Ch %</code> title mask will match every entry that contains both <code>Vol</code> and <code>Ch</code> (in the same order as present in the
 mask) in the title.</p>
 <h2>Excluding unwished entries</h2>
