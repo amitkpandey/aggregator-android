@@ -5,7 +5,7 @@ import os
 import markdown
 import shutil
 
-SOURCES = {}
+CONTENTS = {}
 JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
 TEMPLATES = {
     'howto': JINJA2.get_template('howto.jinja2'),
@@ -29,14 +29,14 @@ def process_content():
         for file_name in sorted(files):
             file_path = os.path.join(root, file_name)
 
-            if file_name.endswith('.source'):
-                source = load_source(file_path)
+            if file_name.endswith('.content'):
+                content = load_content(file_path)
 
-                source_type = source['type']
-                if source_type == 'news':
-                    news.append(source)
+                content_type = content['type']
+                if content_type == 'news':
+                    news.append(content)
                 else:
-                    generate_html(source)
+                    generate_html(content)
 
             else:
                 print 'copying', file_path
@@ -45,45 +45,45 @@ def process_content():
     generate_rss(news)
 
 
-def load_source(file_path):
-    if file_path not in SOURCES:
+def load_content(file_path):
+    if file_path not in CONTENTS:
         print 'loading', file_path
 
         with codecs.open(file_path, mode='r', encoding='utf-8') as reader:
-            source = SOURCES[file_path] = {
+            content = CONTENTS[file_path] = {
                 'file': file_path
             }
 
-            for metadata in reader:
-                metadata = metadata.strip()
-                if not metadata:
+            for parameter in reader:
+                parameter = parameter.strip()
+                if not parameter:
                     break
-                name, value = metadata.split(':', 1)
+                name, value = parameter.split(':', 1)
                 name = name.strip()
                 value = value.strip()
 
                 if name == 'date':
-                    source[name] = dateutil.parser.parse(value)
+                    content[name] = dateutil.parser.parse(value)
                 else:
-                    source[name] = value
+                    content[name] = value
 
-            source_content = reader.read()
-            if source_content:
-                source['content'] = jinja2.Markup(markdown.markdown(source_content))
+            content_markdown = reader.read()
+            if content_markdown:
+                content['content'] = jinja2.Markup(markdown.markdown(content_markdown))
 
-    return SOURCES[file_path]
+    return CONTENTS[file_path]
 
 
-def generate_html(source):
-    source_type = source['type']
-    source_file = source['file']
+def generate_html(content):
+    content_type = content['type']
+    content_file = content['file']
 
-    print 'generating', source_type, 'from', source_file
+    print 'generating', content_type, 'from', content_file
 
-    template = TEMPLATES[source_type]
+    template = TEMPLATES[content_type]
 
-    with codecs.open(os.path.join('../gh-pages', source_file[:-6] + 'html'), mode='w', encoding='utf-8') as writer:
-        writer.write(template.render(**source))
+    with codecs.open(os.path.join('../gh-pages', content_file[:-7] + 'html'), mode='w', encoding='utf-8') as writer:
+        writer.write(template.render(**content))
 
 
 def generate_rss(news):
@@ -96,13 +96,22 @@ def generate_rss(news):
 
     for item in news:
         if 'page' in item:
-            page_source = SOURCES[item['page']].copy()
-            page_source.update(item)
-            item.update(page_source)
+            page = CONTENTS[item['page']].copy()
+            page.update(item)
+            item.update(page)
 
     with codecs.open(os.path.join('../gh-pages', 'news.rss'), mode='w', encoding='utf-8') as writer:
         writer.write(template.render({'news': news}))
 
 
 if __name__ == '__main__':
+    print 'deleting generated files'
+    for root, dirs, files in os.walk('gh-pages'):
+        for file_name in files:
+            if root == 'gh-pages' and file_name.startswith('.'):
+                continue
+            os.remove(os.path.join(root, file_name))
+        if root != 'gh-pages':
+            os.rmdir(root)
+
     process_content()
