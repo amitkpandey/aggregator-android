@@ -4,6 +4,12 @@ import os
 import markdown
 import shutil
 
+SOURCES = {}
+JINJA2 = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
+TEMPLATES = {
+    'howto': JINJA2.get_template('howto.jinja2')
+}
+
 
 def process_content():
     os.chdir('content')
@@ -19,45 +25,54 @@ def process_content():
         for file_name in files:
             file_path = os.path.join(root, file_name)
 
-            if file_name.endswith('.md'):
-                generate_md(file_path)
+            if file_name.endswith('.source'):
+                source = load_source(file_path)
+
+                source_type = source['type']
+                if source_type != 'news':
+                    generate_html(source)
+                pass
             else:
                 print 'copying', file_path
                 shutil.copy(file_path, os.path.join('../gh-pages', file_path))
 
 
-jinja2_env = None
+def load_source(file_path):
+    if file_path not in SOURCES:
+        print 'loading', file_path
+
+        with codecs.open(file_path, mode='r', encoding='utf-8') as reader:
+            source = SOURCES[file_path] = {
+                'source': file_path
+            }
+
+            for metadata in reader:
+                metadata = metadata.strip()
+                if not metadata:
+                    break
+                name, value = metadata.split(':', 1)
+                name = name.strip()
+                value = value.strip()
+
+                source[name] = value
+
+            source_content = reader.read()
+            if source_content:
+                source['content'] = jinja2.Markup(markdown.markdown(source_content))
+
+    return SOURCES[file_path]
 
 
-def generate_md(file_path):
-    print 'processing', file_path
+def generate_html(source):
+    source_type = source['type']
+    source_source = source['source']
 
-    global jinja2_env
-    if not jinja2_env:
-        jinja2_env = jinja2.Environment(loader=jinja2.FileSystemLoader('../templates'))
+    print 'generating', source_type, 'from', source_source
 
-    with codecs.open(file_path, mode='r', encoding='utf-8') as reader:
-        template = None
-        context = {}
-        for metadata in reader:
-            metadata = metadata.strip()
-            if metadata == '*---':
-                continue
-            if metadata == '---*':
-                break
-            name, value = metadata.split(':', 1)
-            name = name.strip()
-            value = value.strip()
+    template = TEMPLATES[source_type]
 
-            if name == 'template':
-                template = jinja2_env.get_template(value)
-            else:
-                context[name] = value
-
-        context['content'] = jinja2.Markup(markdown.markdown(reader.read()))
-
-        with codecs.open(os.path.join('../gh-pages', file_path[:-3] + '.html'), mode='w', encoding='utf-8') as writer:
-            writer.write(template.render(**context))
+    with codecs.open(os.path.join('../gh-pages', source_source[:-6] + 'html'), mode='w', encoding='utf-8') as writer:
+        writer.write(template.render(**source))
 
 
 if __name__ == '__main__':

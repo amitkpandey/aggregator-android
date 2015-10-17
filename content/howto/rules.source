@@ -1,9 +1,6 @@
-*---
-template: howto.html.jinja2
+type: howto
 title: Howto » Entry Rules
 content_title: Entry rules
-uid: addc60ac-1daf-11e5-9a21-1697f925ec7b
----*
 
 **Aggregator** uses user-defined entry rules to filter out the entries of a feed.
 

@@ -1,0 +1,16 @@
+type: news
+uid: c1b9222c-1daf-11e5-9a21-1697f925ec7b
+title: Aggregator 2.6.0
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+
+Aggregator is not dead... development is just (very) slow.
+
+So what's new?
+
+- redesigned UI
+- exclude and include rules for feed entries
+- entry reader with new "show original" option
+- feed:// support
+- pinned entries: which are shown are unread until manually marked as read
+
+![Screenshot](https://lh6.googleusercontent.com/-BVPJ48zWJmY/VSkQfjIMwCI/AAAAAAAAJB0/8YW2qQmCaPg/w540-h900-no/Screenshot_2015-04-11-14-13-33.png)
