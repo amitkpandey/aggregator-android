@@ -4,6 +4,7 @@
     <title>Aggregator News</title>
     <link>http://tughi.github.io/aggregator-android</link>
     <description>Latest news about Aggregator</description>
+    
     <item>
       <guid isPermaLink="false">c1b9222c-1daf-11e5-9a21-1697f925ec7b</guid>
       <title>Aggregator 2.6.0</title>
@@ -11,99 +12,57 @@
       <description>
         <![CDATA[
           <p>Aggregator is not dead... development is just (very) slow.</p>
-          <p>So what's new?</b>
-          <ul>
-            <li>redesigned UI</li>
-            <li>exclude and include rules for feed entries</li>
-            <li>entry reader with new "show original" option</li>
-            <li>feed:// support</li>
-            <li>pinned entries: which are shown are unread until manually marked as read</li>
-          </ul>
-          <img src="https://lh6.googleusercontent.com/-BVPJ48zWJmY/VSkQfjIMwCI/AAAAAAAAJB0/8YW2qQmCaPg/w540-h900-no/Screenshot_2015-04-11-14-13-33.png" />
+<p>So what's new?</p>
+<ul>
+<li>redesigned UI</li>
+<li>exclude and include rules for feed entries</li>
+<li>entry reader with new "show original" option</li>
+<li>feed:// support</li>
+<li>pinned entries: which are shown are unread until manually marked as read</li>
+</ul>
+<p><img alt="Screenshot" src="https://lh6.googleusercontent.com/-BVPJ48zWJmY/VSkQfjIMwCI/AAAAAAAAJB0/8YW2qQmCaPg/w540-h900-no/Screenshot_2015-04-11-14-13-33.png" /></p>
         ]]>
       </description>
-      <pubDate>Wed, 24 Jun 2015 20:00:00 GMT</pubDate>
+      <pubDate>Wed, 24 Jun 2015 20:00:00 UTC</pubDate>
     </item>
+    
     <item>
       <guid isPermaLink="false">addc60ac-1daf-11e5-9a21-1697f925ec7b</guid>
       <title>Aggregator Howto » Entry Rules</title>
+      
       <description>
         <![CDATA[
-          <p>
-            <b>Aggregator</b> uses user-defined entry rules to filter out the entries
-            of a feed.
-          </p>
-          <p>
-            There are two types of rules: <b>exclude rules</b>, used to mark which
-            entries should be hidden while aggregating a feed, and
-            <b>include rules</b>, used to cancel the effect of some exclude rules.
-          </p>
-          <p>
-            Every entry rule defines a <b>mask</b> used to match the entries for which
-            the rule <b>action</b> is applied. The <i class="marked">%</i> character
-            is used to match zero, one or multiple characters, and can be used
-            multiple times in a <b>mask</b>.
-          </p>
-          <p>
-            For example, the <i class="marked">%aggregator%</i> title mask will match
-            every entry that contains <i class="marked">aggregator</i> in the title.
-            While the <i class="marked">% Vol % Ch %</i> title mask will match every
-            entry that contains both <i class="marked">&nbsp;Vol&nbsp;</i> and
-            <i class="marked">&nbsp;Ch&nbsp;</i> (in the same order as present in the
-             mask) in the title.
-          </p>
-          <h2>Excluding unwished entries</h2>
-          <p>
-            The easyest way to define rules that hide entries of a feed is by using
-            the <b>exclude</b> action:
-            <ol>
-              <li>
-                Select the entry which you want to exclude by <i>long pressing</i> it.
-              </li>
-              <li>
-                Click the <i>exclude</i> action from the action bar.<br>
-              </li>
-            </ol>
-          </p>
-          <p>
-            <i>
-              NOTE: Depending on your device type, the <b>exclude</b> action can be
-              found either as as an action icon or as an option in the overflow menu.
-            </i>
-          </p>
-          <p>
-            <i>
-              HINT: Long pressing an icon in the action bar reveals the action name.
-            </i>
-          </p>
-          <h2>Excluding all entries except the whished ones</h2>
-          <p>
-            This is achieved by defining at least two rules:
-            <ol>
-              <li>
-                An <b>exclude</b> rule that hides every entry by using the following
-                title mask: <i class="marked">%</i>
-              </li>
-              <li>
-                One or more <b>include</b> rules that will cancel the effect of the
-                <b>exclude</b> rule.
-              </li>
-            </ol>
-          </p>
-          <p>
-            These rules are preferably created from the <i>entry rules</i> activity,
-            which can be opened by clicking the <b>entry rules</b> option from the
-            overflow menu.
-          </p>
-          <p>
-            <i>
-              NOTE: The <b>entry rules</b> activity lists all the rules of a feed,
-              including the global ones, while also showing how many entries are
-              matched by a rule.
-            </i>
-          </p>
+          <p><strong>Aggregator</strong> uses user-defined entry rules to filter out the entries of a feed.</p>
+<p>There are two types of rules: <strong>exclude rules</strong>, used to mark which entries should be hidden while aggregating a feed,
+and <strong>include rules</strong>, used to cancel the effect of some exclude rules.</p>
+<p>Every entry rule defines a <strong>mask</strong> used to match the entries for which the rule <strong>action</strong> is applied. The <code>%</code>
+character is used to match zero, one or multiple characters, and can be used multiple times in a <strong>mask</strong>.</p>
+<p>For example, the <code>%aggregator%</code> title mask will match every entry that contains <code>aggregator</code> in the title. While the <code>%
+Vol % Ch %</code> title mask will match every entry that contains both <code>Vol</code> and <code>Ch</code> (in the same order as present in the
+mask) in the title.</p>
+<h2>Excluding unwished entries</h2>
+<p>The easiest way to define rules that hide entries of a feed is by using the <strong>exclude</strong> action:</p>
+<ol>
+<li>Select the entry which you want to exclude by <em>long pressing</em> it.</li>
+<li>Click the <em>exclude</em> action from the action bar.</li>
+</ol>
+<p><em>NOTE: Depending on your device type, the <strong>exclude</strong> action can be found either as as an action icon or as an option in
+the overflow menu.</em></p>
+<p><em>HINT: Long pressing an icon in the action bar reveals the action name.</em></p>
+<h2>Excluding all entries except the whished ones</h2>
+<p>This is achieved by defining at least two rules:</p>
+<ol>
+<li>An <strong>exclude</strong> rule that hides every entry by using the following title mask: <code>%</code></li>
+<li>One or more <strong>include</strong> rules that will cancel the effect of the <strong>exclude</strong> rule.</li>
+</ol>
+<p>These rules are preferably created from the <em>entry rules</em> activity, which can be opened by clicking the <strong>entry rules</strong>
+option from the overflow menu.</p>
+<p><em>NOTE: The <strong>entry rules</strong> activity lists all the rules of a feed, including the global ones, while also showing how
+many entries are matched by a rule.</em></p>
         ]]>
       </description>
+      
     </item>
+    
   </channel>
 </rss>
