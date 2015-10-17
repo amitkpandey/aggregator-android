@@ -1,0 +1,19 @@
+type: news
+uid: 73ebb000-74d5-11e5-8bcf-feff819cdc9f
+title: Aggregator 2.7.0
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2015-10-17T14:30:00Z
+
+Aggregator 2.7.0 brings support for user-defined feed categories.
+
+![Screenshot](https://lh3.googleusercontent.com/-pq5D6AU6qCw/ViJTjoHizDI/AAAAAAAAKr4/CveLw7a0hVI/w541-h902-no/Screenshot_2015-10-17-15-38-25.png)
+
+Collapsing or expanding a category can be done by long-pressing it. 
+
+To a assign a feed to a category one has to go to the feed preference activity, also accessible via a long-press.
+
+Other changes:
+
+- light and dark themes for the entire app
+- fix for duplicate entries
+- fix for repeated notification sound and vibrations
