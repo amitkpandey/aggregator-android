@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>Aggregator News</title>
+    <link>http://tughi.github.io/aggregator-android</link>
+    <description>Latest news about Aggregator</description>
+    {% for item in news %}
+    <item>
+      <guid isPermaLink="false">{{ item.uid }}</guid>
+      <title>{{ item.title }}</title>
+      {% if item.link %}<link>{{ item.link }}</link>{% endif %}
+      <description>
+        <![CDATA[
+          {{ item.content }}
+        ]]>
+      </description>
+      {% if item.date %}<pubDate>{{ item.date.strftime('%a, %d %b %Y %H:%M:%S %Z') }}</pubDate>{% endif %}
+    </item>
+    {% endfor %}
+  </channel>
+</rss>
