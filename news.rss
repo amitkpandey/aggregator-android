@@ -4,7 +4,7 @@
     <title>Aggregator News</title>
     <link>http://tughi.github.io/aggregator-android</link>
     <description>Latest news about Aggregator</description>
-    
+
     <item>
       <guid isPermaLink="false">c1b9222c-1daf-11e5-9a21-1697f925ec7b</guid>
       <title>Aggregator 2.6.0</title>
@@ -25,11 +25,11 @@
       </description>
       <pubDate>Wed, 24 Jun 2015 20:00:00 UTC</pubDate>
     </item>
-    
+
     <item>
       <guid isPermaLink="false">addc60ac-1daf-11e5-9a21-1697f925ec7b</guid>
       <title>Aggregator Howto » Entry Rules</title>
-      
+
       <description>
         <![CDATA[
           <p><strong>Aggregator</strong> uses user-defined entry rules to filter out the entries of a feed.</p>
@@ -61,9 +61,9 @@ option from the overflow menu.</p>
 many entries are matched by a rule.</em></p>
         ]]>
       </description>
-      
+
     </item>
-    
+
     <item>
       <guid isPermaLink="false">73ebb000-74d5-11e5-8bcf-feff819cdc9f</guid>
       <title>Aggregator 2.7.0</title>
@@ -83,6 +83,24 @@ many entries are matched by a rule.</em></p>
         ]]>
       </description>
       <pubDate>Sat, 17 Oct 2015 14:30:00 UTC</pubDate>
+    </item>
+
+    <item>
+      <guid isPermaLink="false">d306ca28-a2e3-425c-a112-9b9d1b945940</guid>
+      <title>Aggregator 2.8.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>What's new?</p>
+<ul>
+<li>Full support for the Android 6.0 permission model</li>
+<li>The exported OPML file includes now the entry rules too</li>
+<li>Support for media description present in the Youtube feeds</li>
+<li>The feed category is now displayed for each feed entry</li>
+</ul>
+        ]]>
+      </description>
+      <pubDate>Fri, 01 Apr 2016 12:27:38 UTC</pubDate>
     </item>
     
   </channel>
