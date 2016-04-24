@@ -1,0 +1,12 @@
+type: news
+uid: 376d0a34-b377-428e-8967-6ddcaa0d2500
+title: Aggregator 2.9.0
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2016-04-21T11:19:32Z
+
+What's new?
+
+- Pull to refresh! Works on every entry list (unread, category or feed)
+- The update scheduler groups now feeds in slots of 15 minutes, for better battery life
+- D-Pad navigation support
+- Fixed the global entry rules

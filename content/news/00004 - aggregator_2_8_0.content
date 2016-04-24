@@ -1,0 +1,12 @@
+type: news
+uid: d306ca28-a2e3-425c-a112-9b9d1b945940
+title: Aggregator 2.8.0
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2016-04-01T12:27:38Z
+
+What's new?
+
+- Full support for the Android 6.0 permission model
+- The exported OPML file includes now the entry rules too
+- Support for media description (present in feeds from Youtube)
+- The feed category is now displayed for each feed entry
