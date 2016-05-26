@@ -1,0 +1,12 @@
+type: news
+uid: 5f550a9e-053b-4ed9-90a1-d50f81000d2c
+title: Aggregator 2.10.0
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2016-05-26T14:45:00Z
+
+What's new?
+
+- Renamed the **Unread** category to **All**, and added the option to show the read entries
+- The **Show read entries** is now permanent
+- Increased the entry list font size
+
