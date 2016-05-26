@@ -121,5 +121,22 @@ many entries are matched by a rule.</em></p>
       <pubDate>Thu, 21 Apr 2016 11:19:32 UTC</pubDate>
     </item>
     
+    <item>
+      <guid isPermaLink="false">5f550a9e-053b-4ed9-90a1-d50f81000d2c</guid>
+      <title>Aggregator 2.10.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>What's new?</p>
+<ul>
+<li>Renamed the <strong>Unread</strong> category to <strong>All</strong>, and added the option to show the read entries</li>
+<li>The <strong>Show read entries</strong> is now permanent</li>
+<li>Increased the entry list font size</li>
+</ul>
+        ]]>
+      </description>
+      <pubDate>Thu, 26 May 2016 14:45:00 UTC</pubDate>
+    </item>
+    
   </channel>
 </rss>
