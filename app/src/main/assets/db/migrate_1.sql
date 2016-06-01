@@ -178,9 +178,6 @@ INSERT INTO feed_sync (url) VALUES ('http://feeds.arstechnica.com/arstechnica/in
 INSERT INTO feed_sync (url) VALUES ('http://www.autoblog.com/rss.xml');
 
 -- add test feed
-INSERT INTO feed_sync (url) VALUES ('http://www.bonjourmadame.fr/rss');
-
--- add test feed
 INSERT INTO feed_sync (url) VALUES ('http://daringfireball.net/feeds/main');
 
 -- add test feed
