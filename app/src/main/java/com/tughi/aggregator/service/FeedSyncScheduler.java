@@ -48,6 +48,7 @@ public class FeedSyncScheduler {
         // find next sync
         final String[] selectionArgs = {Long.toString(poll)};
         Cursor cursor = contentResolver.query(Uris.newUserFeedsUri(), USER_FEED_PROJECTION, USER_FEED_SELECTION, selectionArgs, USER_FEED_SORT_ORDER);
+        assert cursor != null;
         if (cursor.moveToFirst()) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

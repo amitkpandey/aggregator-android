@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.tughi.aggregator.content.FeedColumns;
@@ -45,7 +46,7 @@ public class FeedsSyncService extends IntentService {
             new ThreadFactory() {
                 private final AtomicInteger counter = new AtomicInteger(1);
 
-                public Thread newThread(Runnable runnable) {
+                public Thread newThread(@NonNull Runnable runnable) {
                     return new Thread(runnable, FeedsSyncService.class.getSimpleName() + "#" + counter.getAndIncrement());
                 }
             }
@@ -73,6 +74,7 @@ public class FeedsSyncService extends IntentService {
             String[] selectionArgs = {Long.toString(poll)};
             cursor = contentResolver.query(Uris.newFeedsUri(), FEED_PROJECTION, selection, selectionArgs, null);
         }
+        assert cursor != null;
         if (cursor.moveToFirst()) {
             do {
                 // sync feed on a separated thread

@@ -2,7 +2,8 @@ package com.tughi.aggregator.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.feeds.FeedsFinder;
@@ -10,7 +11,7 @@ import com.tughi.aggregator.feeds.FeedsFinder;
 /**
  * An {@link Activity} for adding a feed.
  */
-public class AddFeedActivity extends ActionBarActivity {
+public class AddFeedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,9 @@ public class AddFeedActivity extends ActionBarActivity {
 
         setContentView(R.layout.add_feed_activity);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

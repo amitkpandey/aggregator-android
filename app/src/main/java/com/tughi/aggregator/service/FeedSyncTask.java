@@ -77,7 +77,7 @@ import java.util.ArrayList;
             syncLogValues.put(SyncLogColumns.ENTRIES_TOTAL, result.feed.entries.size());
 
             // prepare content batch
-            ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>(result.feed.entries.size() + 1);
+            ArrayList<ContentProviderOperation> batch = new ArrayList<>(result.feed.entries.size() + 1);
 
             // update feed values
             ContentValues feedSyncValues = new ContentValues();
@@ -172,6 +172,7 @@ import java.util.ArrayList;
         final int entriesNewAverageIndex = 5;
         final int entriesNewMedianIndex = 6;
         Cursor cursor = context.getContentResolver().query(feedSyncLogStatsUri, projection, null, null, null);
+        assert cursor != null;
         if (cursor.moveToFirst()) {
             int lastEntriesTotal = cursor.getInt(lastEntriesTotalIndex);
             int lastEntriesNew = cursor.getInt(lastEntriesNewIndex);

@@ -1,5 +1,7 @@
 package com.tughi.aggregator.feeds;
 
+import android.support.annotation.NonNull;
+
 import com.tughi.aggregator.io.StreamHelper;
 
 import java.io.BufferedReader;
@@ -122,6 +124,7 @@ public class ConnectionHelper {
             return new ByteChars(bytes, this.start + start, this.start + end);
         }
 
+        @NonNull
         @Override
         public String toString() {
             try {

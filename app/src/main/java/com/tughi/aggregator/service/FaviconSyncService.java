@@ -40,6 +40,7 @@ public class FaviconSyncService extends IntentService {
         try {
             ContentResolver contentResolver = getContentResolver();
             Cursor cursor = contentResolver.query(Uris.newSyncFeedsUri(), FEED_PROJECTION, FEED_SELECTION, null, null);
+            assert cursor != null;
             if (cursor.moveToFirst()) {
                 final String updateSelection = FeedColumns.FAVICON + " IS NOT ?";
                 final String[] updateSelectionArgs = new String[1];

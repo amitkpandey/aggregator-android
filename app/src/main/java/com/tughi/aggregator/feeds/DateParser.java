@@ -84,7 +84,7 @@ public abstract class DateParser {
 			String regex = "((" + join(dayValues, "|") + "), )?(\\d{1,2}) (" + join(monthValues, "|") + ") (\\d{4}) (\\d{1,2}):(\\d{2})(:(\\d{2}))? ?(" + join(timezones, "|") + ")?";
 			pattern = Pattern.compile(regex);
 
-			monthMap = new HashMap<String, Integer>(12);
+			monthMap = new HashMap<>(12);
 			monthMap.put(JANUARY, Calendar.JANUARY);
 			monthMap.put(FEBRUARY, Calendar.FEBRUARY);
 			monthMap.put(MARCH, Calendar.MARCH);

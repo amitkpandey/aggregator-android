@@ -5,12 +5,14 @@ import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.tughi.aggregator.BuildConfig;
@@ -29,8 +31,6 @@ public class DatabaseContentProvider extends ContentProvider {
 
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID;
 
-    private SQLiteOpenHelper helper;
-
     private static final String TABLE_FEED_SYNC = "feed_sync";
     private static final String TABLE_FEED_USER = "feed_user";
     private static final String TABLE_ENTRY_SYNC = "entry_sync";
@@ -41,17 +41,23 @@ public class DatabaseContentProvider extends ContentProvider {
     private static final String VIEW_ENTRY = "entry_view";
     private static final String VIEW_SYNC_LOG = "sync_log";
 
+    private Context context;
+    private SQLiteOpenHelper helper;
+
     @Override
     public boolean onCreate() {
-        helper = new DatabaseOpenHelper(getContext(), "content.db", 1) {
+        this.context = getContext();
+        assert context != null;
+
+        helper = new DatabaseOpenHelper(context, "content.db", 1) {
             @Override
             public void onConfigure(SQLiteDatabase db) {
                 if (BuildConfig.DEBUG) {
                     // try to change the database file access mode
                     try {
-                        Class fileUtils = Class.forName("android.os.FileUtils");
-                        Method setPermissions = fileUtils.getMethod("setPermissions", String.class, int.class, int.class, int.class);
-                        setPermissions.invoke(null, db.getPath(), 0666, -1, -1);
+                        Class<?> fileUtilsClass = Class.forName("android.os.FileUtils");
+                        Method setPermissions = fileUtilsClass.getMethod("setPermissions", String.class, int.class, int.class, int.class);
+                        setPermissions.invoke(null, db.getPath(), 438 /*0666*/, -1, -1);
                     } catch (Exception exception) {
                         // failed
                         Log.e(getClass().getName(), "Failed to change the database file permissions");
@@ -64,12 +70,12 @@ public class DatabaseContentProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         throw new UnsupportedOperationException(uri.toString());
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         String feedId;
         switch (Uris.match(uri)) {
             case Uris.MATCHED_FEED_URI:
@@ -103,7 +109,7 @@ public class DatabaseContentProvider extends ContentProvider {
     private Cursor queryFeeds(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         SQLiteDatabase database = helper.getReadableDatabase();
         Cursor cursor = database.query(VIEW_FEED, projection, selection, selectionArgs, null, null, orderBy);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        cursor.setNotificationUri(context.getContentResolver(), uri);
         return cursor;
     }
 
@@ -120,14 +126,14 @@ public class DatabaseContentProvider extends ContentProvider {
     private Cursor queryEntries(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         SQLiteDatabase database = helper.getReadableDatabase();
         Cursor cursor = database.query(VIEW_ENTRY, projection, selection, selectionArgs, null, null, orderBy);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        cursor.setNotificationUri(context.getContentResolver(), uri);
         return cursor;
     }
 
     private Cursor querySyncLog(Uri uri, String[] projection, String selection, String[] selectionArgs, String orderBy) {
         SQLiteDatabase database = helper.getReadableDatabase();
         Cursor cursor = database.query(VIEW_SYNC_LOG, projection, selection, selectionArgs, null, null, orderBy);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        cursor.setNotificationUri(context.getContentResolver(), uri);
         return cursor;
     }
 
@@ -184,7 +190,7 @@ public class DatabaseContentProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         switch (Uris.match(uri)) {
             case Uris.MATCHED_FEED_ENTRIES_URI:
                 return insertEntry(uri, values);
@@ -208,7 +214,7 @@ public class DatabaseContentProvider extends ContentProvider {
 
         // try to update existing entry
         if (database.update(TABLE_ENTRY_SYNC, values, where, whereArgs) > 0) {
-            final String[] columns = {EntryColumns.ID};
+            final String[] columns = { EntryColumns.ID };
             Cursor cursor = database.query(TABLE_ENTRY_USER, columns, where, whereArgs, null, null, null);
             try {
                 cursor.moveToFirst();
@@ -229,7 +235,7 @@ public class DatabaseContentProvider extends ContentProvider {
         long feedId = database.insert(TABLE_FEED_SYNC, null, values);
 
         if (feedId > 0) {
-            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+            context.getContentResolver().notifyChange(Uris.newFeedsUri(), null);
         }
 
         return Uris.newSyncFeedUri(feedId);
@@ -241,14 +247,14 @@ public class DatabaseContentProvider extends ContentProvider {
         long feedId = database.insert(TABLE_SYNC_LOG, null, values);
 
         if (feedId > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            context.getContentResolver().notifyChange(uri, null);
         }
 
         return null;
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String where, String[] whereArgs) {
         switch (Uris.match(uri)) {
             case Uris.MATCHED_USER_ENTRY_URI:
                 where = and(EntryColumns.ID + " = " + uri.getLastPathSegment(), where);
@@ -271,7 +277,7 @@ public class DatabaseContentProvider extends ContentProvider {
         int result = database.update(TABLE_ENTRY_USER, values, where, whereArgs);
 
         if (result != 0) {
-            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+            context.getContentResolver().notifyChange(Uris.newFeedsUri(), null);
         }
 
         return result;
@@ -282,7 +288,7 @@ public class DatabaseContentProvider extends ContentProvider {
         int result = database.update(TABLE_FEED_USER, values, where, whereArgs);
 
         if (result != 0) {
-            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+            context.getContentResolver().notifyChange(Uris.newFeedsUri(), null);
         }
 
         return result;
@@ -293,19 +299,20 @@ public class DatabaseContentProvider extends ContentProvider {
         int result = database.update(TABLE_FEED_SYNC, values, where, whereArgs);
 
         if (result != 0) {
-            getContext().getContentResolver().notifyChange(Uris.newFeedsUri(), null);
+            context.getContentResolver().notifyChange(Uris.newFeedsUri(), null);
         }
 
         return result;
     }
 
     @Override
-    public int delete(Uri uri, String where, String[] whereArgs) {
+    public int delete(@NonNull Uri uri, String where, String[] whereArgs) {
         throw new UnsupportedOperationException(uri.toString());
     }
 
+    @NonNull
     @Override
-    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations) throws OperationApplicationException {
+    public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> operations) throws OperationApplicationException {
         SQLiteDatabase database = helper.getWritableDatabase();
 
         database.beginTransaction();
@@ -323,7 +330,7 @@ public class DatabaseContentProvider extends ContentProvider {
     }
 
     @Override
-    public Bundle call(String method, String arg, Bundle extras) {
+    public Bundle call(@NonNull String method, String arg, Bundle extras) {
         if (Uris.CALL_COMMIT_ENTRIES_READ_STATE.equals(method)) {
             return commitEntryReadFlags();
         }

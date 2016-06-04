@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -71,6 +72,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
         applicationContext = getActivity().getApplicationContext();
 
         entriesUri = getArguments().getParcelable(ARG_ENTRIES_URI);
+        assert entriesUri != null;
         feedId = Long.parseLong(entriesUri.getPathSegments().get(1));
         feedUri = Uris.newFeedUri(feedId);
 
@@ -353,8 +355,8 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
             swipeGestureTrigger = (int) (120 * resources.getDisplayMetrics().density);
 
             animationTime = resources.getInteger(android.R.integer.config_shortAnimTime);
-            readColor = resources.getColor(R.color.entry_read);
-            unreadColor = resources.getColor(R.color.entry_unread);
+            readColor = ResourcesCompat.getColor(resources, R.color.entry_read, null);
+            unreadColor = ResourcesCompat.getColor(resources, R.color.entry_unread, null);
         }
 
         @Override
@@ -412,7 +414,7 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
 
                         Intent intent = new Intent(applicationContext, ReaderActivity.class);
                         intent.setData(entriesUri);
-                        intent.putExtra(ReaderActivity.EXTRA_CURSOR_POSITION, viewHolder.getPosition());
+                        intent.putExtra(ReaderActivity.EXTRA_CURSOR_POSITION, viewHolder.getAdapterPosition());
                         startActivity(intent);
                     }
 

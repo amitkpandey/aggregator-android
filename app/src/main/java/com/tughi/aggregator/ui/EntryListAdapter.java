@@ -3,6 +3,7 @@ package com.tughi.aggregator.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -50,7 +51,7 @@ import java.util.Calendar;
     private long todayStart;
     private long yesterdayStart;
 
-    private SparseArray<String> sections = new SparseArray<String>();
+    private SparseArray<String> sections = new SparseArray<>();
 
     private Cursor cursor;
 
@@ -58,8 +59,8 @@ import java.util.Calendar;
         this.context = context;
 
         Resources resources = context.getResources();
-        readColor = resources.getColor(R.color.entry_read);
-        unreadColor = resources.getColor(R.color.entry_unread);
+        readColor = ResourcesCompat.getColor(resources, R.color.entry_read, null);
+        unreadColor = ResourcesCompat.getColor(resources, R.color.entry_unread, null);
 
         timeFormat = android.text.format.DateFormat.getTimeFormat(context);
         dateFormat = android.text.format.DateFormat.getLongDateFormat(context);

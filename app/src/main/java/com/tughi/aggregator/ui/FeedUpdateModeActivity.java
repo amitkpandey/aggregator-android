@@ -11,7 +11,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,7 +29,7 @@ import com.tughi.aggregator.content.Uris;
 /**
  * An {@link Activity} to configure the mode in which the feed gets updated.
  */
-public class FeedUpdateModeActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class FeedUpdateModeActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
     private static final int LOADER_FEED = 0;
 
@@ -51,17 +52,21 @@ public class FeedUpdateModeActivity extends ActionBarActivity implements Adapter
 
         modeSpinnerAdapter = new ModeSpinnerAdapter();
 
-        getSupportActionBar().setSubtitle(R.string.feed_update_mode);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setSubtitle(R.string.feed_update_mode);
 
         setContentView(R.layout.feed_update_mode_acivity);
 
         modeSpinner = (Spinner) findViewById(R.id.mode);
+        assert modeSpinner != null;
         modeSpinner.setOnItemSelectedListener(this);
 
         autoModeDetails = (ViewGroup) findViewById(R.id.mode_auto_details);
         disabledModeDetails = (ViewGroup) findViewById(R.id.mode_disabled_details);
 
         saveImageButton = (ImageButton) findViewById(R.id.save);
+        assert saveImageButton != null;
         saveImageButton.setOnClickListener(this);
 
         modeSpinner.setAdapter(modeSpinnerAdapter);

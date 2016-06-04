@@ -121,6 +121,7 @@ public class AddFeedFragment extends Fragment implements LoaderManager.LoaderCal
                 syncFeedValues.put(FeedColumns.TITLE, feedTitle);
                 Uri syncFeedUri = contentResolver.insert(Uris.newSyncFeedsUri(), syncFeedValues);
 
+                assert syncFeedUri != null;
                 long feedId = Long.parseLong(syncFeedUri.getLastPathSegment());
 
                 // add user values

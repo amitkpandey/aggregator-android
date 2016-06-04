@@ -222,9 +222,7 @@ public class FeedsFinder {
             saxParser.parse(new InputSource(new StringReader(content)), contentHandler);
         } catch (FinishedException exception) {
             result.feeds.add(feed);
-        } catch (SAXException exception) {
-            throw new IOException("parse failed", exception);
-        } catch (ParserConfigurationException exception) {
+        } catch (SAXException | ParserConfigurationException exception) {
             throw new IOException("parse failed", exception);
         }
     }
@@ -235,7 +233,7 @@ public class FeedsFinder {
             saxParserFactory.setNamespaceAware(true);
             SAXParser saxParser = saxParserFactory.newSAXParser();
             saxParser.parse(new InputSource(new StringReader(content)), new DefaultHandler() {
-                private Stack<String> categories = new Stack<String>();
+                private Stack<String> categories = new Stack<>();
 
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -267,9 +265,7 @@ public class FeedsFinder {
                     }
                 }
             });
-        } catch (SAXException exception) {
-            throw new IOException("parse failed", exception);
-        } catch (ParserConfigurationException exception) {
+        } catch (SAXException | ParserConfigurationException exception) {
             throw new IOException("parse failed", exception);
         }
     }
@@ -280,7 +276,7 @@ public class FeedsFinder {
         public int status;
         public Map<String, List<String>> headers;
         public String source;
-        public List<Feed> feeds = new LinkedList<Feed>();
+        public List<Feed> feeds = new LinkedList<>();
 
         @Override
         public String toString() {

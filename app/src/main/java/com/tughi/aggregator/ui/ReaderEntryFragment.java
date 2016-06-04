@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -173,7 +174,7 @@ public class ReaderEntryFragment extends Fragment {
         descriptionWebView.getSettings().setJavaScriptEnabled(true);
         descriptionWebView.setScrollBarStyle(WebView.SCROLLBARS_INSIDE_OVERLAY);
 
-        descriptionWebView.setBackgroundColor(getResources().getColor(R.color.reader_background));
+        descriptionWebView.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.reader_background, null));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 descriptionWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);

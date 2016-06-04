@@ -506,7 +506,7 @@ public final class FeedParser {
 
             public String title;
             public String link;
-            public List<Entry> entries = new LinkedList<Entry>();
+            public List<Entry> entries = new LinkedList<>();
 
             public class Entry {
 
@@ -515,7 +515,7 @@ public final class FeedParser {
                 public String id;
                 public Author author;
                 public Content summary;
-                public List<Content> contents = new LinkedList<Content>();
+                public List<Content> contents = new LinkedList<>();
                 public String created;
                 public Long createdTimestamp;
                 public String published;

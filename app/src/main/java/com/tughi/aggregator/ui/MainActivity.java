@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private static final int LOADER_FEEDS = 1;
 
+    private ActionBar actionBar;
+
     private SyncLogFragment syncLogFragment;
 
     private DrawerLayout drawerLayout;
@@ -49,19 +52,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         setContentView(R.layout.main_activity);
 
-        Toolbar actionBar = (Toolbar) findViewById(R.id.action_bar);
-        setSupportActionBar(actionBar);
+        Toolbar actionBarToolbar = (Toolbar) findViewById(R.id.action_bar);
+        setSupportActionBar(actionBarToolbar);
+
+        actionBar = getSupportActionBar();
+        assert actionBar != null;
 
         syncLogFragment = (SyncLogFragment) getFragmentManager().findFragmentById(R.id.sync_log);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, actionBar, 0, 0) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, actionBarToolbar, 0, 0) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                getSupportActionBar().setTitle(R.string.app_name);
+                actionBar.setTitle(R.string.app_name);
                 invalidateOptionsMenu();
             }
 
@@ -69,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 
-                getSupportActionBar().setTitle(title);
+                actionBar.setTitle(title);
                 invalidateOptionsMenu();
             }
 
@@ -80,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 syncLogFragment.setScaleFactor(1 - slideOffset);
             }
         };
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
 
         drawerListAdapter = new FeedListAdapter();
 
@@ -90,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         getLoaderManager().initLoader(LOADER_FEEDS, null, this);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
 
         title = getTitle();
 
@@ -172,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void setTitle(CharSequence title) {
         this.title = title;
-        getSupportActionBar().setTitle(title);
+        actionBar.setTitle(title);
     }
 
     @Override

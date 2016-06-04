@@ -10,14 +10,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.ViewGroup;
 
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.EntryColumns;
 
-public class ReaderActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>, ViewPager.OnPageChangeListener {
+public class ReaderActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ViewPager.OnPageChangeListener {
 
     public static final String EXTRA_CURSOR_POSITION = "cursor_position";
 
@@ -34,7 +34,8 @@ public class ReaderActivity extends ActionBarActivity implements LoaderManager.L
         setContentView(R.layout.reader_activity);
 
         pager = (ViewPager) findViewById(R.id.pager);
-        pager.setOnPageChangeListener(this);
+        assert pager != null;
+        pager.addOnPageChangeListener(this);
         pager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.reader_pager_margin));
         pager.setPageMarginDrawable(R.drawable.reader_pager_margin);
         pager.setAdapter(adapter);
