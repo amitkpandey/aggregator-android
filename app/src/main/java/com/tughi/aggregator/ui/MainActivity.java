@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +34,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private ActionBar actionBar;
 
-    private SyncLogFragment syncLogFragment;
-
     private DrawerLayout drawerLayout;
 
     private ListView drawerListView;
@@ -52,17 +49,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         setContentView(R.layout.main_activity);
 
-        Toolbar actionBarToolbar = (Toolbar) findViewById(R.id.action_bar);
-        setSupportActionBar(actionBarToolbar);
-
         actionBar = getSupportActionBar();
         assert actionBar != null;
 
-        syncLogFragment = (SyncLogFragment) getFragmentManager().findFragmentById(R.id.sync_log);
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, actionBarToolbar, 0, 0) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, null, 0, 0) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -77,13 +69,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 actionBar.setTitle(title);
                 invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-
-                syncLogFragment.setScaleFactor(1 - slideOffset);
             }
         };
         drawerLayout.addDrawerListener(drawerToggle);
@@ -193,17 +178,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         entryListFragmentArgs.putParcelable(EntryListFragment.ARG_ENTRIES_URI, Uris.newFeedEntriesUri(feedId));
         entryListFragment.setArguments(entryListFragmentArgs);
 
-        // create new sync log fragment
-        syncLogFragment = new SyncLogFragment();
-        Bundle syncLogFragmentArgs = new Bundle();
-        syncLogFragmentArgs.putParcelable(SyncLogFragment.ARG_SYNC_LOG_URI, Uris.newFeedSyncLogUri(feedId));
-        syncLogFragment.setArguments(syncLogFragmentArgs);
-
         // replace existing fragment with the new one
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content, entryListFragment)
-                .replace(R.id.sync_log, syncLogFragment)
                 .commit();
 
         // mark position as active
