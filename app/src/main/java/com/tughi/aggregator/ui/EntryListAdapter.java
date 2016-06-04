@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.EntryColumns;
 
@@ -118,10 +117,8 @@ import java.util.Calendar;
         }
 
         if (!cursor.isNull(ENTRY_FEED_FAVICON)) {
-            Picasso.with(context)
-                    .load(cursor.getString(ENTRY_FEED_FAVICON))
-                    .placeholder(R.drawable.favicon_placeholder)
-                    .into(holder.faviconImageView);
+            // TODO: cursor.getString(ENTRY_FEED_FAVICON)
+            holder.faviconImageView.setImageResource(R.drawable.favicon_placeholder);
         } else {
             holder.faviconImageView.setImageResource(R.drawable.favicon_placeholder);
         }

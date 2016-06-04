@@ -9,8 +9,8 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,13 +23,12 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
 import com.tughi.aggregator.R;
 import com.tughi.aggregator.content.FeedColumns;
 import com.tughi.aggregator.content.Uris;
 import com.tughi.aggregator.service.FeedsSyncService;
 
-public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     private static final int LOADER_FEEDS = 1;
 
@@ -294,10 +293,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
             // set feed favicon
             if (!cursor.isNull(FEED_FAVICON_INDEX)) {
-                Picasso.with(context)
-                        .load(cursor.getString(FEED_FAVICON_INDEX))
-                        .placeholder(faviconPlaceholder)
-                        .into(tag.faviconImageView);
+                // TODO: cursor.getString(FEED_FAVICON_INDEX)
+                tag.faviconImageView.setImageResource(faviconPlaceholder);
             } else {
                 tag.faviconImageView.setImageResource(faviconPlaceholder);
             }

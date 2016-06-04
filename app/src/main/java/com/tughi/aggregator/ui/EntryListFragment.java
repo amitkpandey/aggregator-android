@@ -514,6 +514,11 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
             }
         }
 
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            entriesRecyclerView.requestDisallowInterceptTouchEvent(disallowIntercept);
+        }
+
     }
 
 }

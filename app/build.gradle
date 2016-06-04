@@ -8,28 +8,27 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
-        applicationId 'com.tughi.aggregator.dev'
+        applicationId 'com.tughi.aggregator.next'
         minSdkVersion 16
-        targetSdkVersion 21
-        versionCode 100
-        versionName '3.0-dev'
+        targetSdkVersion 23
+        versionCode 300000
+        versionName '3.0.0'
     }
 }
 
 dependencies {
     compile 'com.tughi.android:sqlite-open-helper:0.5'
     compile 'com.tughi.sax:sax-framework:2.0'
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
-    compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
 }
 
 task generateDrawables << {
-    def inkscapeCmd = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape'
+    def inkscapeCmd = 'inkscape'
 
     def svgDir = new File(projectDir, ['src', 'main', 'svg'].join(File.separator))
     def resDir = new File(projectDir, ['src', 'main', 'res'].join(File.separator))
