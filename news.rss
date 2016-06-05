@@ -6,24 +6,93 @@
     <description>Latest news about Aggregator</description>
     
     <item>
-      <guid isPermaLink="false">c1b9222c-1daf-11e5-9a21-1697f925ec7b</guid>
-      <title>Aggregator 2.6.0</title>
+      <guid isPermaLink="false">9b357595-c98a-419d-ac50-dfd61eb6c188</guid>
+      <title>Aggregator 2.11.0</title>
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
       <description>
         <![CDATA[
-          <p>Aggregator is not dead... development is just (very) slow.</p>
-<p>So what's new?</p>
+          <p>What's new?</p>
 <ul>
-<li>redesigned UI</li>
-<li>exclude and include rules for feed entries</li>
-<li>entry reader with new "show original" option</li>
-<li>feed:// support</li>
-<li>pinned entries: which are shown are unread until manually marked as read</li>
+<li>You can directly open the original article with the browser by pressing entry's feed icon in the entries list.</li>
+<li>Long pressing the entry's feed icon, navigates you to that feed.</li>
 </ul>
-<p><img alt="Screenshot" src="https://lh6.googleusercontent.com/-BVPJ48zWJmY/VSkQfjIMwCI/AAAAAAAAJB0/8YW2qQmCaPg/w540-h900-no/Screenshot_2015-04-11-14-13-33.png" /></p>
         ]]>
       </description>
-      <pubDate>Wed, 24 Jun 2015 20:00:00 UTC</pubDate>
+      <pubDate>Sat, 28 May 2016 10:41:00 UTC</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">5f550a9e-053b-4ed9-90a1-d50f81000d2c</guid>
+      <title>Aggregator 2.10.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>What's new?</p>
+<ul>
+<li>Renamed the <strong>Unread</strong> category to <strong>All</strong>, and added the option to show the read entries</li>
+<li>The <strong>Show read entries</strong> is now permanent</li>
+<li>Increased the entry list font size</li>
+</ul>
+        ]]>
+      </description>
+      <pubDate>Thu, 26 May 2016 14:45:00 UTC</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">376d0a34-b377-428e-8967-6ddcaa0d2500</guid>
+      <title>Aggregator 2.9.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>What's new?</p>
+<ul>
+<li>Pull to refresh! Works on every entry list (unread, category or feed)</li>
+<li>The update scheduler groups now feeds in slots of 15 minutes, for better battery life</li>
+<li>D-Pad navigation support</li>
+<li>Fixed the global entry rules</li>
+</ul>
+        ]]>
+      </description>
+      <pubDate>Thu, 21 Apr 2016 11:19:32 UTC</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">d306ca28-a2e3-425c-a112-9b9d1b945940</guid>
+      <title>Aggregator 2.8.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>What's new?</p>
+<ul>
+<li>Full support for the Android 6.0 permission model</li>
+<li>The exported OPML file includes now the entry rules too</li>
+<li>Support for media description (present in feeds from Youtube)</li>
+<li>The feed category is now displayed for each feed entry</li>
+</ul>
+        ]]>
+      </description>
+      <pubDate>Fri, 01 Apr 2016 12:27:38 UTC</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">73ebb000-74d5-11e5-8bcf-feff819cdc9f</guid>
+      <title>Aggregator 2.7.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>Aggregator 2.7.0 brings support for user-defined feed categories.</p>
+<p><img alt="Screenshot" src="https://lh3.googleusercontent.com/-pq5D6AU6qCw/ViJTjoHizDI/AAAAAAAAKr4/CveLw7a0hVI/w541-h902-no/Screenshot_2015-10-17-15-38-25.png" /></p>
+<p>Collapsing or expanding a category can be done by long-pressing it. </p>
+<p>To a assign a feed to a category one has to go to the feed preference activity, also accessible via a long-press.</p>
+<p>Other changes:</p>
+<ul>
+<li>light and dark themes for the entire app</li>
+<li>fix for duplicate entries</li>
+<li>fix for repeated notification sound and vibrations</li>
+</ul>
+        ]]>
+      </description>
+      <pubDate>Sat, 17 Oct 2015 14:30:00 UTC</pubDate>
     </item>
     
     <item>
@@ -65,77 +134,24 @@ many entries are matched by a rule.</em></p>
     </item>
     
     <item>
-      <guid isPermaLink="false">73ebb000-74d5-11e5-8bcf-feff819cdc9f</guid>
-      <title>Aggregator 2.7.0</title>
+      <guid isPermaLink="false">c1b9222c-1daf-11e5-9a21-1697f925ec7b</guid>
+      <title>Aggregator 2.6.0</title>
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
       <description>
         <![CDATA[
-          <p>Aggregator 2.7.0 brings support for user-defined feed categories.</p>
-<p><img alt="Screenshot" src="https://lh3.googleusercontent.com/-pq5D6AU6qCw/ViJTjoHizDI/AAAAAAAAKr4/CveLw7a0hVI/w541-h902-no/Screenshot_2015-10-17-15-38-25.png" /></p>
-<p>Collapsing or expanding a category can be done by long-pressing it. </p>
-<p>To a assign a feed to a category one has to go to the feed preference activity, also accessible via a long-press.</p>
-<p>Other changes:</p>
+          <p>Aggregator is not dead... development is just (very) slow.</p>
+<p>So what's new?</p>
 <ul>
-<li>light and dark themes for the entire app</li>
-<li>fix for duplicate entries</li>
-<li>fix for repeated notification sound and vibrations</li>
+<li>redesigned UI</li>
+<li>exclude and include rules for feed entries</li>
+<li>entry reader with new "show original" option</li>
+<li>feed:// support</li>
+<li>pinned entries: which are shown are unread until manually marked as read</li>
 </ul>
+<p><img alt="Screenshot" src="https://lh6.googleusercontent.com/-BVPJ48zWJmY/VSkQfjIMwCI/AAAAAAAAJB0/8YW2qQmCaPg/w540-h900-no/Screenshot_2015-04-11-14-13-33.png" /></p>
         ]]>
       </description>
-      <pubDate>Sat, 17 Oct 2015 14:30:00 UTC</pubDate>
-    </item>
-    
-    <item>
-      <guid isPermaLink="false">d306ca28-a2e3-425c-a112-9b9d1b945940</guid>
-      <title>Aggregator 2.8.0</title>
-      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
-      <description>
-        <![CDATA[
-          <p>What's new?</p>
-<ul>
-<li>Full support for the Android 6.0 permission model</li>
-<li>The exported OPML file includes now the entry rules too</li>
-<li>Support for media description (present in feeds from Youtube)</li>
-<li>The feed category is now displayed for each feed entry</li>
-</ul>
-        ]]>
-      </description>
-      <pubDate>Fri, 01 Apr 2016 12:27:38 UTC</pubDate>
-    </item>
-    
-    <item>
-      <guid isPermaLink="false">376d0a34-b377-428e-8967-6ddcaa0d2500</guid>
-      <title>Aggregator 2.9.0</title>
-      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
-      <description>
-        <![CDATA[
-          <p>What's new?</p>
-<ul>
-<li>Pull to refresh! Works on every entry list (unread, category or feed)</li>
-<li>The update scheduler groups now feeds in slots of 15 minutes, for better battery life</li>
-<li>D-Pad navigation support</li>
-<li>Fixed the global entry rules</li>
-</ul>
-        ]]>
-      </description>
-      <pubDate>Thu, 21 Apr 2016 11:19:32 UTC</pubDate>
-    </item>
-    
-    <item>
-      <guid isPermaLink="false">5f550a9e-053b-4ed9-90a1-d50f81000d2c</guid>
-      <title>Aggregator 2.10.0</title>
-      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
-      <description>
-        <![CDATA[
-          <p>What's new?</p>
-<ul>
-<li>Renamed the <strong>Unread</strong> category to <strong>All</strong>, and added the option to show the read entries</li>
-<li>The <strong>Show read entries</strong> is now permanent</li>
-<li>Increased the entry list font size</li>
-</ul>
-        ]]>
-      </description>
-      <pubDate>Thu, 26 May 2016 14:45:00 UTC</pubDate>
+      <pubDate>Wed, 24 Jun 2015 20:00:00 UTC</pubDate>
     </item>
     
   </channel>
