@@ -101,7 +101,7 @@ def generate_rss(news):
             item.update(page)
 
     with codecs.open(os.path.join('../gh-pages', 'news.rss'), mode='w', encoding='utf-8') as writer:
-        writer.write(template.render({'news': news}))
+        writer.write(template.render({'news': reversed(news)}))
 
 
 if __name__ == '__main__':
