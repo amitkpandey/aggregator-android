@@ -1,7 +1,5 @@
 package com.tughi.aggregator.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -9,22 +7,16 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -63,7 +55,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     private TextView unreadCountTextView;
     private ProgressBar progressBar;
     private View emptyView;
-    private View junkNotificationView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,13 +135,11 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
     public void onViewCreated(View view, Bundle savedInstanceState) {
         entriesRecyclerView = (RecyclerView) view.findViewById(R.id.entries);
         entriesRecyclerView.setAdapter(adapter);
-        entriesRecyclerView.addOnItemTouchListener(new OnItemTouchListener());
+        // TODO: register item touch listener
 
         unreadCountTextView = (TextView) view.findViewById(R.id.unread_count);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         emptyView = view.findViewById(R.id.empty);
-
-        junkNotificationView = view.findViewById(R.id.junk_notification);
     }
 
     @Override
@@ -262,265 +251,6 @@ public class EntryListFragment extends Fragment implements LoaderManager.LoaderC
                 return applicationContext.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
             }
         }.execute();
-    }
-
-    private void markEntryJunk(final long id, final boolean junk) {
-        new AsyncTask<Object, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Object... params) {
-                ContentValues values = new ContentValues();
-                values.put(EntryColumns.FLAG_JUNK, junk);
-                return applicationContext.getContentResolver().update(Uris.newUserEntryUri(id), values, null, null) == 1;
-            }
-        }.execute();
-
-        if (junk) {
-            // update undo view
-            junkNotificationView.setTag(id);
-            if (junkNotificationView.getVisibility() == View.GONE) {
-                // show undo view
-                junkNotificationView.setAlpha(0);
-                junkNotificationView.setVisibility(View.VISIBLE);
-                junkNotificationView
-                        .animate()
-                        .alpha(1)
-                        .setListener(null);
-            }
-            // register click listener
-            junkNotificationView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    markEntryJunk(id, false);
-
-                    // hide notification
-                    junkNotificationView
-                            .animate()
-                            .alpha(0)
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    junkNotificationView.setVisibility(View.GONE);
-                                }
-                            });
-                }
-            });
-            // hide notification after 2 seconds
-            junkNotificationView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (junkNotificationView.getVisibility() != View.GONE &&
-                            id == (Long) junkNotificationView.getTag()) {
-                        junkNotificationView
-                                .animate()
-                                .alpha(0)
-                                .setListener(new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        junkNotificationView.setVisibility(View.GONE);
-                                    }
-                                });
-                    }
-                }
-            }, 2000);
-        }
-    }
-
-    /**
-     * A {@link RecyclerView.OnItemTouchListener} that detects an item swipe.
-     */
-    private class OnItemTouchListener implements RecyclerView.OnItemTouchListener {
-
-        private final float touchSlopSquare;
-        private final int animationTime;
-        private final int swipeGestureTrigger;
-
-        private MotionEvent downEvent;
-        private float downX;
-        private float downY;
-
-        private boolean swipeDetection;
-        private boolean swipeCancelled;
-
-        private EntryListAdapter.ViewHolder viewHolder;
-
-        private int readColor;
-        private int unreadColor;
-
-        private OnItemTouchListener() {
-            ViewConfiguration configuration = ViewConfiguration.get(applicationContext);
-            final int touchSlop = configuration.getScaledTouchSlop();
-            touchSlopSquare = touchSlop * touchSlop;
-
-            Resources resources = applicationContext.getResources();
-            swipeGestureTrigger = (int) (120 * resources.getDisplayMetrics().density);
-
-            animationTime = resources.getInteger(android.R.integer.config_shortAnimTime);
-            readColor = ResourcesCompat.getColor(resources, R.color.entry_read, null);
-            unreadColor = ResourcesCompat.getColor(resources, R.color.entry_unread, null);
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent event) {
-            final float x = event.getX();
-            final float y = event.getY();
-
-            switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
-                case MotionEvent.ACTION_DOWN: {
-                    downX = x;
-                    downY = y;
-
-                    View itemView = recyclerView.findChildViewUnder(downX, downY);
-                    if (itemView != null) {
-                        viewHolder = (EntryListAdapter.ViewHolder) recyclerView.getChildViewHolder(itemView);
-                        swipeDetection = true;
-
-                        if (downEvent != null) {
-                            downEvent.recycle();
-                        }
-                        downEvent = MotionEvent.obtain(event);
-                    } else {
-                        viewHolder = null;
-                        swipeDetection = false;
-                    }
-
-                    break;
-                }
-                case MotionEvent.ACTION_MOVE: {
-                    if (swipeDetection) {
-                        final int deltaX = (int) (x - downX);
-                        final int deltaY = (int) (y - downY);
-                        final int distance = (deltaX * deltaX) + (deltaY * deltaY);
-                        if (distance > touchSlopSquare) {
-                            // scroll detected
-
-                            swipeDetection = false;
-
-                            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                                // start swiping
-                                swipeCancelled = false;
-                                onTouchEvent(recyclerView, event);
-
-                                // receive next swipe events in onTouchEvent(...)
-                                return true;
-                            }
-                        }
-                    }
-
-                    break;
-                }
-                case MotionEvent.ACTION_UP: {
-                    if (swipeDetection) {
-                        // item clicked
-
-                        Intent intent = new Intent(applicationContext, ReaderActivity.class);
-                        intent.setData(entriesUri);
-                        intent.putExtra(ReaderActivity.EXTRA_CURSOR_POSITION, viewHolder.getAdapterPosition());
-                        startActivity(intent);
-                    }
-
-                    break;
-                }
-            }
-
-            // intercept next event
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {
-            if (swipeCancelled) {
-                return;
-            }
-
-            final View entryView = viewHolder.entryView;
-            final float width = entryView.getWidth();
-
-            final float deltaX = event.getX() - downX;
-
-            switch (event.getAction() & MotionEventCompat.ACTION_MASK) {
-                case MotionEvent.ACTION_MOVE: {
-                    // move view
-                    entryView.setTranslationX(deltaX);
-
-                    if (deltaX < 0) {
-                        // gesture: mark as junk
-                        float maxDeltaX = Math.min(swipeGestureTrigger << 1, width / 2);
-                        entryView.setAlpha(1 - Math.abs(deltaX) / maxDeltaX);
-
-                        if (-deltaX > maxDeltaX) {
-                            swipeCancelled = true;
-
-                            // apply gesture
-                            markEntryJunk(viewHolder.getItemId(), true);
-                        }
-                    } else {
-                        // gesture: toggle read state
-                        int fromColor;
-                        int toColor;
-                        if (viewHolder.isRead()) {
-                            fromColor = readColor;
-                            toColor = unreadColor;
-                        } else {
-                            fromColor = unreadColor;
-                            toColor = readColor;
-                        }
-                        int delta = Math.min((int) deltaX, swipeGestureTrigger);
-                        int deltaColor = Color.argb(
-                                (Color.alpha(toColor) - Color.alpha(fromColor)) * delta / swipeGestureTrigger + Color.alpha(fromColor),
-                                (Color.red(toColor) - Color.red(fromColor)) * delta / swipeGestureTrigger + Color.red(fromColor),
-                                (Color.green(toColor) - Color.green(fromColor)) * delta / swipeGestureTrigger + Color.green(fromColor),
-                                (Color.blue(toColor) - Color.blue(fromColor)) * delta / swipeGestureTrigger + Color.blue(fromColor)
-                        );
-                        viewHolder.stateView.setBackgroundColor(deltaColor);
-
-                        if (deltaX > swipeGestureTrigger) {
-                            swipeCancelled = true;
-
-                            // apply gesture
-                            final long entryId = viewHolder.getItemId();
-                            final boolean entryNewRead = !viewHolder.isRead();
-                            entryView.animate()
-                                    .translationX(0)
-                                    .setDuration(animationTime)
-                                    .setListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            markEntryRead(entryId, entryNewRead);
-                                        }
-                                    });
-                        }
-                    }
-
-                    break;
-                }
-                case MotionEvent.ACTION_CANCEL:
-                case MotionEvent.ACTION_UP: {
-                    // swipe cancelled
-
-                    if (deltaX < 0) {
-                        entryView.animate()
-                                .translationX(0)
-                                .alpha(1)
-                                .setDuration(animationTime)
-                                .setListener(null);
-                    } else {
-                        viewHolder.stateView.setBackgroundColor(viewHolder.isRead() ? readColor : unreadColor);
-                        entryView.animate()
-                                .translationX(0)
-                                .setDuration(animationTime)
-                                .setListener(null);
-                    }
-
-                    break;
-                }
-            }
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-            entriesRecyclerView.requestDisallowInterceptTouchEvent(disallowIntercept);
-        }
-
     }
 
 }

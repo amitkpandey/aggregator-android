@@ -30,11 +30,6 @@ public interface EntryColumns {
     public static final String FLAG_STAR = "flag_star";
 
     /**
-     * Boolean flag that marks an entry as junk.
-     */
-    public static final String FLAG_JUNK = "flag_junk";
-
-    /**
      * Read-only boolean flag that contains the original value of {@link #FLAG_READ}.
      */
     public static final String RO_FLAG_READ = "ro_flag_read";
