@@ -15,18 +15,19 @@
 <p>When I started to work on the new design of the update history I had these goals:</p>
 <ul>
 <li>make it scrollable to cover a longer period of time</li>
-<li>include visual hints for the passed time between updates</li>
+<li>include visual hints for the time passed between updates</li>
 <li>provide extended details for each update</li>
 </ul>
 <p>To access the <em>update history</em>, navigate to a feed and select the <code>Update history</code>
 option from the overflow menu. If Aggregator failed to update the feed, the <code>Update
 history</code> option is available directly in the action bar.</p>
-<p><img alt="update history" src="images/00008/device-2016-07-06-204317.png" /></p>
-<p><img alt="update details" src="images/00008/device-2016-07-06-213455.png" /></p>
+<p><img alt="update history" src="news/00008/device-2016-07-06-204317.png" /></p>
+<p><img alt="update details" src="news/00008/device-2016-07-06-213455.png" /></p>
 <p>Also, in the navigation drawer, feeds that failed to be updated are now highlighted.</p>
-<p><img alt="highlighted feeds" src="images/00008/device-2016-07-06-203852.png" /></p>
+<p><img alt="highlighted feeds" src="news/00008/device-2016-07-06-203852.png" /></p>
 <h3>Redirects</h3>
-<p>Starting with this version, Aggregator will handle both temporary and permanent redirects.</p>
+<p>Starting with this version, Aggregator will handle both temporary and permanent
+redirects.</p>
         ]]>
       </description>
       <pubDate>Tue, 05 Jul 2016 08:58:00 UTC</pubDate>
