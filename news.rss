@@ -21,10 +21,10 @@
 <p>To access the <em>update history</em>, navigate to a feed and select the <code>Update history</code>
 option from the overflow menu. If Aggregator failed to update the feed, the <code>Update
 history</code> option is available directly in the action bar.</p>
-<p><img alt="update history" src="news/00008/device-2016-07-06-204317.png" /></p>
-<p><img alt="update details" src="news/00008/device-2016-07-06-213455.png" /></p>
+<p><img alt="update history" src="https://tughi.github.io/aggregator-android/news/00008/device-2016-07-06-204317.png" /></p>
+<p><img alt="update details" src="https://tughi.github.io/aggregator-android/news/00008/device-2016-07-06-213455.png" /></p>
 <p>Also, in the navigation drawer, feeds that failed to be updated are now highlighted.</p>
-<p><img alt="highlighted feeds" src="news/00008/device-2016-07-06-203852.png" /></p>
+<p><img alt="highlighted feeds" src="https://tughi.github.io/aggregator-android/news/00008/device-2016-07-06-203852.png" /></p>
 <h3>Redirects</h3>
 <p>Starting with this version, Aggregator will handle both temporary and permanent
 redirects.</p>
@@ -109,7 +109,7 @@ redirects.</p>
       <description>
         <![CDATA[
           <p>Aggregator 2.7.0 brings support for user-defined feed categories.</p>
-<p><img alt="Screenshot" src="news/00003/device-2015-10-17-153825.png" /></p>
+<p><img alt="Screenshot" src="https://tughi.github.io/aggregator-android/news/00003/device-2015-10-17-153825.png" /></p>
 <p>Collapsing or expanding a category can be done by long-pressing it.</p>
 <p>To a assign a feed to a category one has to go to the feed preference activity, also accessible via a long-press.</p>
 <p>Other changes:</p>
@@ -176,7 +176,7 @@ many entries are matched by a rule.</em></p>
 <li>feed:// support</li>
 <li>pinned entries: which are shown are unread until manually marked as read</li>
 </ul>
-<p><img alt="Screenshot" src="news/00001/device-2015-04-11-141333.png" /></p>
+<p><img alt="Screenshot" src="https://tughi.github.io/aggregator-android/news/00001/device-2015-04-11-141333.png" /></p>
         ]]>
       </description>
       <pubDate>Wed, 24 Jun 2015 20:00:00 UTC</pubDate>
