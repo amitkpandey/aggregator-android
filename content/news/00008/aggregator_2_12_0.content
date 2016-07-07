@@ -1,0 +1,30 @@
+type: news
+uid: 6540a28d-ad73-4f57-902b-a367f103c4f5
+title: Aggregator 2.12.0
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2016-07-05T08:58:00Z
+
+### The *update history* is back!
+
+When I started to work on the new design of the update history I had these goals:
+
+- make it scrollable to cover a longer period of time
+- include visual hints for the time passed between updates
+- provide extended details for each update
+
+To access the *update history*, navigate to a feed and select the `Update history`
+option from the overflow menu. If Aggregator failed to update the feed, the `Update
+history` option is available directly in the action bar.
+
+![update history](https://tughi.github.io/aggregator-android/news/00008/device-2016-07-06-204317.png)
+
+![update details](https://tughi.github.io/aggregator-android/news/00008/device-2016-07-06-213455.png)
+
+Also, in the navigation drawer, feeds that failed to be updated are now highlighted.
+
+![highlighted feeds](https://tughi.github.io/aggregator-android/news/00008/device-2016-07-06-203852.png)
+
+### Redirects
+
+Starting with this version, Aggregator will handle both temporary and permanent
+redirects.

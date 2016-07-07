@@ -18,6 +18,8 @@ def process_content():
 
     os.chdir('content')
     for root, dirs, files in os.walk('./'):
+        dirs.sort(reverse=True)
+
         if root.startswith('./'):
             root = root[2:]
 
@@ -101,17 +103,19 @@ def generate_rss(news):
             item.update(page)
 
     with codecs.open(os.path.join('../gh-pages', 'news.rss'), mode='w', encoding='utf-8') as writer:
-        writer.write(template.render({'news': reversed(news)}))
+        writer.write(template.render({'news': news}))
 
 
 if __name__ == '__main__':
     print 'deleting generated files'
-    for root, dirs, files in os.walk('gh-pages'):
+    for root, dirs, files in reversed([x for x in os.walk('gh-pages')]):
         for file_name in files:
             if root == 'gh-pages' and file_name.startswith('.'):
                 continue
+            print "rm", os.path.join(root, file_name)
             os.remove(os.path.join(root, file_name))
         if root != 'gh-pages':
+            print "rm", root
             os.rmdir(root)
 
     process_content()
