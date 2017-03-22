@@ -13,13 +13,13 @@
       <description>
         <![CDATA[
           <h3>More material design</h3>
-<p>The <code>mark all as read</code> action has been converted to a <em>floating action button</em>, and in its place has been taken by the <code>refresh</code> action.</p>
+<p>The <strong>mark all as read</strong> action has been converted to a <em>floating action button</em>, and its place has been taken by the <strong>refresh</strong> action.</p>
 <p>To give a better idea what happens in the background, the refresh action shows now how many feeds are beeing syncronized... </p>
 <p>Clicking the refresh action, while spinning, will display more details.</p>
-<p><img alt="refresh action" src="news/00013/device-2017-03-22-233451.gif" /></p>
+<p><img alt="refresh action" src="https://tughi.github.io/aggregator-android/news/00013/device-2017-03-22-233451.gif" /></p>
         ]]>
       </description>
-      <pubDate>Fri, 10 Mar 2017 00:46:44 +0000</pubDate>
+      <pubDate>Sun, 19 Mar 2017 22:51:17 +0000</pubDate>
     </item>
     
     <item>
@@ -30,12 +30,12 @@
         <![CDATA[
           <h3>Entry list</h3>
 <p>The entry list has received a facelift that dims down the noise produced by high-contrasted colors to allow the reader to focus more on content.</p>
-<p><img alt="entry list" src="news/00012/device-2017-03-22-220123.png" /></p>
+<p><img alt="entry list" src="https://tughi.github.io/aggregator-android/news/00012/device-2017-03-22-220123.png" /></p>
 <p>Unread entries now appear in bold while read entries are grayed out.
 Feeds annotated with a color have a colored bullet in front of the entry time.</p>
 <h3>OPML</h3>
 <p>The feeds import and export activities display now the feed categories in a similar way to the entry list...</p>
-<p><img alt="entry list" src="news/00012/device-2017-03-22-220536.png" /></p>
+<p><img alt="entry list" src="https://tughi.github.io/aggregator-android/news/00012/device-2017-03-22-220536.png" /></p>
         ]]>
       </description>
       <pubDate>Fri, 10 Mar 2017 00:46:44 +0000</pubDate>
