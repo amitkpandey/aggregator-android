@@ -3,8 +3,88 @@
   <channel>
     <atom:link href="https://tughi.github.io/aggregator-android/news.rss" rel="self" type="application/rss+xml" />
     <title>Aggregator News</title>
-    <link>http://tughi.github.io/aggregator-android</link>
+    <link>https://tughi.github.io/aggregator-android</link>
     <description>Latest news about Aggregator</description>
+    
+    <item>
+      <guid isPermaLink="false">a43468fa-0dd9-4b8f-9194-94bee81d2e79</guid>
+      <title>Aggregator 2.16.000</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <h3>More material design</h3>
+<p>The <code>mark all as read</code> action has been converted to a <em>floating action button</em>, and in its place has been taken by the <code>refresh</code> action.</p>
+<p>To give a better idea what happens in the background, the refresh action shows now how many feeds are beeing syncronized... </p>
+<p>Clicking the refresh action, while spinning, will display more details.</p>
+<p><img alt="refresh action" src="news/00013/device-2017-03-22-233451.gif" /></p>
+        ]]>
+      </description>
+      <pubDate>Fri, 10 Mar 2017 00:46:44 +0000</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">8313549e-cf87-4222-a974-7e8e2c894a48</guid>
+      <title>Aggregator 2.15.000</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <h3>Entry list</h3>
+<p>The entry list has received a facelift that dims down the noise produced by high-contrasted colors to allow the reader to focus more on content.</p>
+<p><img alt="entry list" src="news/00012/device-2017-03-22-220123.png" /></p>
+<p>Unread entries now appear in bold while read entries are grayed out.
+Feeds annotated with a color have a colored bullet in front of the entry time.</p>
+<h3>OPML</h3>
+<p>The feeds import and export activities display now the feed categories in a similar way to the entry list...</p>
+<p><img alt="entry list" src="news/00012/device-2017-03-22-220536.png" /></p>
+        ]]>
+      </description>
+      <pubDate>Fri, 10 Mar 2017 00:46:44 +0000</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">8c5233b8-6c60-445e-bfe2-cf9bb198ade2</guid>
+      <title>Aggregator 2.14.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>In the past weeks I received a lot of emails with questions on how the entry rules work...</p>
+<p>Even though this feed already provides an howto related to this topic, the majority of users doesn't use it (some users forgot about it while others lost access to it by unsubscribed from this).</p>
+<p>Starting with this release, the same howto is now available right from the <em>create entry rule</em> activity...</p>
+        ]]>
+      </description>
+      <pubDate>Fri, 10 Feb 2017 20:13:30 +0000</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">4d8400d3-dee3-47ba-87e4-2c7f6e13be60</guid>
+      <title>Aggregator 2.13.5</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>Unfortunately, the <a href="https://developers.google.com/feed/">Google Feed API</a> service has been discontinued on 15 December 2016.</p>
+<p>As a result, the <em>find feeds by keywords</em> feature has stopped functionning... and with this release I removed it entirely.</p>
+<p>If you are aware of another free service that provides a similar functionality, drop me an email...</p>
+        ]]>
+      </description>
+      <pubDate>Thu, 26 Jan 2017 22:34:50 +0000</pubDate>
+    </item>
+    
+    <item>
+      <guid isPermaLink="false">50e525cd-9dd9-4eb3-bb69-c998125529ba</guid>
+      <title>Aggregator 2.13.0</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>What's new?</p>
+<ul>
+<li><strong>Android 5+ only:</strong> Aggregator takes advantage of the new <em>JobScheduler API</em>, to become more battery friendly</li>
+<li>The displayed time respects now the user's time settings</li>
+<li>When available, the author of an entry is displayed in entry lists and the embedded viewer</li>
+</ul>
+        ]]>
+      </description>
+      <pubDate>Wed, 02 Nov 2016 22:59:27 +0000</pubDate>
+    </item>
     
     <item>
       <guid isPermaLink="false">6540a28d-ad73-4f57-902b-a367f103c4f5</guid>
@@ -13,7 +93,7 @@
       <description>
         <![CDATA[
           <h3>The <em>update history</em> is back!</h3>
-<p>When I started to work on the new design of the update history I had these goals:</p>
+<p>When I started working on the new design of the update history I had these goals:</p>
 <ul>
 <li>make it scrollable to cover a longer period of time</li>
 <li>include visual hints for the time passed between updates</li>
