@@ -1,0 +1,11 @@
+type: news
+uid: 50e525cd-9dd9-4eb3-bb69-c998125529ba
+title: Aggregator 2.13.0
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2016-11-02T22:59:27Z
+
+What's new?
+
+- **Android 5+ only:** Aggregator takes advantage of the new *JobScheduler API*, to become more battery friendly
+- The displayed time respects now the user's time settings
+- When available, the author of an entry is displayed in entry lists and the embedded viewer

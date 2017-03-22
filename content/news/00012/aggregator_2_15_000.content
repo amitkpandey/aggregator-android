@@ -1,0 +1,20 @@
+type: news
+uid: 8313549e-cf87-4222-a974-7e8e2c894a48
+title: Aggregator 2.15.000
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2017-03-10T00:46:44Z
+
+### Entry list
+
+The entry list has received a facelift that dims down the noise produced by high-contrasted colors and allows the reader to focus more on the content.
+
+![entry list](https://tughi.github.io/aggregator-android/news/00012/device-2017-03-22-220123.png)
+
+Unread entries now appear in bold while read entries are grayed out.
+Feeds annotated with a color have a colored bullet in front of the entry time.
+
+### OPML
+
+The feeds import and export activities display now the feed categories in a similar way to the entry list...
+
+![entry list](https://tughi.github.io/aggregator-android/news/00012/device-2017-03-22-220536.png)

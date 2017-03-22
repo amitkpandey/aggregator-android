@@ -1,0 +1,15 @@
+type: news
+uid: a43468fa-0dd9-4b8f-9194-94bee81d2e79
+title: Aggregator 2.16.000
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2017-03-19T22:51:17Z
+
+### More material design
+
+The **mark all as read** action has been converted to a *floating action button*, and its place has been taken by the **refresh** action.
+
+To give a better idea what happens in the background, the refresh action shows now how many feeds are beeing syncronized... 
+
+Clicking the refresh action, while spinning, will display more details.
+
+![refresh action](https://tughi.github.io/aggregator-android/news/00013/device-2017-03-22-233451.gif)

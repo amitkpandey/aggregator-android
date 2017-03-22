@@ -6,7 +6,7 @@ date: 2016-07-05T08:58:00Z
 
 ### The *update history* is back!
 
-When I started to work on the new design of the update history I had these goals:
+When I started working on the new design of the update history I had these goals:
 
 - make it scrollable to cover a longer period of time
 - include visual hints for the time passed between updates
