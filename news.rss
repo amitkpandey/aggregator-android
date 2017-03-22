@@ -29,7 +29,7 @@
       <description>
         <![CDATA[
           <h3>Entry list</h3>
-<p>The entry list has received a facelift that dims down the noise produced by high-contrasted colors to allow the reader to focus more on content.</p>
+<p>The entry list has received a facelift that dims down the noise produced by high-contrasted colors and allows the reader to focus more on the content.</p>
 <p><img alt="entry list" src="https://tughi.github.io/aggregator-android/news/00012/device-2017-03-22-220123.png" /></p>
 <p>Unread entries now appear in bold while read entries are grayed out.
 Feeds annotated with a color have a colored bullet in front of the entry time.</p>
@@ -48,7 +48,7 @@ Feeds annotated with a color have a colored bullet in front of the entry time.</
       <description>
         <![CDATA[
           <p>In the past weeks I received a lot of emails with questions on how the entry rules work...</p>
-<p>Even though this feed already provides an howto related to this topic, the majority of users doesn't use it (some users forgot about it while others lost access to it by unsubscribed from this).</p>
+<p>Even though this feed already provides an howto related to this topic, the majority of users doesn't use it (some users forgot about it while others lost access to it by unsubscribing from this feed).</p>
 <p>Starting with this release, the same howto is now available right from the <em>create entry rule</em> activity...</p>
         ]]>
       </description>
