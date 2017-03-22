@@ -6,6 +6,6 @@ date: 2017-02-10T20:13:30Z
 
 In the past weeks I received a lot of emails with questions on how the entry rules work...
 
-Even though this feed already provides an howto related to this topic, the majority of users doesn't use it (some users forgot about it while others lost access to it by unsubscribed from this).
+Even though this feed already provides an howto related to this topic, the majority of users doesn't use it (some users forgot about it while others lost access to it by unsubscribing from this feed).
 
 Starting with this release, the same howto is now available right from the *create entry rule* activity...
