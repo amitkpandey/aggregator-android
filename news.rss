@@ -7,6 +7,21 @@
     <description>Latest news about Aggregator</description>
     
     <item>
+      <guid isPermaLink="false">ec447774-52db-4e37-b9ed-ca5e5c72719f</guid>
+      <title>Aggregator 2.17.000</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>Swipe to refresh works now at both the top and the bottom of the list. The same action now hides the read entries too.</p>
+<p>The title of pinned entries has a more prominent color to be noticed more easily.</p>
+<p>All layouts have been updated to support RTL languages... and I prepared a website for the ones interested in translating the app in their language. Drop me an e-mail if you want to help...</p>
+<p><img alt="refresh action" src="https://tughi.github.io/aggregator-android/news/00013/device-2017-03-31-095617.gif" /></p>
+        ]]>
+      </description>
+      <pubDate>Sun, 19 Mar 2017 22:51:17 +0000</pubDate>
+    </item>
+    
+    <item>
       <guid isPermaLink="false">a43468fa-0dd9-4b8f-9194-94bee81d2e79</guid>
       <title>Aggregator 2.16.000</title>
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
