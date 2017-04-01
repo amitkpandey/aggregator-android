@@ -17,15 +17,15 @@
 like to contribute by translating the app. So I set up a <a href="https://weblate.tughi.com">website</a>
 that would allow just that.</p>
 <p>In the past days I looked at more self-hostable solutions and decided to go on with <a href="https://weblate.org">Weblate</a>. In this post I am not going to explain how to use Weblate since this is
-alreay covered by their <a href="https://docs.weblate.org/en/weblate-2.12/user/translating.html">documentation</a>;
-but go briefly over what means to translate Aggregator.</p>
+alreay covered by their <a href="https://docs.weblate.org/en/weblate-2.12/user/translating.html">documentation</a>
+, but go briefly over what means to translate Aggregator.</p>
 <h3>Authentication</h3>
 <p>Registration is open. You only need a Google account to be able to sign in.</p>
 <p>This account will be used for e-mail notifications, if enabled.</p>
 <h3>Initial configuration</h3>
 <p>On your first login, please go to the <a href="https://weblate.tughi.com/accounts/profile/#account">profile page</a>
 and set the <code>Full name</code>. The username and the full name is the only information visible to other
-translators... you can configure both of them.</p>
+translators. You can configure both of them.</p>
 <p>Next, please go to <a href="https://weblate.tughi.com/accounts/profile/#languages">Languages</a> and select
 your language(s) in the <code>Translated languages</code> field.</p>
 <p>Now move to <a href="https://weblate.tughi.com/accounts/profile/#subscriptions">Subscriptions</a> and select
@@ -39,11 +39,12 @@ them in the subscription settings (this section is not visible in the mobile ver
 suggestion is applied as soon as it receives <strong>3</strong> votes.</p>
 <p>If some strings cannot be translated just by looking at the string and context, please add a
 comment and I'll try to give more details.</p>
-<p>Strings can contain special markers like <code>%1$s</code> or <code>%2$d</code>... Please keep them in the translated
+<p>Strings can contain special markers like <code>%1$s</code> or <code>%2$d</code>. Please keep them in the translated
 text. They are required at runtime when the final text is generated.</p>
-<p>Only the languages that are over 90% completed are added to Aggregator... gowing below this
+<p>Only the languages that are over 90% completed are added to Aggregator. Gowing below this
 percentage means removal too.</p>
-<p>Currently, there are 164 strings (totaling 433 words) used in different parts of the app. Not that many... Right?</p>
+<p>Currently, there are 164 strings (totaling 433 words) used in different parts of the app.
+Not that many... Right?</p>
         ]]>
       </description>
       <pubDate>Sat, 01 Apr 2017 20:33:00 +0000</pubDate>
