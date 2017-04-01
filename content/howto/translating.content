@@ -1,0 +1,55 @@
+type: howto
+title: Howto » Translating Aggregator
+content_title: Translating Aggregator
+
+![installs by user](https://tughi.github.io/aggregator-android/howto/translating.png)
+
+Looking at Google's statistic, I thought that there might be some users out there that would
+like to contribute by translating the app. So I set up a [website](https://weblate.tughi.com)
+that would allow just that.
+
+In the past days I looked at more self-hostable solutions and decided to go on with [Weblate](
+https://weblate.org). In this post I am not going to explain how to use Weblate since this is
+alreay covered by their [documentation](https://docs.weblate.org/en/weblate-2.12/user/translating.html)
+, but go briefly over what means to translate Aggregator.
+
+### Authentication
+
+Registration is open. You only need a Google account to be able to sign in.
+
+This account will be used for e-mail notifications, if enabled.
+
+### Initial configuration
+
+On your first login, please go to the [profile page](https://weblate.tughi.com/accounts/profile/#account)
+and set the `Full name`. The username and the full name is the only information visible to other
+translators. You can configure both of them.
+
+Next, please go to [Languages](https://weblate.tughi.com/accounts/profile/#languages) and select
+your language(s) in the `Translated languages` field.
+
+Now move to [Subscriptions](https://weblate.tughi.com/accounts/profile/#subscriptions) and select
+**Aggregator** as a `watched project`.
+
+By completing these two steps, the Weblate dashboard will give you direct links to the languages
+you can translate.
+
+To stay informed about `new strings to translate`, `new suggestions` or `new comments` activate
+them in the subscription settings (this section is not visible in the mobile version of the website).
+
+### The translation process
+
+Translators are able to suggest new translations or vote suggestions from other translators. A
+suggestion is applied as soon as it receives **3** votes.
+
+If some strings cannot be translated just by looking at the string and context, please add a
+comment and I'll try to give more details.
+
+Strings can contain special markers like `%1$s` or `%2$d`. Please keep them in the translated
+text. They are required at runtime when the final text is generated.
+
+Only the languages that are over 90% completed are added to Aggregator. Gowing below this
+percentage means removal too.
+
+Currently, there are 164 strings (totaling 433 words) used in different parts of the app.
+Not that many... Right?
