@@ -1,10 +1,10 @@
 type: news
 uid: 73ebb000-74d5-11e5-8bcf-feff819cdc9f
-title: Aggregator 2.7.0
+title: Aggregator 2.7
 link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
 date: 2015-10-17T14:30:00Z
 
-Aggregator 2.7.0 brings support for user-defined feed categories.
+Aggregator 2.7 brings support for user-defined feed categories.
 
 ![Screenshot](https://tughi.github.io/aggregator-android/news/00003/device-2015-10-17-153825.png)
 
