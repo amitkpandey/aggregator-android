@@ -7,6 +7,21 @@
     <description>Latest news about Aggregator</description>
     
     <item>
+      <guid isPermaLink="false">1f3836cb-e77e-487d-8479-01785377796d</guid>
+      <title>Aggregator 2.18.000</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>New feature: "Add a subscription" directly from the browser or other apps that can share URLs.</p>
+<p>Aggregator updates correctly now the published date of a changed entry. With this fix the support for feeds without publish dates has been also improved.</p>
+<p>Fixed the animation of the entry list.</p>
+<p><img alt="refresh action" src="https://tughi.github.io/aggregator-android/news/00016/device-2017-04-11-194035.gif" /></p>
+        ]]>
+      </description>
+      <pubDate>Tue, 11 Apr 2017 17:33:00 +0000</pubDate>
+    </item>
+    
+    <item>
       <guid isPermaLink="false">426f1014-7022-496a-ba48-6d523a3dcd66</guid>
       <title>Translating Aggregator</title>
       
