@@ -1,0 +1,13 @@
+type: news
+uid: 1f3836cb-e77e-487d-8479-01785377796d
+title: Aggregator 2.18
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2017-04-11T17:33:00Z
+
+New feature: "Add a subscription" directly from the browser or other apps that can share URLs.
+
+Aggregator updates correctly now the published date of a changed entry. With this fix the support for feeds without publish dates has been also improved.
+
+Fixed the animation of the entry list.
+
+![refresh action](https://tughi.github.io/aggregator-android/news/00016/device-2017-04-11-194035.gif)
