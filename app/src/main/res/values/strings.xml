@@ -27,4 +27,5 @@
 
     <string name="entry_list_empty">No new feed entries.</string>
 
+    <string name="entry_marked_as_junk">Marked as junk</string>
 </resources>

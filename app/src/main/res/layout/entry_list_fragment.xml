@@ -40,4 +40,19 @@
         android:text="@string/entry_list_empty"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/junk_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="48dp"
+        android:background="@android:drawable/toast_frame"
+        android:drawablePadding="16dp"
+        android:drawableRight="@drawable/ic_action_revert"
+        android:gravity="center_vertical"
+        android:text="@string/entry_marked_as_junk"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
 </FrameLayout>
