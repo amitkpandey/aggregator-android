@@ -13,6 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,9 @@ public class FeedsFinder {
 
     private static final Pattern sourcePattern = Pattern.compile("<(html|feed|rss|rdf:RDF|opml)");
 
-    public static Result find(URLConnection connection) throws IOException {
+    public static Result find(String url) throws IOException {
+        URLConnection connection = new URL(url).openConnection();
+
         Result result = new FeedsFinder().new Result();
 
         if (connection instanceof HttpURLConnection) {
@@ -46,9 +49,16 @@ public class FeedsFinder {
             result.url = httpURLConnection.getURL().toString();
             result.headers = httpURLConnection.getHeaderFields();
 
-            if (result.status != HttpURLConnection.HTTP_OK) {
-                // unexpected response code
-                return result;
+            switch (result.status) {
+                case HttpURLConnection.HTTP_OK:
+                    break;
+                case HttpURLConnection.HTTP_MOVED_PERM:
+                case HttpURLConnection.HTTP_MOVED_TEMP:
+                    // redirected
+                    return find(result.headers.get("Location").get(0));
+                default:
+                    // unexpected response code
+                    return result;
             }
         }
 
@@ -145,7 +155,7 @@ public class FeedsFinder {
         final Result.Feed feed = result.new Feed();
 
         Document document = new Document();
-        final String[] rssNamespaces = {"", "http://purl.org/rss/1.0/"};
+        final String[] rssNamespaces = { "", "http://purl.org/rss/1.0/" };
 
         // create RSS parser
         TagElement rssElement = new TagElement("rss") {
@@ -187,7 +197,7 @@ public class FeedsFinder {
         rdfElement.addChild(itemElement);
 
         // create Atom parser
-        final String[] atomNamespaces = {"http://www.w3.org/2005/Atom", "http://purl.org/atom/ns#"};
+        final String[] atomNamespaces = { "http://www.w3.org/2005/Atom", "http://purl.org/atom/ns#" };
 
         TagElement feedElement = new TagElement("feed", atomNamespaces) {
             @Override

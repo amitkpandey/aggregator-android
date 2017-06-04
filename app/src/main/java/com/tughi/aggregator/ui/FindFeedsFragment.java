@@ -19,7 +19,6 @@ import com.tughi.aggregator.R;
 import com.tughi.aggregator.feeds.FeedsFinder;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -97,8 +96,7 @@ public class FindFeedsFragment extends Fragment implements AdapterView.OnItemCli
 
             try {
                 // URL-based search
-                URL url = new URL(query);
-                return FeedsFinder.find(url.openConnection());
+                return FeedsFinder.find(query);
             } catch (IOException exception) {
                 Log.e(getClass().getName(), "Feeds search failed.", exception);
             }
