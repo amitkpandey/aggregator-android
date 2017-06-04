@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Aggregator</string>
+    <string name="app_name" translatable="false">Aggregator</string>
 
     <string name="unread_feed">Unread</string>
     <string name="starred_feed">Starred</string>
