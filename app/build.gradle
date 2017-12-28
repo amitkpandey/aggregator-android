@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId 'com.tughi.aggregator.next'
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 23
         versionCode 300000
         versionName '3.0.0'
