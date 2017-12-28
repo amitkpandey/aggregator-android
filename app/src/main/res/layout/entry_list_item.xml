@@ -30,7 +30,7 @@
                     android:id="@+id/feed"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
+                    android:layout_marginStart="56dp"
                     android:layout_marginEnd="16dp"
                     android:layout_weight="1"
                     android:textAllCaps="true"
@@ -55,7 +55,8 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginBottom="2dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/favicon_placeholder"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
@@ -65,6 +66,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginStart="32dp"
                     android:ellipsize="end"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?android:textColorPrimary" />
