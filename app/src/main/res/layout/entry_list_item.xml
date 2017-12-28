@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <com.tughi.aggregator.ui.BaselinedImageView
+                <com.tughi.aggregator.ui.InlineImageView
                     android:id="@+id/favicon"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
