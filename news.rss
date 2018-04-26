@@ -7,6 +7,18 @@
     <description>Latest news about Aggregator</description>
     
     <item>
+      <guid isPermaLink="false">f503855e-c9ce-4738-bed8-f232ec498420</guid>
+      <title>Aggregator 2.20</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>Added support for feed compression and delta updates.</p>
+        ]]>
+      </description>
+      <pubDate>Wed, 25 Apr 2018 19:15:00 +0000</pubDate>
+    </item>
+    
+    <item>
       <guid isPermaLink="false">ea334a94-f0f1-4d59-85e4-c06ce0b5adf9</guid>
       <title>Aggregator 2.19</title>
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
