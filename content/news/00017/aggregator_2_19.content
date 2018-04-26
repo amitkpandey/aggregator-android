@@ -1,0 +1,11 @@
+type: news
+uid: ea334a94-f0f1-4d59-85e4-c06ce0b5adf9
+title: Aggregator 2.19
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2017-12-23T19:14:00Z
+
+New feature for Android 6+: Provide shortcut to customize the battery optimizations in the settings.
+
+Added new setting to enable or disable the use of "Custom Tabs".
+
+Fixed the feed links when they start with //
