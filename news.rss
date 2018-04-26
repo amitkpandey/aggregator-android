@@ -7,6 +7,20 @@
     <description>Latest news about Aggregator</description>
     
     <item>
+      <guid isPermaLink="false">ea334a94-f0f1-4d59-85e4-c06ce0b5adf9</guid>
+      <title>Aggregator 2.19</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>New feature for Android 6+: Provide shortcut to customize the battery optimizations in the settings.</p>
+<p>Added new setting to enable or disable the use of "Custom Tabs".</p>
+<p>Fixed the feed links when they start with //</p>
+        ]]>
+      </description>
+      <pubDate>Sat, 23 Dec 2017 19:14:00 +0000</pubDate>
+    </item>
+    
+    <item>
       <guid isPermaLink="false">1f3836cb-e77e-487d-8479-01785377796d</guid>
       <title>Aggregator 2.18</title>
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
