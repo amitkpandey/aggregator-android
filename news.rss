@@ -7,6 +7,19 @@
     <description>Latest news about Aggregator</description>
     
     <item>
+      <guid isPermaLink="false">912c5403-5422-4452-9aae-398c8e154fbd</guid>
+      <title>Aggregator 2.21</title>
+      <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
+      <description>
+        <![CDATA[
+          <p>Added RTL support in the embedded entry viewer, based on the feed's language.
+In case a feed doesn't declare the correct language, the user can change it in the feed preferences.</p>
+        ]]>
+      </description>
+      <pubDate>Mon, 30 Apr 2018 19:54:00 +0000</pubDate>
+    </item>
+    
+    <item>
       <guid isPermaLink="false">f503855e-c9ce-4738-bed8-f232ec498420</guid>
       <title>Aggregator 2.20</title>
       <link>https://play.google.com/store/apps/details?id=com.tughi.aggregator</link>
