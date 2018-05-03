@@ -1,0 +1,8 @@
+type: news
+uid: 912c5403-5422-4452-9aae-398c8e154fbd
+title: Aggregator 2.21
+link: https://play.google.com/store/apps/details?id=com.tughi.aggregator
+date: 2018-04-30T19:54:00Z
+
+Added RTL support in the embedded entry viewer, based on the feed's language.
+In case a feed doesn't declare the correct language, the user can change it in the feed preferences.
